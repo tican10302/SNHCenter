@@ -1,0 +1,164 @@
+﻿
+
+<style>
+    .header {
+        height: 70px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    /* NAVBAR LEFT */
+    .navbar-left .btn-toggler {
+        height: 100%;
+    }
+
+    .navbar-left .btn-toggler:focus,
+    .navbar-left .btn-toggler:active,
+    .navbar-left .navbar-toggler-icon:focus {
+        outline: none;
+        box-shadow: none;
+    }
+    .navbar-left, .navbar-right {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        height: 100%;
+    }
+    
+    .navbar-left .navbar-search {
+        display: flex;
+        align-items: center;
+        width: 388px;
+        height: 38px;
+        padding: 0 16px;
+        margin-left: 16px;
+        border:  1px solid #D5D5D5;
+        border-radius: 15px;
+        background-color: #F5F6FA;
+    }
+
+    .navbar-left .navbar-search-icon {
+        color: #7A7B7D;
+    }
+
+    .navbar-left .navbar-search-input {
+        height: 100%;
+        width: 100%;
+        margin-left: 12px;
+        background-color: rgba(0, 0, 0, 0);
+        border: none;
+    }
+
+    .navbar-left .navbar-search-input:focus {
+        outline: none;
+    }
+    
+    /* NAVBAR RIGHT */
+    .navbar-right .navbar-notification,
+    .navbar-right .navbar-notification-card{
+        display: flex;
+        align-items: center;
+        height: 100%;
+        margin-right: 13px;
+    }
+    
+    .navbar-right .navbar-notification-card svg {
+        font-size: 20px;
+    }
+    
+    .navbar-right .navbar-profile {
+        display: flex;
+        height: 100%;
+    }
+    
+    .navbar-right .navbar-profile .navbar-profile-card {
+        display: flex;
+        flex-direction: row;
+        height: 100%;
+        align-items: center;
+        margin-right: 32px;
+    }
+    
+    .navbar-right .navbar-profile .navbar-profile-avatar {
+        width: 44px;
+        height: 44px;
+    }
+
+    .navbar-right .navbar-profile .navbar-profile-info {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        margin: 0 26px 0 20px;
+    }
+
+    .navbar-right .navbar-profile .navbar-profile-name {
+        font-weight: bold;
+        font-size: 16px;
+    }
+
+    .navbar-right .navbar-profile .navbar-profile-role {
+        font-size: 12px;
+    }
+
+    .navbar-right .navbar-profile .navbar-profile-dropdown-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 20px;
+        height: 20px;
+        border: 0.5px solid #B3B3B3;
+        border-radius: 10px;
+    }
+
+    .navbar-right .navbar-notification-card svg,
+    .navbar-right .navbar-profile .navbar-profile-dropdown-icon svg {
+        color: #595959;
+    }
+
+</style>
+
+<nav class="header navbar-light navbar-expand px-3">
+    <div class="navbar-left">
+        <button class="btn btn-toggler" type="button" data-bs-theme="light">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="navbar-search">
+            <i class="fa-solid fa-magnifying-glass navbar-search-icon"></i>
+            <input class="navbar-search-input" placeholder="Search"/>
+        </div>
+    </div>
+    <div class="navbar-right">
+        <div class="navbar-notification">
+            <div type="button" class="navbar-notification-card" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fa-solid fa-bell"></i>
+            </div>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" href="#">Action</a></li>
+                <li><a class="dropdown-item" href="#">Another action</a></li>
+                <li><a class="dropdown-item" href="#">Something else here</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="#">Separated link</a></li>
+            </ul>
+        </div>
+        <div class="btn-group navbar-profile">
+            <div type="button" class="navbar-profile-card" data-bs-toggle="dropdown" aria-expanded="false">
+                <img alt="Avatar" class="navbar-profile-avatar" src="img/avatar/avatar-default.png"/>
+                <div class="navbar-profile-info">
+                    <span class="navbar-profile-name">Tican</span>
+                    <span class="navbar-profile-role">Admin</span>
+                </div>
+                <div class="navbar-profile-dropdown-icon">
+                    <i class="fa-solid fa-caret-down"></i>
+                </div>
+            </div>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" href="#">Action</a></li>
+                <li><a class="dropdown-item" href="#">Another action</a></li>
+                <li><a class="dropdown-item" href="#">Something else here</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="#">Separated link</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>

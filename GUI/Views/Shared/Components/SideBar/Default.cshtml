@@ -1,0 +1,141 @@
+﻿<style>
+    li {
+        list-style: none;
+    }
+
+    /* Layout skeleton */
+    .wrapper {
+        align-items: stretch;
+        display: flex;
+        width: 100%;
+    }
+
+    #sidebar {
+        max-width: 240px;
+        min-width: 240px;
+        transition: all 0.35s ease-in-out;
+        border-right: 1px solid #E8E8E8;
+    }
+
+    /* Sidebar collapse*/
+    #sidebar.collapsed {
+        margin-left: -240px;
+    }
+
+    .sidebar-logo {
+        padding-top: 4px;
+        padding-left: 40px;
+    }
+
+    .sidebar-logo a {
+        color: #000;
+        font-size: 1.25rem;
+        font-weight: 600;
+    }
+
+    .sidebar-logo img {
+        max-width: 100px;
+        min-width: 60px;
+    }
+
+    .sidebar-nav {
+        padding: 0;
+    }
+
+    .sidebar-header {
+        color: #202224;
+        padding: 16px 0 16px 40px;
+        font-size: 16px;
+    }
+
+    a.sidebar-link {
+        margin: 0 24px;
+        padding: 16px;
+        color: #202224;
+        border-radius: 6px;
+        position: relative;
+        display: block;
+        font-size: 1rem;
+    }
+
+    .sidebar-item {
+        position: relative;
+    }
+
+    .sidebar-item.active::before {
+        border-left: 4px solid #4880FF;
+        border-radius: 4px 0 0 4px;
+        height: 100%;
+        content: "";
+        display: inline-block;
+        position: absolute;
+        left: 0;
+        top: 0;
+        transform: rotate(180deg);  
+    }
+
+    .sidebar-item.active a.sidebar-link {
+        margin: 0 24px;
+        color: #fff;
+        background-color: #4880FF;
+        border-radius: 6px;
+        position: relative;
+        display: block;
+        font-size: 1rem;
+    }
+
+    .sidebar-link[data-bs-toggle="collapse"]::after {
+        border: solid;
+        border-width: 0 0.075rem 0.075rem 0;
+        content: "";
+        display: inline-block;
+        padding: 2px;
+        position: absolute;
+        right: 1.5rem;
+        top: 1.4rem;
+        transform: rotate(-135deg);
+        transition: all 0.2s ease-out;
+    }
+
+    .sidebar-link[data-bs-toggle="collapse"].collapsed::after {
+        transform: rotate(45deg);
+        transition: all 0.2s ease-out;
+    }
+</style>
+
+<div class="h-100">
+    <div class="sidebar-logo">
+        <a href="#">
+            <img src="~/img/logo/logo.png" alt="SNHCenter" />
+        </a>
+    </div>
+    <ul class="sidebar-nav">
+        <li class="sidebar-header">
+            Home
+        </li>
+        <li class="sidebar-item active">
+            <a href="#" class="sidebar-link">
+                <i class="fa-solid fa-list pe-2"></i>
+                Profile
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a href="#" class="sidebar-link collapsed" data-bs-toggle="collapse" data-bs-target="#pages"
+                aria-expanded="false" aria-controls="pages">
+                <i class="fa-solid fa-list pe-2"></i>
+                Pages
+            </a>
+            <ul id="pages" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
+                <li class="sidebar-item">
+                    <a href="#" class="sidebar-link">Analytics</a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#" class="sidebar-link">Analytics</a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#" class="sidebar-link">Analytics</a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</div>

@@ -1,0 +1,64 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
+    <link href="~/lib/fontawesome-6.5.2/css/all.min.css" rel="stylesheet" />
+</head>
+<style>
+    .main {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        width: 100%;
+        overflow: hidden;
+        transition: all 0.35s ease-in-out;
+    }
+
+    .body {
+        background-color: #F5F6FA;
+    }
+</style>
+<body>
+    <div id="pageLoading" class="container-scroller">
+        <div class="wrapper">
+            <!-- SideBar -->
+            <aside id="sidebar">
+                @await Component.InvokeAsync("SideBar", null)
+            </aside>
+            <!-- End SideBar -->
+            <div class="main">
+                <!-- Header -->
+                @await Component.InvokeAsync("Header", null)
+                <!-- End Header -->
+                <div class="body">
+                    @RenderBody()
+                </div>
+            </div>
+        </div>
+        <div class="main">
+        </div>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2024 - FE - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/lib/fontawesome-6.5.2/js/all.min.js"></script>
+
+    <script>
+        const toggler = document.querySelector('.btn-toggler');
+        toggler.addEventListener("click", function () {
+            document.querySelector("#sidebar").classList.toggle('collapsed');
+        })
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
