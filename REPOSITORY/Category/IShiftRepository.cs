@@ -1,5 +1,6 @@
 using DTO.Base;
-using DTO.Category.Shift;
+using DTO.Category.Shift.Requests;
+using DTO.Category.Shift.Dtos;
 
 namespace REPOSITORY.Category;
 

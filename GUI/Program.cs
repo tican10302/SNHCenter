@@ -1,7 +1,34 @@
+using AspNetCoreHero.ToastNotification;
+using AspNetCoreHero.ToastNotification.Extensions;
+using Microsoft.AspNetCore.Authentication.Cookies;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin",
+        builder =>
+        {
+            builder.WithOrigins("*").AllowAnyOrigin()
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .SetIsOriginAllowed(origin => true) // allow any origin 
+                .SetPreflightMaxAge(TimeSpan.FromSeconds(2520));
+        });
+});
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.ExpireTimeSpan = TimeSpan.FromHours(8);
+        options.LoginPath = "/Account/Index";
+    });
+
+builder.Services.AddNotyf(config => { config.DurationInSeconds = 10;config.IsDismissable = true;config.Position = NotyfPosition.BottomRight; });
 
 var app = builder.Build();
 
@@ -13,11 +40,14 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+app.UseCors("AllowSpecificOrigin");
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
+app.UseCookiePolicy();
 app.UseRouting();
+app.UseNotyf();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

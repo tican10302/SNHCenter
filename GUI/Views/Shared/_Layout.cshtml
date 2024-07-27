@@ -6,6 +6,7 @@
     <title>@ViewData["Title"]</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true"/>
     <link href="~/lib/fontawesome-6.5.2/css/all.min.css" rel="stylesheet" />
 </head>
 <style>
@@ -20,6 +21,7 @@
 
     .body {
         background-color: #F5F6FA;
+        padding: 30px;
     }
 </style>
 <body>
@@ -39,26 +41,20 @@
                 </div>
             </div>
         </div>
-        <div class="main">
-        </div>
     </div>
-
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2024 - FE - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
+    
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/lib/fontawesome-6.5.2/js/all.min.js"></script>
 
-    <script>
+<script>
         const toggler = document.querySelector('.btn-toggler');
         toggler.addEventListener("click", function () {
             document.querySelector("#sidebar").classList.toggle('collapsed');
         })
     </script>
+    @await Component.InvokeAsync("Notyf");
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

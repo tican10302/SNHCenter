@@ -1,6 +1,8 @@
-namespace DTO.Category.Shift;
+using DTO.Base;
 
-public class ShiftModel
+namespace DTO.Category.Shift.Requests;
+
+public class ShiftModel : ModelBase
 {
     public Guid Id { get; set; }
     public string? Name { get; set; }

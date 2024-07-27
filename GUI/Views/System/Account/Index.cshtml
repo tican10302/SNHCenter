@@ -1,0 +1,220 @@
+@model DTO.System.Account.Dtos.AccountDto
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <title>SNHCenter - Login</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+        }
+        .body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            background-image: url(@Url.Content("~/img/common/background.png"));
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .login-card {
+            background-color: #fff;
+            padding: 60px 56px 72px 56px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        
+        .login-card-title {
+            text-align: center;
+        }
+        
+        .login-card-title-head {
+            font-size: 30px;
+            font-weight: bold;
+            margin: 0;
+        }
+        
+        .login-card-title-des {
+            display: block;
+            font-size: 16px;
+            margin: 12px 0 36px 0;
+        }
+        
+        .login-card-form {
+            
+        }
+        
+        .login-card-form-row {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .login-card-form-row input {
+            border: 1px solid #D8D8D8;
+            border-radius: 8px;
+            background-color: #F1F4F9;
+            height: 44px;
+            font-size: 16px;
+            padding: 0 16px;
+        }
+
+        .login-card-form-row input:focus {
+            outline: none;
+            box-shadow: none;
+        }
+        
+        .login-card-form-column {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+        
+        .login-card-form-column a {
+            color: #202224;
+            transition: all 0.1s ease-in-out;
+        }
+
+        .login-card-form-column a:hover {
+            color: #4880FF;
+        }
+        
+        .login-card-form-row-title {
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .login-card-form-remember-password {
+            display: flex;
+            align-items: center;
+        }
+
+        .login-card-form-remember-password input[type=checkbox] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+        
+        .login-card-button button {
+            margin-top: 40px;
+            width: 100%;
+            height: 56px;
+            cursor: pointer;
+            background-color: #4880FF;
+            color: #FFF;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            transition: all 0.1s ease-in-out;
+        }
+
+        .login-card-button button:hover {
+            background-color: #3773ff;
+        }
+
+        .mb-24 {
+            margin-bottom: 24px;
+        }
+        
+        .mb-40 {
+            margin-bottom: 40px;
+        }
+        
+    </style>
+</head>
+
+<body>
+<div class="body">
+    <div class="login-card">
+        <div class="login-card-title">
+            <h4 class="login-card-title-head">
+                Login to Account
+            </h4>
+            <span class="login-card-title-des">
+                Please enter your username and password to continue
+            </span>
+        </div>
+        @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "frmLogin" }))
+        {
+            <div class="login-card-form">
+                <div class="login-card-form-row mb-40">
+                    <label class="login-card-form-row-title">Username:</label>
+                    <input id="UserName" name="username" placeholder="Username" type="text" required/>
+                    @Html.ValidationMessageFor(model => model.UserName, "", new { @class = "text-danger"})
+                </div>
+                <div class="login-card-form-row mb-24">
+                    <div class="login-card-form-column">
+                        <label class="login-card-form-row-title">Password:</label>
+                        <a href="#">Forget Password?</a>
+                    </div>
+                    <input id="Password" name="password" placeholder="••••••••" type="password" required/>
+                    @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+                </div>
+                <div class="login-card-form-remember-password">
+                    <input type="checkbox"/>
+                    <span>Remember Password</span>
+                </div>
+            </div>
+            <div class="login-card-button">
+                <button type="submit">Sign in</button>
+            </div>
+        }
+    </div>
+</div>
+</body>
+</html>
+
+<script>
+    $(document).ready(function() {
+        $("#frmLogin").validate({
+            rules: {
+                username: {
+                    required: true
+                },
+                password: {
+                    required: true
+                }
+            },
+            messages: {
+                username: {
+                    required: "Username is required"
+                },
+                password: {
+                    required: "Password is required"
+                }
+            }
+        });
+
+        $("#frmLogin").submit(async function(event) {
+            event.preventDefault();
+            if ($("#frmLogin").valid()) {
+                $.ajax({
+                    url: '@Url.Action("Login", "Account")',
+                    type: "POST",
+                    data: $("#frmLogin").serialize(),
+                    success: function(result) {
+                        if (result.isSuccess) {
+                            window.location.href = "/Home/Index";
+                        } else {
+                            // Handle login failure
+                        }
+                    }
+                });
+            }
+        });
+    });
+</script>

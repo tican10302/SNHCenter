@@ -1,9 +1,12 @@
+using System.Data;
 using System.Linq.Expressions;
-using DAL.Entities;
+using DAL.Data;
+using Dapper;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace REPOSITORY;
-public class Repository<T>(DbContext dbContext) : IRepository<T>
+public class Repository<T>(DbContext dbContext, DataContext dataContext) : IRepository<T>
     where T : class
 {
     private readonly DbSet<T> _dbSet = dbContext.Set<T>();
@@ -61,5 +64,29 @@ public class Repository<T>(DbContext dbContext) : IRepository<T>
         }
 
         return query;
+    }
+    
+    public async Task<List<T>> ExecWithStoreProcedure(string query, params SqlParameter[] parameters)
+    {
+        try
+        {
+            using (var connection = dataContext.Database.GetDbConnection())
+            {
+                var parametersList = parameters.ToDictionary(p => p.ParameterName, p => p.Value);
+
+                var result = await connection.QueryAsync<T>(
+                    sql: query,
+                    param: parametersList,
+                    commandType: CommandType.StoredProcedure);
+
+                
+                var test = result.ToList();
+                return result.ToList();
+            }
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("An error occurred while executing the stored procedure: " + ex.Message);
+        }
     }
 }

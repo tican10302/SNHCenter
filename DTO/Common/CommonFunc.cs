@@ -25,4 +25,9 @@ public static class CommonFunc
 
         return errorList[0];
     }
+    
+    public static string ConvertExceptionToMessage(Exception ex, string message)
+    {
+        return message + " " + ex.Message;
+    }
 }

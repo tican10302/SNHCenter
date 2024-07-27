@@ -4,7 +4,7 @@ using GUI.Models;
 
 namespace GUI.Controllers;
 
-public class HomeController : Controller
+public class HomeController : BaseController<HomeController>
 {
     private readonly ILogger<HomeController> _logger;
 

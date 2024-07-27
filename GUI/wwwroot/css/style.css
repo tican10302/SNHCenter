@@ -1,0 +1,80 @@
+.title {
+    font-size: 32px;
+    font-weight: bold;
+}
+
+/* Title */
+.title {
+    display: flex;
+    justify-content: space-between;
+}
+
+/* Filter */
+.filter-search {
+    display: flex;
+    align-items: center;
+    width: 252px;
+    height: 38px;
+    padding: 0 16px;
+    margin-left: 16px;
+    border:  1px solid #D5D5D5;
+    border-radius: 15px;
+    background-color: #FFF;
+}
+
+.filter-search-icon {
+    color: #7A7B7D;
+    font-size: 16px;
+}
+
+.filter-search-input {
+    height: 100%;
+    width: 100%;
+    margin-left: 12px;
+    background-color: rgba(0, 0, 0, 0);
+    border: none;
+    font-size: 16px;
+}
+
+.filter-search-input:focus {
+    outline: none;
+}
+
+/*  CONTENT */
+/* CONTENT - TABLE*/
+.content-table {
+    background-color: #FFF;
+    border-radius: 12px;
+}
+
+.content-table .table th {
+    border-bottom: 1px solid #D5D5D5 !important;
+    padding: 16px 8px 12px 8px;
+}
+
+.content-table .table td {
+    padding: 24px 8px;
+}
+
+.content-table .table th:first-child,
+
+.content-table .table td:first-child {
+    padding-left: 30px;
+}
+
+.content-table .table th:last-child,
+.content-table .table td:last-child {
+    padding-right: 30px;
+}
+
+.content-table .table tr:last-child {
+    border-bottom: 1px solid rgba(0, 0, 0, 0);
+}
+
+/* CONTENT - PAGING */
+.content-paging {
+}
+
+.content-paging .page-item:first-child {
+    border-top-left-radius: 4px;
+}

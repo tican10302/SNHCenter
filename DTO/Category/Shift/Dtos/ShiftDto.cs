@@ -1,8 +1,9 @@
+using DTO.Base;
 using FluentValidation;
 
-namespace DTO.Category.Shift;
+namespace DTO.Category.Shift.Dtos;
 
-public class ShiftDto
+public class ShiftDto : BaseRequest
 {
     public Guid Id { get; set; }
     public string? Name { get; set; }

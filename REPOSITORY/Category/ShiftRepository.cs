@@ -3,7 +3,8 @@ using AutoDependencyRegistration.Attributes;
 using AutoMapper;
 using DAL.Entities;
 using DTO.Base;
-using DTO.Category.Shift;
+using DTO.Category.Shift.Requests;
+using DTO.Category.Shift.Dtos;
 using Microsoft.Data.SqlClient;
 using REPOSITORY.Common;
 
@@ -33,11 +34,11 @@ public class ShiftRepository(IUnitOfWork unitOfWork, IMapper mapper) : IShiftRep
                  iTotalRow
              };
 
-            var result = await unitOfWork.ExecWithStoreProcedure<Shift>("sp_Category_Shift_GetListPaging", parameters);
+            var result = await unitOfWork.GetRepository<ShiftModel>().ExecWithStoreProcedure("sp_Category_Shift_GetListPaging", parameters);
             var responseData = new GetListPagingResponse
             {
                 PageIndex = request.PageIndex,
-                Data = mapper.Map<List<ShiftModel>>(result),
+                Data = result,
                 TotalRow = Convert.ToInt32(iTotalRow.Value)
             };
             response.Data = responseData;

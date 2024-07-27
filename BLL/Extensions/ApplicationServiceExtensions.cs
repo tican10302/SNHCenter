@@ -1,12 +1,17 @@
 using System.Reflection;
+using System.Text;
 using AutoDependencyRegistration;
 using AutoMapper;
 using DAL.Data;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using REPOSITORY;
 using REPOSITORY.Common;
+using REPOSITORY.System.Account;
 
 namespace BLL.Extensions;
 
@@ -19,7 +24,34 @@ public static class ApplicationServiceExtensions
             opt.UseSqlServer(config.GetConnectionString("DefaultConnection"));
         });
         services.AddCors();
-
+        
+        //SYSTEM
+        services.AddSingleton(config);
+        services.AddHttpContextAccessor();
+        services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+        services.AddControllersWithViews();
+        
+        //AUTHENTICATION
+        services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = config["Jwt:Issuer"],
+                    ValidAudience = config["Jwt:Issuer"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]))
+                };
+            });
+        
         //MAPPER
         var allREPONSITORY = Assembly.GetEntryAssembly()
             .GetReferencedAssemblies()

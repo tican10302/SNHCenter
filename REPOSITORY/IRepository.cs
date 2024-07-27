@@ -1,5 +1,6 @@
 using System.Linq.Expressions;
 using DAL.Entities;
+using Microsoft.Data.SqlClient;
 
 namespace REPOSITORY;
 
@@ -12,4 +13,5 @@ public interface IRepository<T> where T : class
     Task DeleteAsync(T entity);
     Task<T> Find(Expression<Func<T, bool>> match);
     IQueryable<T> GetAll(Expression<Func<T, bool>> predicate, string[] includes = null);
+    Task<List<T>> ExecWithStoreProcedure(string query, params SqlParameter[] parameters);
 }

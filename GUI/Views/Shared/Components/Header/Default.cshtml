@@ -143,10 +143,10 @@
         </div>
         <div class="btn-group navbar-profile">
             <div type="button" class="navbar-profile-card" data-bs-toggle="dropdown" aria-expanded="false">
-                <img alt="Avatar" class="navbar-profile-avatar" src="img/avatar/avatar-default.png"/>
+                <img alt="Avatar" class="navbar-profile-avatar" src="@Url.Content(ViewBag.UserInfo.Avatar)"/>
                 <div class="navbar-profile-info">
-                    <span class="navbar-profile-name">Tican</span>
-                    <span class="navbar-profile-role">Admin</span>
+                    <span class="navbar-profile-name">@ViewBag.UserInfo.FirstName @ViewBag.UserInfo.LastName</span>
+                    <span class="navbar-profile-role">@ViewBag.UserInfo.Role</span>
                 </div>
                 <div class="navbar-profile-dropdown-icon">
                     <i class="fa-solid fa-caret-down"></i>
@@ -157,7 +157,7 @@
                 <li><a class="dropdown-item" href="#">Another action</a></li>
                 <li><a class="dropdown-item" href="#">Something else here</a></li>
                 <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="#">Separated link</a></li>
+                <li><a class="dropdown-item" href="@Url.Action("Logout", "Account")">Log Out</a></li>
             </ul>
         </div>
     </div>

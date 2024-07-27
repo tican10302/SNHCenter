@@ -6,6 +6,6 @@
         public Lesson Lesson { get; set; }
         public User User { get; set; }
         public bool isAbsent { get; set; }
-        public string Reason { get; set; }
+        public string? Reason { get; set; }
     }
 }

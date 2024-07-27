@@ -1,21 +1,14 @@
 using System.Net;
 using BLL.Helpers;
 using DTO.Base;
-using DTO.Category.Shift;
+using DTO.Category.Shift.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using REPOSITORY.Category;
 
 namespace BLL.Controllers;
 
-public class ShiftController : BaseController
+public class ShiftController(IShiftRepository repository) : BaseController
 {
-    private IShiftRepository _repository;
-
-    public ShiftController(IShiftRepository repository)
-    {
-        _repository = repository;
-    }
-    
     [HttpPost, Route("get-list-paging")]
     public async Task<IActionResult> GetListPagingAsync(GetListPagingRequest request)
     {
@@ -25,7 +18,7 @@ public class ShiftController : BaseController
             {
                 throw new Exception(DTO.Common.CommonFunc.GetModelStateAPI(ModelState));
             }
-            var result = await _repository.GetListPagingAsync(request);
+            var result = await repository.GetListPagingAsync(request);
             if (result.Error)
             {
                 throw new Exception(result.Message);
@@ -46,7 +39,7 @@ public class ShiftController : BaseController
     {
         try
         {
-            var result = await _repository.GetAllAsync();
+            var result = await repository.GetAllAsync();
             if (result.Error)
             {
                 throw new Exception(result.Message);
@@ -73,7 +66,7 @@ public class ShiftController : BaseController
             {
                 throw new Exception("Id is not valid");
             }
-            var result = await _repository.GetByIdAsync(idRequest);
+            var result = await repository.GetByIdAsync(idRequest);
             if (result.Error)
             {
                 throw new Exception(result.Message);
@@ -98,7 +91,7 @@ public class ShiftController : BaseController
             {
                 throw new Exception(DTO.Common.CommonFunc.GetModelStateAPI(ModelState));
             }
-            var result = await _repository.AddAsync(request);
+            var result = await repository.AddAsync(request);
             if (result.Error)
             {
                 throw new Exception(result.Message);
@@ -132,7 +125,7 @@ public class ShiftController : BaseController
 
             request.Id = idRequest;
             
-            var result = await _repository.UpdateAsync(request);
+            var result = await repository.UpdateAsync(request);
             if (result.Error)
             {
                 throw new Exception(result.Message);
@@ -153,7 +146,7 @@ public class ShiftController : BaseController
     {
         try
         {
-            var result = await _repository.DeLeteListAsync(request);
+            var result = await repository.DeLeteListAsync(request);
             if (result.Error)
             {
                 throw new Exception(result.Message);

@@ -74,6 +74,7 @@
         transform: rotate(180deg);  
     }
 
+    .sidebar-item:hover a.sidebar-link,
     .sidebar-item.active a.sidebar-link {
         margin: 0 24px;
         color: #fff;
@@ -82,6 +83,16 @@
         position: relative;
         display: block;
         font-size: 1rem;
+    }
+
+    .sidebar-item:hover a.sidebar-link {
+        background-color: #F5F6FA;
+        color: #202224;
+    }
+    
+    .sidebar-item.active:hover a.sidebar-link {
+        background-color: #4880FF;
+        color: #fff;
     }
 
     .sidebar-link[data-bs-toggle="collapse"]::after {
@@ -105,7 +116,7 @@
 
 <div class="h-100">
     <div class="sidebar-logo">
-        <a href="#">
+        <a href="@Url.Action("Index", "Home")">
             <img src="~/img/logo/logo.png" alt="SNHCenter" />
         </a>
     </div>
@@ -114,28 +125,79 @@
             Home
         </li>
         <li class="sidebar-item active">
-            <a href="#" class="sidebar-link">
-                <i class="fa-solid fa-list pe-2"></i>
-                Profile
+            <a href="@Url.Action("Index", "Home")" class="sidebar-link">
+                <i class="fa-solid fa-house"></i>
+                Dashboard
+            </a>
+        </li>
+
+        @* ---------------- DROPDOWN ---------------- *@
+        @* <li class="sidebar-item"> *@
+        @*     <a href="#" class="sidebar-link collapsed" data-bs-toggle="collapse" data-bs-target="#pages" *@
+        @*        aria-expanded="false" aria-controls="pages"> *@
+        @*         <i class="fa-solid fa-list pe-2"></i> *@
+        @*         Pages *@
+        @*     </a> *@
+        @*     <ul id="pages" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar"> *@
+        @*         <li class="sidebar-item"> *@
+        @*             <a href="#" class="sidebar-link">Analytics</a> *@
+        @*         </li> *@
+        @*         <li class="sidebar-item"> *@
+        @*             <a href="#" class="sidebar-link">Analytics</a> *@
+        @*         </li> *@
+        @*         <li class="sidebar-item"> *@
+        @*             <a href="#" class="sidebar-link">Analytics</a> *@
+        @*         </li> *@
+        @*     </ul> *@
+        @* </li> *@
+    </ul>
+    <hr class="hr" />
+    <ul class="sidebar-nav">
+        <li class="sidebar-header">
+            Management
+        </li>
+        <li class="sidebar-item">
+            <a href="@Url.Action("Index", "Home")" class="sidebar-link">
+                <i class="fa-solid fa-chalkboard-user"></i>
+                Teacher
             </a>
         </li>
         <li class="sidebar-item">
-            <a href="#" class="sidebar-link collapsed" data-bs-toggle="collapse" data-bs-target="#pages"
-                aria-expanded="false" aria-controls="pages">
-                <i class="fa-solid fa-list pe-2"></i>
-                Pages
+            <a href="@Url.Action("Index", "Home")" class="sidebar-link">
+                <i class="fa-solid fa-graduation-cap"></i>
+                Student
             </a>
-            <ul id="pages" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
-                <li class="sidebar-item">
-                    <a href="#" class="sidebar-link">Analytics</a>
-                </li>
-                <li class="sidebar-item">
-                    <a href="#" class="sidebar-link">Analytics</a>
-                </li>
-                <li class="sidebar-item">
-                    <a href="#" class="sidebar-link">Analytics</a>
-                </li>
-            </ul>
+        </li>
+        <li class="sidebar-item">
+            <a href="@Url.Action("Index", "Home")" class="sidebar-link">
+                <i class="fa-solid fa-book"></i>
+                Course
+            </a>
+        </li>
+    </ul>
+
+    <hr class="hr" />
+    <ul class="sidebar-nav">
+        <li class="sidebar-header">
+            Category
+        </li>
+        <li class="sidebar-item">
+            <a href="@Url.Action("Index", "Shift")" class="sidebar-link">
+                <i class="fa-solid fa-calendar"></i>
+                Shift
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a href="@Url.Action("Index", "Home")" class="sidebar-link">
+                <i class="fa-solid fa-graduation-cap"></i>
+                Student
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a href="@Url.Action("Index", "Home")" class="sidebar-link">
+                <i class="fa-solid fa-book"></i>
+                Course
+            </a>
         </li>
     </ul>
 </div>

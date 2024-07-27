@@ -1,6 +1,7 @@
 using System.Data;
 using AutoMapper;
 using DAL.Data;
+using Dapper;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -8,13 +9,14 @@ using Microsoft.EntityFrameworkCore.Storage;
 namespace REPOSITORY.Common;
 public class UnitOfWork : IUnitOfWork
 {
-     private  DataContext _dbContext;
+    private  DataContext _dataContext;
+    private  DbContext _dbContext;
      private  Dictionary<Type, object> _repositories;
      private IDbContextTransaction _transaction;
-     private IMapper _mapper;
      private bool disposed = false;
-     public UnitOfWork(DataContext dbContext)
+     public UnitOfWork(DataContext dbContext, DataContext dataContext)
      {
+         _dataContext = dataContext;
          _dbContext = dbContext;
          _repositories = new Dictionary<Type, object>();
      }
@@ -25,46 +27,13 @@ public class UnitOfWork : IUnitOfWork
              return _repositories[typeof(T)] as IRepository<T>;
          }
 
-         var repository = new Repository<T>(_dbContext);
+         var repository = new Repository<T>(_dbContext, _dataContext);
          _repositories.Add(typeof(T), repository);
          return repository;
      }
-     public async Task<List<T>> ExecWithStoreProcedure<T>(string query, params SqlParameter[] parameters) where T : class
-     {
-
-         try
-            {
-                var parametersList = parameters ?? Array.Empty<SqlParameter>();
-                var sql = $"exec {query} {string.Join(", ", parametersList.Select(p => p.ParameterName))}";
-                
-                var outputParam = parametersList.FirstOrDefault(p => p.Direction == ParameterDirection.Output);
-                if (outputParam != null)
-                {
-                    sql += $" OUTPUT";
-                }
-
-                List<T> result = await _dbContext.Set<T>()
-                                       .FromSqlRaw(sql, parametersList)
-                                       .ToListAsync();
-                
-                if (outputParam != null)
-                {
-                    if (outputParam.Value != DBNull.Value)
-                    {
-                        var outputValue = Convert.ToInt64(outputParam.Value);
-                    }
-                }
-                
-                return result;
-            }
-         catch (Exception ex)
-            {
-                throw new Exception("An error occurred while executing the stored procedure: " + ex.Message);
-            }
-     }
      public async Task BeginTransactionAsync()
      {
-         _transaction = await _dbContext.Database.BeginTransactionAsync();
+         _transaction = await _dataContext.Database.BeginTransactionAsync();
      }
 
      public async Task CommitAsync()
@@ -94,7 +63,7 @@ public class UnitOfWork : IUnitOfWork
 
      public async Task<int> SaveChangesAsync()
      {
-         return await _dbContext.SaveChangesAsync();
+         return await _dataContext.SaveChangesAsync();
      }
 
      public void Dispose()
@@ -109,7 +78,7 @@ public class UnitOfWork : IUnitOfWork
          {
              if(disposing)
              {
-                 _dbContext.Dispose();
+                 _dataContext.Dispose();
              }    
          }
          this.disposed = true;
