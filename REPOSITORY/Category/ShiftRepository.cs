@@ -28,19 +28,20 @@ public class ShiftRepository(IUnitOfWork unitOfWork, IMapper mapper) : IShiftRep
 
             var parameters = new[]
             {
-                 new SqlParameter("@iTextSearch", request.TextSearch),
-                 new SqlParameter("@iPageIndex", request.PageIndex),
-                 new SqlParameter("@iRowsPerPage", request.RowPerPage),
+                 new SqlParameter("@iTextSearch", request.Search),
+                 new SqlParameter("@iPageIndex", request.Offset),
+                 new SqlParameter("@iRowsPerPage", request.Limit),
                  iTotalRow
              };
 
             var result = await unitOfWork.GetRepository<ShiftModel>().ExecWithStoreProcedure("sp_Category_Shift_GetListPaging", parameters);
             var responseData = new GetListPagingResponse
             {
-                PageIndex = request.PageIndex,
+                PageIndex = request.Offset,
                 Data = result,
                 TotalRow = Convert.ToInt32(iTotalRow.Value)
             };
+
             response.Data = responseData;
         }
         catch (Exception ex)

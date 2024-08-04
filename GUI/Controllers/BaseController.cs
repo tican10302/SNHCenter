@@ -2,7 +2,9 @@
 using System.Net.Http.Headers;
 using System.Reflection;
 using DTO.Base;
+using DTO.System.Account.Requests;
 using GUI.Constants;
+using GUI.Helpers;
 using GUI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,10 +17,89 @@ namespace GUI.Controllers
     [CustomAuthorizeAttribute]
     public class BaseController<T> : Controller
     {
-        public BaseController()
+        private readonly ICacheService _cacheService = new InMemoryCache();
+
+        public PermissionModel GetPerMission()
         {
-            
+            List<PermissionModel> fullRole = new List<PermissionModel>();
+
+            //Get cache
+            string cacheMenu = _cacheService.Get<string>(GetUserName() + "_menu");
+            string cacheRole = _cacheService.Get<string>(GetUserName() + "_role");
+            if (string.IsNullOrEmpty(cacheRole))
+            {
+                ResponseData response = this.PostAPI(URL_API.ACCOUNT_GETPERMISSION, new { Id = GetUserId() });
+                if (response.Status)
+                {
+                    _cacheService.Set(GetUserName() + "_role", response.Data.ToString(), 60);
+                    fullRole = JsonConvert.DeserializeObject<List<PermissionModel>>(response.Data.ToString());
+                }
+            }
+            else
+            {
+                fullRole = JsonConvert.DeserializeObject<List<PermissionModel>>(cacheRole);
+            }
+            if (string.IsNullOrEmpty(cacheMenu))
+            {
+                ResponseData response = this.PostAPI(URL_API.ACCOUNT_GETLISTMENU, new { Id = GetUserId() });
+                if (response.Status)
+                {
+                    _cacheService.Set(GetUserName() + "_menu", response.Data.ToString(), 60);
+                }
+            }
+
+            PermissionModel result = fullRole.FirstOrDefault(x => x.ControllerName == typeof(T).Name.ToLower());
+            if (result == null) result = new PermissionModel();
+
+            return result;
         }
+        
+        public string GetUserName()
+        {
+            try
+            {
+                if (User != null && User.Identity != null && User.Identity.Name != null)
+                {
+                    return User.Identity.Name;
+                }
+                else
+                {
+                    throw new Exception("Please log in");
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+        
+        public string GetUserId()
+        {
+            try
+            {
+                if (User != null && User.Identity != null && User.Identity.Name != null)
+                {
+                    var UserId = @User.Claims.FirstOrDefault(c => c.Type == "UserId");
+                    if (UserId != null)
+                    {
+                        return UserId.Value;
+                    }
+                    else
+                    {
+                        throw new Exception("Please log in");
+                    }
+                }
+                else
+                {
+                    throw new Exception("Please log in");
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+        
         #region Execute API
 
         public ResponseData GetAPI(string action)
@@ -165,4 +246,6 @@ namespace GUI.Controllers
             }
         }
     }
+    
+    
 }

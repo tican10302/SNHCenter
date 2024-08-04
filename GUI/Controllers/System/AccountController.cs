@@ -6,6 +6,7 @@ using DTO.Common;
 using DTO.System.Account.Dtos;
 using DTO.System.Account.Requests;
 using GUI.Constants;
+using GUI.Helpers;
 using GUI.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -15,8 +16,14 @@ using Newtonsoft.Json;
 
 namespace GUI.Controllers.System;
 
-public class AccountController(INotyfService notyfService) : Controller
+public class AccountController : Controller
 {
+    private ICacheService _cacheService;
+
+    public AccountController()
+    {
+        _cacheService = new InMemoryCache();
+    }
     [AllowAnonymous]
     public IActionResult Index()
     {
@@ -42,10 +49,13 @@ public class AccountController(INotyfService notyfService) : Controller
 
                 var claims = new List<Claim>();
                 
+                _cacheService.Set(userData.UserName + "_role", JsonConvert.SerializeObject(accountData.Permission), 60);
+                
                 claims.Add(new Claim(ClaimTypes.Name, userData.UserName));
                 claims.Add(new Claim(ClaimTypes.Surname, userData.FirstName ?? ""));
                 claims.Add(new Claim(ClaimTypes.GivenName, userData.LastName ?? ""));
                 claims.Add(new Claim(ClaimTypes.Role, userData.Role ?? ""));
+                claims.Add(new Claim("UserId", userData.Id.ToString() ?? ""));
                 claims.Add(new Claim("Token", userData.Token));
                 if (!string.IsNullOrEmpty(userData.Avatar))
                 {
@@ -55,8 +65,7 @@ public class AccountController(INotyfService notyfService) : Controller
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                 var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal);
-
-                notyfService.Success("Logged in successfully");
+                
                 return Json(new { IsSuccess = true, Message = "Logged in successfully", Data = "" });
 
             }

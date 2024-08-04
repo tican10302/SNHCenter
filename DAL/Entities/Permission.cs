@@ -4,9 +4,11 @@
     {
         public required Role Role { get; set; }
         public required string ControllerName { get; set; }
-        public bool IsView { get; set; } = false;
-        public bool IsAdd { get; set; } = false;
-        public bool IsEdit { get; set; } = false;
-        public bool IsDelete { get; set; } = false;
+        public bool IsView { get; set; }
+        public bool IsAdd { get; set; }
+        public bool IsEdit { get; set; }
+        public bool IsDelete { get; set; }
+        public bool IsApprove { get; set; }
+        public bool IsStatistic { get; set; }
     }
 }

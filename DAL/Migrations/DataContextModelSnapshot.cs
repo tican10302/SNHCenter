@@ -433,6 +433,9 @@ namespace DAL.Migrations
                     b.Property<bool>("IsAdd")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsApprove")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
 
@@ -440,6 +443,9 @@ namespace DAL.Migrations
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsEdit")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsStatistic")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsView")

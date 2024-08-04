@@ -8,4 +8,5 @@ public interface IAccountRepository
 {
     Task<BaseResponse<AccountModel>> Register(RegisterDto request);
     Task<BaseResponse<AccountPermissionModel>> Login(AccountDto request);
+    Task<BaseResponse<List<PermissionModel>>> GetPermission(GetByIdRequest request);
 }

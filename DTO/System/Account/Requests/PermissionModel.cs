@@ -8,4 +8,6 @@ public class PermissionModel
     public bool IsAdd { get; set; }
     public bool IsEdit { get; set; }
     public bool IsDelete { get; set; }
+    public bool IsApprove { get; set; }
+    public bool IsStatistic { get; set; }
 }

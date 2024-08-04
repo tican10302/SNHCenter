@@ -107,7 +107,7 @@ public class AccountRepository(IUnitOfWork unitOfWork, IMapper mapper, ITokenSer
                 data.Account.Avatar = string.IsNullOrWhiteSpace(account.Avatar) ? "img/avatar/avatar-default.png" : account.Avatar;
                 data.Account.Token = tokenService.CreateToken(account);
 
-                SqlParameter parameter = new SqlParameter("@iUserId", account.Id);
+                SqlParameter parameter = new SqlParameter("@iAccountId", account.Id);
                 var permissions = await unitOfWork.GetRepository<PermissionModel>().ExecWithStoreProcedure("sp_Sys_Account_GetPermission", parameter);
 
                 data.Permission = mapper.Map<List<PermissionModel>>(permissions);
@@ -117,9 +117,30 @@ public class AccountRepository(IUnitOfWork unitOfWork, IMapper mapper, ITokenSer
         }
         catch (Exception e)
         {
-            await unitOfWork.RollbackAsync();
             response.Error = true;
             response.Message = e.Message;
+        }
+
+        return response;
+    }
+    
+    //GET PERMISSION
+    public async Task<BaseResponse<List<PermissionModel>>> GetPermission(GetByIdRequest request)
+    {
+        var response = new BaseResponse<List<PermissionModel>>();
+        try
+        {
+            var parameters = new[]
+            {
+                new SqlParameter("@AccountId", request.Id),
+            };
+
+            response.Data = await unitOfWork.GetRepository<PermissionModel>().ExecWithStoreProcedure("sp_Sys_Account_GetPermission", parameters);
+        }
+        catch (Exception ex)
+        {
+            response.Error = true;
+            response.Message = ex.Message;
         }
 
         return response;
