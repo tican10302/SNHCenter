@@ -3,6 +3,7 @@ using AutoDependencyRegistration.Attributes;
 using AutoMapper;
 using DAL.Data;
 using DAL.Entities;
+using Dapper;
 using DTO.Base;
 using DTO.System.Account.Dtos;
 using DTO.System.Account.Requests;
@@ -107,8 +108,9 @@ public class AccountRepository(IUnitOfWork unitOfWork, IMapper mapper, ITokenSer
                 data.Account.Avatar = string.IsNullOrWhiteSpace(account.Avatar) ? "img/avatar/avatar-default.png" : account.Avatar;
                 data.Account.Token = tokenService.CreateToken(account);
 
-                SqlParameter parameter = new SqlParameter("@iAccountId", account.Id);
-                var permissions = await unitOfWork.GetRepository<PermissionModel>().ExecWithStoreProcedure("sp_Sys_Account_GetPermission", parameter);
+                var parameters = new DynamicParameters();
+                parameters.Add("@iAccountId", account.Id);
+                var permissions = await unitOfWork.GetRepository<PermissionModel>().ExecWithStoreProcedure("sp_Sys_Account_GetPermission", parameters);
 
                 data.Permission = mapper.Map<List<PermissionModel>>(permissions);
 
@@ -130,10 +132,8 @@ public class AccountRepository(IUnitOfWork unitOfWork, IMapper mapper, ITokenSer
         var response = new BaseResponse<List<PermissionModel>>();
         try
         {
-            var parameters = new[]
-            {
-                new SqlParameter("@AccountId", request.Id),
-            };
+            var parameters = new DynamicParameters();
+            parameters.Add("@iAccountId", request.Id);
 
             response.Data = await unitOfWork.GetRepository<PermissionModel>().ExecWithStoreProcedure("sp_Sys_Account_GetPermission", parameters);
         }

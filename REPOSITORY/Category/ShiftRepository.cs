@@ -2,6 +2,7 @@ using System.Data;
 using AutoDependencyRegistration.Attributes;
 using AutoMapper;
 using DAL.Entities;
+using Dapper;
 using DTO.Base;
 using DTO.Category.Shift.Requests;
 using DTO.Category.Shift.Dtos;
@@ -19,27 +20,19 @@ public class ShiftRepository(IUnitOfWork unitOfWork, IMapper mapper) : IShiftRep
 
         try
         {
-            SqlParameter iTotalRow = new SqlParameter()
-            {
-                ParameterName = "@oTotalRow",
-                SqlDbType = SqlDbType.BigInt,
-                Direction = ParameterDirection.Output
-            };
-
-            var parameters = new[]
-            {
-                 new SqlParameter("@iTextSearch", request.Search),
-                 new SqlParameter("@iPageIndex", request.Offset),
-                 new SqlParameter("@iRowsPerPage", request.Limit),
-                 iTotalRow
-             };
+            var parameters = new DynamicParameters();
+            parameters.Add("@iTextSearch", request.Search, DbType.String);
+            parameters.Add("@iPageIndex", request.Offset, DbType.Int32);
+            parameters.Add("@iRowsPerPage", request.Limit, DbType.Int32);
+            parameters.Add("@oTotalRow", dbType: DbType.Int64, direction: ParameterDirection.Output);
 
             var result = await unitOfWork.GetRepository<ShiftModel>().ExecWithStoreProcedure("sp_Category_Shift_GetListPaging", parameters);
+            var totalRow = parameters.Get<long>("@oTotalRow");
             var responseData = new GetListPagingResponse
             {
                 PageIndex = request.Offset,
                 Data = result,
-                TotalRow = Convert.ToInt32(iTotalRow.Value)
+                TotalRow = Convert.ToInt32(totalRow)
             };
 
             response.Data = responseData;

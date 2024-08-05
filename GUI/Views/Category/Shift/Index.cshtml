@@ -5,33 +5,98 @@
         </h2>
     </div>
     <div class="content">
-        <div class="content-table">
-            <table class="table"
+        @* --- TABLE --- *@
+        <div class="">
+            <div class="row">
+                <div class="col-md-6">
+                    <div id="toolbar">
+                        <button class="btn btn-success" onclick="addData()"><i class="fa-solid fa-plus"></i> Add</button>
+                        <button class="btn btn-primary" onclick="showData()"><i class="fa-solid fa-eye"></i> View</button>
+                        <button class="btn btn-warning" onclick="updateData()"><i class="fa-solid fa-pen"></i> Update</button>
+                        <button class="btn btn-danger" onclick="deleteData()"><i class="fa-solid fa-trash"></i> Delete</button>
+                    </div>
+                </div>
+            </div>
+
+            <table class="bootstrap-table"
                    id="ShiftTable"
                    data-toggle="table"
                    data-height="460"
                    data-ajax="getDataTable"
                    data-search="true"
                    data-side-pagination="server"
-                   data-pagination="true">
+                   data-pagination="true"
+                   data-click-to-select="true"
+                   data-toolbar="#toolbar">
                 <thead class="content-table-header">
-                    <tr>
-                        <th data-field="id" data-visible="false">ID</th>
-                        <th data-field="name">Name</th>
-                        <th data-field="time">Time</th>
-                        <th data-field="days">Days</th>
-                    </tr>
+                <tr>
+                    <th data-checkbox="true"></th>
+                    <th data-formatter="sortTable" data-align="center">STT</th>
+                    <th data-field="id" data-visible="false">ID</th>
+                    <th data-field="name">Name</th>
+                    <th data-field="time">Time</th>
+                    <th data-field="days">Days</th>
+                </tr>
                 </thead>
             </table>
         </div>
     </div>
 </div>
 
+<div class="modal fade" id="modal-default" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-lg" id='modelContainer'>
+    </div>
+</div>
+
 <script>
-    function getDataTable(params) {
-        var url = '@Url.Action("GetList", "Shift")';
-        $.get(url + '?' + $.param(params.data)).then(function (res) {
-            params.success(res)
+    function getIdSelections() {
+        return $.map($('#ShiftTable').bootstrapTable('getSelections'), function (row) {
+            return row.id
         })
     }
+
+    function addData() {
+
+    }
+
+    function showData() {
+        var selectedRows = getIdSelections();
+        if (selectedRows.length == 1) {
+            alert('View: ' + JSON.stringify(selectedRows));
+        } else {
+            notyf.error('Please select a row to view.');
+        }
+    }
+
+    function updateData() {
+        var selectedRows = getIdSelections();
+        if (selectedRows.length == 1) {
+            alert('Update: ' + JSON.stringify(selectedRows));
+        } else {
+            notyf.error('Please select a row to update.');
+        }
+    }
+
+    function deleteData() {
+        var selectedRows = getIdSelections();
+        if (selectedRows.length > 0) {
+            alert('Delete: ' + JSON.stringify(selectedRows));
+        } else {
+            notyf.error('Please select a row to delete.');
+        }
+    }
+    
+    function getDataTable(params) {
+        var url = '@Url.Action("GetList", "Shift")';
+        var data = params.data;
+
+        $.get(url, data, function (response) {
+            params.success({
+                total: response.total,
+                rows: response.data
+            });
+        });
+    }
+
+
 </script>

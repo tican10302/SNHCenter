@@ -25,6 +25,15 @@
         padding: 30px;
     }
 </style>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script>
+    function sortTable(value, row, index) {
+        var pageSize = $('#ShiftTable').bootstrapTable('getOptions').pageSize;
+        var pageNumber = $('#ShiftTable').bootstrapTable('getOptions').pageNumber;
+        return (pageNumber - 1) * pageSize + index + 1;
+    }
+</script>
 <body>
     <div id="pageLoading" class="container-scroller">
         <div class="wrapper">
@@ -44,7 +53,7 @@
         </div>
     </div>
     
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+   
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/lib/bootstrap-table-1.23.2/dist/bootstrap-table.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
@@ -54,17 +63,7 @@
         const toggler = document.querySelector('.btn-toggler');
         toggler.addEventListener("click", function () {
             document.querySelector("#sidebar").classList.toggle('collapsed');
-        })
-
-        function getTableParams(params) {
-        return {
-            TextSearch: params.searchText,    // Đổi 'searchText' thành 'searchTerm'
-            SortBy: params.sort,              // Đổi 'sort' thành 'sortBy'
-            SortOrder: params.order,          // Đổi 'order' thành 'sortOrder'
-            RowPerPage: params.limit,           // Đổi 'limit' thành 'pageSize'
-            PageIndex: (params.offset / params.limit) + 1 // Đổi 'offset' thành 'pageNumber'
-        };
-    }
+        }) 
 
     </script>
     @await Component.InvokeAsync("Notyf");

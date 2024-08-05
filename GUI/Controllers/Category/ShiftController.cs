@@ -1,3 +1,4 @@
+using AspNetCoreHero.ToastNotification.Abstractions;
 using DTO.Base;
 using DTO.Category.Shift.Dtos;
 using DTO.Category.Shift.Requests;
@@ -11,6 +12,12 @@ namespace GUI.Controllers.Category;
 
 public class ShiftController : BaseController<ShiftController>
 {
+    private readonly INotyfService _notyf;
+
+    public ShiftController(INotyfService notyf)
+    {
+        _notyf = notyf;
+    }
     // GET
     public IActionResult Index()
     {
@@ -21,12 +28,13 @@ public class ShiftController : BaseController<ShiftController>
     {
         try
         {
+            var dataResult = new GetListPagingResponse();
             var result = new List<ShiftModel>();
 
             ResponseData response = this.PostAPI(URL_API.SHIFT_GETLIST, param);
             if (response.Status)
             {
-                var dataResult = JsonConvert.DeserializeObject<GetListPagingResponse>(response.Data.ToString());
+                dataResult = JsonConvert.DeserializeObject<GetListPagingResponse>(response.Data.ToString());
                 result = JsonConvert.DeserializeObject<List<ShiftModel>>(dataResult.Data.ToString());
             }
             else
@@ -34,7 +42,7 @@ public class ShiftController : BaseController<ShiftController>
                 throw new Exception(response.Message);
             }
 
-            return Json(result);
+            return Json(new { total = dataResult.TotalRow, data = result });
         }
         catch (Exception ex)
         {

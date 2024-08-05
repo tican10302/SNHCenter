@@ -39,3 +39,19 @@
 .filter-search-input:focus {
     outline: none;
 }
+
+/* BOOTSTRAP TABLE */
+
+.bootstrap-table {
+    background-color: #fff;
+    padding: 8px;
+    border-radius: 12px;
+}
+
+.bootstrap-table input[type="search"] {
+    background-color: #F5F6FA;
+    width: 330px;
+    height: 40px;
+    border-radius: 20px;
+    padding: 0 12px;
+}
