@@ -96,8 +96,7 @@ public class ShiftRepository(IUnitOfWork unitOfWork, IMapper mapper) : IShiftRep
 
             var checkData = unitOfWork.GetRepository<Shift>().Find(x => 
                 !x.IsDeleted &&
-                (x.Name == request.Name ||
-                (x.Time == request.Time && x.Days == request.Days)));
+                x.Name == request.Name);
             if (checkData != null)
             {
                 throw new Exception("Data already exists");
@@ -128,6 +127,15 @@ public class ShiftRepository(IUnitOfWork unitOfWork, IMapper mapper) : IShiftRep
         try
         {
             using var transaction = unitOfWork.BeginTransactionAsync();
+
+            var checkData = unitOfWork.GetRepository<Shift>().Find(x =>
+                !x.IsDeleted &&
+                x.Id != request.Id &&
+                x.Name == request.Name);
+            if (checkData != null)
+            {
+                throw new Exception("Data already exists");
+            }
 
             var data = await unitOfWork.GetRepository<Shift>().GetByIdAsync(request.Id);
             if (data == null)

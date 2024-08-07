@@ -56,7 +56,12 @@
     }
 
     function addData() {
-
+        var url = '@Url.Action("ShowInsertPopup", "Shift")';
+        
+        $.get(url, function (data) {
+            $('#modelContainer').html(data);
+            $('#modal-default').modal('show');
+        })
     }
 
     function showData() {
@@ -98,5 +103,7 @@
         });
     }
 
-
+    function refreshGrid() {
+        showLoading(false);
+    }
 </script>
