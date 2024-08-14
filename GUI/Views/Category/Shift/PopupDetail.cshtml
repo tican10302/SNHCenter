@@ -36,7 +36,7 @@
                     @foreach (var day in new List<string> { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" })
                     {
                         <div class="col-sm-3">
-                        @Html.CheckBox("Days", new { @value = day, @style="width: auto;" })
+                        @Html.CheckBox("SelectDays", new { @value = day, @style="width: auto;" })
                             @Html.Label(day)
                         </div>
                     }
@@ -45,7 +45,7 @@
         </div>
         
         <div class="modal-footer">
-            <button type="submit" id="btnSave" class="btn btn-success btn-sm"><i class="fas fa-check-square"></i> Save</button>
+            <button type="submit" id="btnSave" class="btn btn-success btn-sm"><i class="fas fa-check-square"></i> Create</button>
             <button type="button" class="btn btn-danger btn-sm" onclick="closePopup();"><i class="fas fa-times-square"></i> Cancel</button>
         </div>
     }

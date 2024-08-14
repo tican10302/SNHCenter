@@ -8,11 +8,12 @@ using DTO.Category.Shift.Requests;
 using DTO.Category.Shift.Dtos;
 using Microsoft.Data.SqlClient;
 using REPOSITORY.Common;
+using Microsoft.AspNetCore.Http;
 
 namespace REPOSITORY.Category;
 
 [RegisterClassAsTransient]
-public class ShiftRepository(IUnitOfWork unitOfWork, IMapper mapper) : IShiftRepository
+public class ShiftRepository(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor) : IShiftRepository
 {
     public async Task<BaseResponse<GetListPagingResponse>> GetListPagingAsync(GetListPagingRequest request)
     {
@@ -27,6 +28,12 @@ public class ShiftRepository(IUnitOfWork unitOfWork, IMapper mapper) : IShiftRep
             parameters.Add("@oTotalRow", dbType: DbType.Int64, direction: ParameterDirection.Output);
 
             var result = await unitOfWork.GetRepository<ShiftModel>().ExecWithStoreProcedure("sp_Category_Shift_GetListPaging", parameters);
+
+            foreach (var item in result)
+            {
+                item.SelectDays = item.Days.Split(", ").ToList();
+            }
+
             var totalRow = parameters.Get<long>("@oTotalRow");
             var responseData = new GetListPagingResponse
             {
@@ -103,7 +110,8 @@ public class ShiftRepository(IUnitOfWork unitOfWork, IMapper mapper) : IShiftRep
             }
             
             var entity = mapper.Map<Shift>(request);
-            entity.CreatedBy = "admin";
+            entity.Days = string.Join(",", request.SelectDays);
+            entity.CreatedBy = httpContextAccessor.HttpContext.User.Identity.Name;
             var result = await unitOfWork.GetRepository<Shift>().AddAsync(entity);
 
             await unitOfWork.SaveChangesAsync();
@@ -144,8 +152,9 @@ public class ShiftRepository(IUnitOfWork unitOfWork, IMapper mapper) : IShiftRep
             }
             var entity = mapper.Map(request, data);
 
+            entity.Days = string.Join(",", request.SelectDays);
             entity.UpdatedAt = DateTime.Now;
-            entity.UpdatedBy = "admin";
+            entity.UpdatedBy = httpContextAccessor.HttpContext.User.Identity.Name;
             
             await unitOfWork.GetRepository<Shift>().UpdateAsync(entity);
 
