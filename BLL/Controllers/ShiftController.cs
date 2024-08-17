@@ -2,6 +2,7 @@ using System.Net;
 using BLL.Helpers;
 using DTO.Base;
 using DTO.Category.Shift.Dtos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using REPOSITORY.Category;
 
@@ -18,28 +19,7 @@ public class ShiftController(IShiftRepository repository) : BaseController
             {
                 throw new Exception(DTO.Common.CommonFunc.GetModelStateAPI(ModelState));
             }
-            var result = await repository.GetListPagingAsync(request);
-            if (result.Error)
-            {
-                throw new Exception(result.Message);
-            }
-            else
-            {
-                return Ok(new ApiOkResponse(result.Data));
-            }
-        }
-        catch (Exception ex)
-        {
-            return Ok(new ApiResponse(false, (int)HttpStatusCode.InternalServerError, ex.Message));
-        }
-    }
-
-    [HttpGet]
-    public async Task<IActionResult> GetAllAsync()
-    {
-        try
-        {
-            var result = await repository.GetAllAsync();
+            var result = await repository.GetListPaging(request);
             if (result.Error)
             {
                 throw new Exception(result.Message);
@@ -56,7 +36,7 @@ public class ShiftController(IShiftRepository repository) : BaseController
     }
 
     [HttpGet("get-by-id")]
-    public async Task<IActionResult> GetByIdAsync([FromQuery] string id)
+    public async Task<IActionResult> GetById([FromQuery] string id)
     {
         try
         {
@@ -66,7 +46,7 @@ public class ShiftController(IShiftRepository repository) : BaseController
             {
                 throw new Exception("Id is not valid");
             }
-            var result = await repository.GetByIdAsync(idRequest);
+            var result = await repository.GetById(idRequest);
             if (result.Error)
             {
                 throw new Exception(result.Message);
@@ -81,8 +61,35 @@ public class ShiftController(IShiftRepository repository) : BaseController
             return Ok(new ApiResponse(false, (int)HttpStatusCode.InternalServerError, ex.Message));
         }
     }
-    
-    [HttpPost]
+
+    [HttpGet("get-by-post")]
+    public async Task<IActionResult> GetByPost([FromQuery] string id)
+    {
+        try
+        {
+            var isValidId = Guid.TryParse(id, out var idRequest);
+
+            if (!isValidId)
+            {
+                throw new Exception("Id is not valid");
+            }
+            var result = await repository.GetByPost(idRequest);
+            if (result.Error)
+            {
+                throw new Exception(result.Message);
+            }
+            else
+            {
+                return Ok(new ApiOkResponse(result.Data));
+            }
+        }
+        catch (Exception ex)
+        {
+            return Ok(new ApiResponse(false, (int)HttpStatusCode.InternalServerError, ex.Message));
+        }
+    }
+
+    [HttpPost("insert")]
     public async Task<IActionResult> Post(ShiftDto request)
     {
         try
@@ -91,7 +98,7 @@ public class ShiftController(IShiftRepository repository) : BaseController
             {
                 throw new Exception(DTO.Common.CommonFunc.GetModelStateAPI(ModelState));
             }
-            var result = await repository.AddAsync(request);
+            var result = await repository.Add(request);
             if (result.Error)
             {
                 throw new Exception(result.Message);
@@ -107,7 +114,7 @@ public class ShiftController(IShiftRepository repository) : BaseController
         }
     }
     
-    [HttpPatch]
+    [HttpPatch("update")]
     public async Task<IActionResult> Update([FromQuery] string id, ShiftDto request)
     {
         try
@@ -125,7 +132,7 @@ public class ShiftController(IShiftRepository repository) : BaseController
 
             request.Id = idRequest;
             
-            var result = await repository.UpdateAsync(request);
+            var result = await repository.Update(request);
             if (result.Error)
             {
                 throw new Exception(result.Message);
@@ -141,12 +148,12 @@ public class ShiftController(IShiftRepository repository) : BaseController
         }
     }
     
-    [HttpDelete]
+    [HttpDelete("delete-list")]
     public async Task<IActionResult> Detele(DeleteListRequest request)
     {
         try
         {
-            var result = await repository.DeLeteListAsync(request);
+            var result = await repository.DeLeteList(request);
             if (result.Error)
             {
                 throw new Exception(result.Message);

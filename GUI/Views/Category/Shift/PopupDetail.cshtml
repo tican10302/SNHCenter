@@ -23,12 +23,12 @@
                 <label class="col-sm-2 form-label">Name <span class="text-danger">(*)</span></label>
                 <div class="col-sm-4">
                     @(Html.TextBoxFor(model => model.Name, new { @placeholder = "Enter name" }))
-                    @(Html.ValidationMessageFor(model => model.Name, "Name is required", new {@class = "text-danger" }))
+                    @(Html.ValidationMessageFor(model => model.Name, "", new {@class = "text-danger" }))
                 </div>
                 <label class="col-sm-2 form-label">Time <span class="text-danger">(*)</span></label>
                 <div class="col-sm-4">
                     @(Html.TextBoxFor(model => model.Time, new { @type = "time", @placeholder = "Select a time" }))
-                    @(Html.ValidationMessageFor(model => model.Time, "Time is required", new {@class = "text-danger" }))
+                    @(Html.ValidationMessageFor(model => model.Time, "", new {@class = "text-danger" }))
                 </div>
             </div>
             <div class="row form-group">
@@ -40,7 +40,7 @@
                             @Html.Label(day)
                         </div>
                     }
-                    @(Html.ValidationMessageFor(model => model.Days, "Days is required", new { @class = "text-danger" }))
+                    @(Html.ValidationMessageFor(model => model.Days, "", new { @class = "text-danger" }))
             </div>
         </div>
         
@@ -53,13 +53,15 @@
 
 <script>
     $(document).ready(function () {
-        $.validator.unobtrusive.parse($("#frmShift"));
-
+        $("#frmShift").find("span.field-validation-valid").hide();
+        
         //Save
         $("#frmShift").submit(async function (event) {
             event.preventDefault();
+            $("#frmShift").find("span.field-validation-valid").show();
+            
             if ($("#frmShift").valid()) {
-                showLoadingElement(true, 'modalLoading');
+                @* showLoadingElement(true, 'modalLoading'); *@
 
                 $.ajax({
                     url: '/Shift/Post',
@@ -67,15 +69,15 @@
                     data: $("#frmShift").serialize(),
                     success: function (data) {
                         if (data.IsSuccess) {
-                            notyf.success(data.Message);
+                            notyf.success(data.message);
                             closePopup();
                         }
                         else {
-                            notyf.error(data.Message);
+                            notyf.error(data.message);
                         }
                     }
                 });
-                showLoadingElement(false, 'modalLoading');
+                @* showLoadingElement(false, 'modalLoading'); *@
             }
         });
     })

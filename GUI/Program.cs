@@ -6,6 +6,16 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddMvc().AddSessionStateTempDataProvider();
+
+builder.Services.AddSession(options =>
+{
+    options.Cookie.SameSite = SameSiteMode.None;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.Cookie.IsEssential = true;
+});
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin",
@@ -28,6 +38,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.LoginPath = "/Account/Index";
     });
 
+builder.Services.AddAntiforgery(o => o.SuppressXFrameOptionsHeader = true);
 builder.Services.AddNotyf(config => { config.DurationInSeconds = 10;config.IsDismissable = true;config.Position = NotyfPosition.BottomRight; });
 
 var app = builder.Build();
@@ -44,6 +55,7 @@ app.UseCors("AllowSpecificOrigin");
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseCookiePolicy();
+app.UseSession();
 app.UseRouting();
 app.UseNotyf();
 

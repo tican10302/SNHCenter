@@ -15,7 +15,7 @@ namespace REPOSITORY.Category;
 [RegisterClassAsTransient]
 public class ShiftRepository(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor) : IShiftRepository
 {
-    public async Task<BaseResponse<GetListPagingResponse>> GetListPagingAsync(GetListPagingRequest request)
+    public async Task<BaseResponse<GetListPagingResponse>> GetListPaging(GetListPagingRequest request)
     {
         var response = new BaseResponse<GetListPagingResponse>();
 
@@ -53,24 +53,7 @@ public class ShiftRepository(IUnitOfWork unitOfWork, IMapper mapper, IHttpContex
         return response;
     }
 
-    public async Task<BaseResponse<List<ShiftModel>>> GetAllAsync()
-    {
-        var response = new BaseResponse<List<ShiftModel>>();
-        try
-        {
-            var result = await unitOfWork.GetRepository<Shift>().GetAllAsync();
-            response.Data = mapper.Map<List<ShiftModel>>(result);
-
-        }
-        catch (Exception ex)
-        {
-            response.Error = true;
-            response.Message = ex.Message;
-        }
-        return response;
-    }
-
-    public async Task<BaseResponse<ShiftModel>> GetByIdAsync(Guid id)
+    public async Task<BaseResponse<ShiftModel>> GetById(Guid id)
     {
         var response = new BaseResponse<ShiftModel>();
 
@@ -94,14 +77,45 @@ public class ShiftRepository(IUnitOfWork unitOfWork, IMapper mapper, IHttpContex
         return response;
     }
 
-    public async Task<BaseResponse<ShiftModel>> AddAsync(ShiftDto request)
+    public async Task<BaseResponse<ShiftDto>> GetByPost(Guid id)
+    {
+        var response = new BaseResponse<ShiftDto>();
+
+        try
+        {
+            var result = new ShiftDto();
+            var data = await unitOfWork.GetRepository<Shift>().GetByIdAsync(id);
+            if (result == null)
+            {
+                result.Id = Guid.NewGuid();
+                result.IsEdit = false;
+            }
+            else
+            {
+                result = mapper.Map<ShiftDto>(data);
+                result.IsEdit = true;
+            }
+
+            response.Data = result;
+
+        }
+        catch (Exception ex)
+        {
+            response.Error = true;
+            response.Message = ex.Message;
+        }
+
+        return response;
+    }
+
+    public async Task<BaseResponse<ShiftModel>> Add(ShiftDto request)
     {
         var response = new BaseResponse<ShiftModel>();
         try
         {
             using var transaction = unitOfWork.BeginTransactionAsync();
 
-            var checkData = unitOfWork.GetRepository<Shift>().Find(x => 
+            var checkData = await unitOfWork.GetRepository<Shift>().Find(x => 
                 !x.IsDeleted &&
                 x.Name == request.Name);
             if (checkData != null)
@@ -110,7 +124,8 @@ public class ShiftRepository(IUnitOfWork unitOfWork, IMapper mapper, IHttpContex
             }
             
             var entity = mapper.Map<Shift>(request);
-            entity.Days = string.Join(",", request.SelectDays);
+            request.SelectDays = request.SelectDays?.Where(x => x != "false").ToList();
+            entity.Days = string.Join(", ", request.SelectDays);
             entity.CreatedBy = httpContextAccessor.HttpContext.User.Identity.Name;
             var result = await unitOfWork.GetRepository<Shift>().AddAsync(entity);
 
@@ -129,7 +144,7 @@ public class ShiftRepository(IUnitOfWork unitOfWork, IMapper mapper, IHttpContex
         return response;
     }
 
-    public async Task<BaseResponse<string>> UpdateAsync(ShiftDto request)
+    public async Task<BaseResponse<string>> Update(ShiftDto request)
     {
         var response = new BaseResponse<string>();
         try
@@ -152,7 +167,7 @@ public class ShiftRepository(IUnitOfWork unitOfWork, IMapper mapper, IHttpContex
             }
             var entity = mapper.Map(request, data);
 
-            entity.Days = string.Join(",", request.SelectDays);
+            entity.Days = string.Join(", ", request.SelectDays);
             entity.UpdatedAt = DateTime.Now;
             entity.UpdatedBy = httpContextAccessor.HttpContext.User.Identity.Name;
             
@@ -161,7 +176,7 @@ public class ShiftRepository(IUnitOfWork unitOfWork, IMapper mapper, IHttpContex
             await unitOfWork.SaveChangesAsync();
             await unitOfWork.CommitAsync();
 
-            response.Data = "success";
+            response.Data = "Success";
         }
         catch (Exception ex)
         {
@@ -174,7 +189,7 @@ public class ShiftRepository(IUnitOfWork unitOfWork, IMapper mapper, IHttpContex
     }
 
 
-    public async Task<BaseResponse<string>> DeLeteListAsync(DeleteListRequest request)
+    public async Task<BaseResponse<string>> DeLeteList(DeleteListRequest request)
     {
         var response = new BaseResponse<string>();
         try
@@ -186,7 +201,7 @@ public class ShiftRepository(IUnitOfWork unitOfWork, IMapper mapper, IHttpContex
 
                 entity.IsDeleted = true;
                 entity.DeletedAt = DateTime.Now;
-                entity.DeletedBy = "admin";
+                entity.DeletedBy = httpContextAccessor.HttpContext.User.Identity.Name;
             
                 await unitOfWork.GetRepository<Shift>().UpdateAsync(entity);
 
@@ -194,7 +209,7 @@ public class ShiftRepository(IUnitOfWork unitOfWork, IMapper mapper, IHttpContex
             }
             await unitOfWork.CommitAsync();
 
-            response.Data = "success";
+            response.Data = "Success";
         }
         catch (Exception ex)
         {

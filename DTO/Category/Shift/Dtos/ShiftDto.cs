@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using DTO.Base;
 using FluentValidation;
 
@@ -6,9 +7,12 @@ namespace DTO.Category.Shift.Dtos;
 public class ShiftDto : BaseRequest
 {
     public Guid Id { get; set; }
+    [Required(AllowEmptyStrings = false, ErrorMessage = "Name is required")]
     public string? Name { get; set; }
+    [Required(AllowEmptyStrings = false, ErrorMessage = "Time is required")]
     public string? Time { get; set; }
     public string? Days { get; set; }
+    [Required(AllowEmptyStrings = false, ErrorMessage = "Days is required")]
     public List<string>? SelectDays { get; set; }
 }
 
