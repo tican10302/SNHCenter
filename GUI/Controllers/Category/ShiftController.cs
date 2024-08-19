@@ -13,7 +13,6 @@ namespace GUI.Controllers.Category;
 
 public class ShiftController : BaseController<ShiftController>
 {
-
     public ShiftController()
     {
     }
@@ -157,7 +156,8 @@ public class ShiftController : BaseController<ShiftController>
     {
         try
         {
-            ResponseData response = this.PostAPI(URL_API.SHIFT_DELETELIST, new { ids = listSelectedId }); ;
+            List<Guid> ids = listSelectedId;
+            ResponseData response = this.PostAPI(URL_API.SHIFT_DELETELIST, ids);
             return Json(new { IsSuccess = response.Status, Message = response.Message, Data = "" });
         }
         catch (Exception ex)

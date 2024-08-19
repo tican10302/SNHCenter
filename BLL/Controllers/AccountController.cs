@@ -1,12 +1,13 @@
 using System.Net;
 using BLL.Helpers;
 using DTO.System.Account.Dtos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using REPOSITORY.System.Account;
 
 namespace BLL.Controllers;
 
-public class AccountController(IAccountRepository repository) : BaseController
+public class AccountController(IAccountRepository repository) : BaseController<AccountController>
 {
     [HttpPost, Route("register")]
     public async Task<IActionResult> Register(RegisterDto request)
@@ -30,6 +31,7 @@ public class AccountController(IAccountRepository repository) : BaseController
     }
     
     [HttpPost, Route("login")]
+    [AllowAnonymous]
     public async Task<IActionResult> Login(AccountDto request)
     {
         try

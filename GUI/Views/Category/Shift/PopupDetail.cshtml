@@ -69,11 +69,12 @@
                     data: $("#frmShift").serialize(),
                     success: function (data) {
                         if (data.IsSuccess) {
-                            notyf.success(data.message);
+                            notyf.success(addSuccess);
+                            refreshGrid();
                             closePopup();
                         }
                         else {
-                            notyf.error(data.message);
+                            notyf.error(data.Message);
                         }
                     }
                 });

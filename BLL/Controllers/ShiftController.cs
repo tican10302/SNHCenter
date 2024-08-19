@@ -8,7 +8,7 @@ using REPOSITORY.Category;
 
 namespace BLL.Controllers;
 
-public class ShiftController(IShiftRepository repository) : BaseController
+public class ShiftController(IShiftRepository repository) : BaseController<ShiftController>
 {
     [HttpPost, Route("get-list-paging")]
     public async Task<IActionResult> GetListPagingAsync(GetListPagingRequest request)
@@ -149,11 +149,11 @@ public class ShiftController(IShiftRepository repository) : BaseController
     }
     
     [HttpDelete("delete-list")]
-    public async Task<IActionResult> Detele(DeleteListRequest request)
+    public async Task<IActionResult> Detele([FromQuery] List<Guid> ids)
     {
         try
         {
-            var result = await repository.DeLeteList(request);
+            var result = await repository.DeLeteList(new DeleteListRequest { Ids = ids});
             if (result.Error)
             {
                 throw new Exception(result.Message);

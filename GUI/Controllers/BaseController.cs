@@ -121,7 +121,7 @@ namespace GUI.Controllers
             catch (Exception ex)
             {
                 response.Status = false;
-                response.Message = DTO.Common.CustomException.ConvertExceptionToMessage(ex, "System error.");
+                response.Message = DTO.Common.CustomException.ConvertExceptionToMessage(ex, "Error system.");
             }
 
             return response;
@@ -141,8 +141,8 @@ namespace GUI.Controllers
                     //Called Member default GET All records  
                     //GetAsync to send a GET request   
                     // PutAsync to send a PUT request  
-                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                     client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                     var responseTask = client.PostAsJsonAsync(action, model);
                     responseTask.Wait();
                     response = ExecuteAPIResponse(responseTask);
@@ -151,7 +151,37 @@ namespace GUI.Controllers
             catch (Exception ex)
             {
                 response.Status = false;
-                response.Message = DTO.Common.CustomException.ConvertExceptionToMessage(ex, "Lỗi hệ thống.");
+                response.Message = DTO.Common.CustomException.ConvertExceptionToMessage(ex, "Error system.");
+            }
+
+            return response;
+        }
+
+        public ResponseData DeleteAPI<T>(string action, List<Guid> ids)
+        {
+            ResponseData response = new ResponseData();
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    client.Timeout = TimeSpan.FromMinutes(5);
+                    client.BaseAddress = new Uri(GetBLLUrl());
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", GetToken());
+
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                    var queryString = string.Join("&", ids.Select(id => $"ids={id}"));
+
+                    var responseTask = client.DeleteAsync($"{action}?{queryString}");
+                    responseTask.Wait();
+                    response = ExecuteAPIResponse(responseTask);
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Status = false;
+                response.Message = DTO.Common.CustomException.ConvertExceptionToMessage(ex, "Error system.");
             }
 
             return response;

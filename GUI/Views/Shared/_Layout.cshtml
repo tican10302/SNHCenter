@@ -31,10 +31,25 @@
 
 
 <script>
+    var addSuccess = "Created data successfully";
+    var updateSuccess = "Updated data successfully";
+    var deleteSuccess = "Deleted data successfully";
+    var deleteConfirmText = "Are you sure you want to delete the data?";
+    var titleConfirm = "Confirm";
+    var errorMessage = "System error";
+    var deleteDataFunction;
+
     function sortTable(value, row, index) {
         var pageSize = $('#ShiftTable').bootstrapTable('getOptions').pageSize;
         var pageNumber = $('#ShiftTable').bootstrapTable('getOptions').pageNumber;
         return (pageNumber - 1) * pageSize + index + 1;
+    }
+
+    function confirmDialogYesNo(titleConfirm, deleteConfirmText, deleteData) {
+        $('#modal-systemModal').find('.modal-title').text(titleConfirm);
+        $('#modal-systemModal').find('.modal-body').text(deleteConfirmText);
+        deleteDataFunction = deleteData;
+        $('#modal-systemModal').modal('show');
     }
 </script>
 <body>
@@ -62,13 +77,43 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/lib/fontawesome-6.5.2/js/all.min.js"></script>
 
+    <div class="modal fade" id="modal-systemModal" tabindex="-1" role="basic" aria-hidden="true" data-backdrop="static">
+        <div class="modal-dialog modal-lg" id='modelContainer-systemModal'>
+        </div>
+        <!-- /.modal-dialog -->
+        <div>
+            <div class="modal-header">
+                <h4 class="modal-title"></h4>
+            </div>
+
+            <div class="modal-body">
+            </div>
+
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-success btn-sm" onclick="onDialogYes();"><i class="fa-solid fa-check"></i> Yes</button>
+                <button type="button" class="btn btn-danger btn-sm" onclick="onDialogNo();"><i class="fa-solid fa-xmark"></i> No</button>
+            </div>
+        </div>
+    </div>
+
 <script>
         const toggler = document.querySelector('.btn-toggler');
         toggler.addEventListener("click", function () {
             document.querySelector("#sidebar").classList.toggle('collapsed');
         }) 
 
-    </script>
+        function onDialogYes() {
+            if (deleteDataFunction) {
+                deleteDataFunction();
+            }
+            $('#modal-systemModal').modal('hide');
+        }
+
+        function onDialogNo() {
+            $('#modal-systemModal').modal('hide');
+        }
+
+</script>
     @await Component.InvokeAsync("Notyf");
     @await RenderSectionAsync("Scripts", required: false)
 </body>

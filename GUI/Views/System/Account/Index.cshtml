@@ -210,7 +210,8 @@
                     type: "POST",
                     data: $("#frmLogin").serialize(),
                     success: function(result) {
-                        if (result.isSuccess) {
+                        console.log(result);
+                        if (result.IsSuccess) {
                             toastr.success('Logged in successfully', 'Log in', {
                                 positionClass: 'toast-bottom-right'
                             });

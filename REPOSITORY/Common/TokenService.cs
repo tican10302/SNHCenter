@@ -9,31 +9,25 @@ using Microsoft.IdentityModel.Tokens;
 namespace REPOSITORY.Common;
 
 [RegisterClassAsScoped]
-public class TokenService(IConfiguration config) : ITokenService
+public class TokenService : ITokenService
 {
-    private readonly SymmetricSecurityKey _key = new(Encoding.UTF8.GetBytes(config["Jwt:Key"] ?? string.Empty));
-
-    public string CreateToken(Account acc)
+    public string CreateToken(Account acc, IConfiguration config)
     {
-        var claims = new List<Claim>
-        {
-            new Claim(JwtRegisteredClaimNames.UniqueName, acc.UserName ?? string.Empty),
-            new Claim(JwtRegisteredClaimNames.NameId, acc.Id.ToString())
-        };
-
-        var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);
-
-        var tokenDescriptor = new SecurityTokenDescriptor
-        {
-            Issuer = config["Jwt:Issuer"] ?? string.Empty,
-            Subject = new ClaimsIdentity(claims),
-            Expires = DateTime.Now.AddHours(DTO.Common.CommonConst.ExpireTime),
-            SigningCredentials = creds
-        };
-
         var tokenHandler = new JwtSecurityTokenHandler();
+        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]));
+        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
-        var token = tokenHandler.CreateToken(tokenDescriptor);
+        var claims = new[] {
+                new Claim(JwtRegisteredClaimNames.Name, acc.Id.ToString()),
+                new Claim(JwtRegisteredClaimNames.UniqueName, acc.UserName ?? string.Empty),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            };
+
+        var token = new JwtSecurityToken(config["Jwt:Issuer"],
+            config["Jwt:Issuer"],
+            claims,
+            expires: DateTime.Now.AddHours(DTO.Common.CommonConst.ExpireTime),
+            signingCredentials: credentials);
 
         return tokenHandler.WriteToken(token);
     }

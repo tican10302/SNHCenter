@@ -10,7 +10,7 @@ public class ShiftDto : BaseRequest
     [Required(AllowEmptyStrings = false, ErrorMessage = "Name is required")]
     public string? Name { get; set; }
     [Required(AllowEmptyStrings = false, ErrorMessage = "Time is required")]
-    public string? Time { get; set; }
+    public TimeSpan? Time { get; set; }
     public string? Days { get; set; }
     [Required(AllowEmptyStrings = false, ErrorMessage = "Days is required")]
     public List<string>? SelectDays { get; set; }

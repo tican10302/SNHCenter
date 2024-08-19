@@ -10,11 +10,13 @@ using DTO.System.Account.Requests;
 using Microsoft.Data.SqlClient;
 using REPOSITORY.Common;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Http;
 
 namespace REPOSITORY.System.Account;
 
 [RegisterClassAsTransient]
-public class AccountRepository(IUnitOfWork unitOfWork, IMapper mapper, ITokenService tokenService, DataContext context) : IAccountRepository
+public class AccountRepository(IUnitOfWork unitOfWork, IMapper mapper, ITokenService tokenService, IConfiguration config, DataContext context, IHttpContextAccessor contextAccessor) : IAccountRepository
 {
     public async Task<BaseResponse<AccountModel>> Register(RegisterDto request)
     {
@@ -43,8 +45,8 @@ public class AccountRepository(IUnitOfWork unitOfWork, IMapper mapper, ITokenSer
             entity.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
             
             // 4. Store to database
-            entity.CreatedBy = "admin";
-            entity.UpdatedBy = "admin";
+            entity.CreatedBy = contextAccessor.HttpContext.User.Identity.Name;
+            entity.UpdatedBy = contextAccessor.HttpContext.User.Identity.Name;
             var data = await unitOfWork.GetRepository<DAL.Entities.Account>().AddAsync(entity);
             var account = mapper.Map<AccountModel>(data);
             
@@ -52,7 +54,7 @@ public class AccountRepository(IUnitOfWork unitOfWork, IMapper mapper, ITokenSer
             await unitOfWork.CommitAsync();
             
             // 5. Generate JWT Token
-            account.Token = tokenService.CreateToken(data);
+            account.Token = tokenService.CreateToken(data, config);
 
             response.Data = account;
 
@@ -106,7 +108,7 @@ public class AccountRepository(IUnitOfWork unitOfWork, IMapper mapper, ITokenSer
                 data.Account.LastName = userInfo.LastName;
                 data.Account.Role = role.Name;
                 data.Account.Avatar = string.IsNullOrWhiteSpace(account.Avatar) ? "img/avatar/avatar-default.png" : account.Avatar;
-                data.Account.Token = tokenService.CreateToken(account);
+                data.Account.Token = tokenService.CreateToken(account, config);
 
                 var parameters = new DynamicParameters();
                 parameters.Add("@iAccountId", account.Id);
