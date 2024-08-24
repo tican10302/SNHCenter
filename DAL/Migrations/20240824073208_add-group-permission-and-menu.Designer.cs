@@ -4,6 +4,7 @@ using DAL.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240824073208_add-group-permission-and-menu")]
+    partial class addgrouppermissionandmenu
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -413,9 +416,6 @@ namespace DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("GroupPermissionId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<bool>("IsActived")
                         .HasColumnType("bit");
 
@@ -448,8 +448,6 @@ namespace DAL.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("GroupPermissionId");
 
                     b.ToTable("Menu");
                 });
@@ -972,17 +970,6 @@ namespace DAL.Migrations
                         .IsRequired();
 
                     b.Navigation("Course");
-                });
-
-            modelBuilder.Entity("DAL.Entities.Menu", b =>
-                {
-                    b.HasOne("DAL.Entities.GroupPermission", "GroupPermission")
-                        .WithMany()
-                        .HasForeignKey("GroupPermissionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("GroupPermission");
                 });
 
             modelBuilder.Entity("DAL.Entities.Permission", b =>

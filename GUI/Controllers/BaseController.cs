@@ -1,8 +1,5 @@
-﻿using System.Net;
-using System.Net.Http.Headers;
-using System.Reflection;
-using DTO.Base;
-using DTO.System.Account.Requests;
+﻿using DTO.Base;
+using DTO.System.Account.Models;
 using GUI.Constants;
 using GUI.Helpers;
 using GUI.Models;
@@ -10,6 +7,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Newtonsoft.Json;
+using System.Net;
+using System.Net.Http.Headers;
 
 
 namespace GUI.Controllers
@@ -26,6 +25,8 @@ namespace GUI.Controllers
             //Get cache
             string cacheMenu = _cacheService.Get<string>(GetUserName() + "_menu");
             string cacheRole = _cacheService.Get<string>(GetUserName() + "_role");
+            string cacheInfo = _cacheService.Get<string>(GetUserName() + "_info");
+            string cacheGroupRole = _cacheService.Get<string>(GetUserName() + "_grouprole");
             if (string.IsNullOrEmpty(cacheRole))
             {
                 ResponseData response = this.PostAPI(URL_API.ACCOUNT_GETPERMISSION, new { Id = GetUserId() });
@@ -45,6 +46,22 @@ namespace GUI.Controllers
                 if (response.Status)
                 {
                     _cacheService.Set(GetUserName() + "_menu", response.Data.ToString(), 60);
+                }
+            }
+            if (string.IsNullOrEmpty(cacheInfo))
+            {
+                ResponseData response = this.PostAPI(URL_API.ACCOUNT_GETBYID, new { UserId = GetUserId() });
+                if (response.Status)
+                {
+                    _cacheService.Set(GetUserName() + "_info", response.Data.ToString(), 60);
+                }
+            }
+            if (string.IsNullOrEmpty(cacheGroupRole))
+            {
+                ResponseData response = this.PostAPI(URL_API.GROUPPERMISSION_GETLIST, new GetAllRequest());
+                if (response.Status)
+                {
+                    _cacheService.Set(GetUserName() + "_grouprole", response.Data.ToString(), 60);
                 }
             }
 
@@ -144,36 +161,6 @@ namespace GUI.Controllers
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                     var responseTask = client.PostAsJsonAsync(action, model);
-                    responseTask.Wait();
-                    response = ExecuteAPIResponse(responseTask);
-                }
-            }
-            catch (Exception ex)
-            {
-                response.Status = false;
-                response.Message = DTO.Common.CustomException.ConvertExceptionToMessage(ex, "Error system.");
-            }
-
-            return response;
-        }
-
-        public ResponseData DeleteAPI<T>(string action, List<Guid> ids)
-        {
-            ResponseData response = new ResponseData();
-            try
-            {
-                using (var client = new HttpClient())
-                {
-                    client.Timeout = TimeSpan.FromMinutes(5);
-                    client.BaseAddress = new Uri(GetBLLUrl());
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", GetToken());
-
-                    client.DefaultRequestHeaders.Accept.Clear();
-                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                    var queryString = string.Join("&", ids.Select(id => $"ids={id}"));
-
-                    var responseTask = client.DeleteAsync($"{action}?{queryString}");
                     responseTask.Wait();
                     response = ExecuteAPIResponse(responseTask);
                 }

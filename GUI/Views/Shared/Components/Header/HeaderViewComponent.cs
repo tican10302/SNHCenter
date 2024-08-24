@@ -1,5 +1,5 @@
 ﻿using System.Security.Claims;
-using DTO.System.Account.Requests;
+using DTO.System.Account.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FE.Views.Shared.Components.Header

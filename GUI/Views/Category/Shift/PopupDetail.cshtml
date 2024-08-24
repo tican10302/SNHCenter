@@ -1,5 +1,10 @@
 @model DTO.Category.Shift.Dtos.ShiftDto
 
+@{
+var daysOfWeek = new List<string> { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
+var selectDays = Model.SelectDays ?? new List<string>();
+}
+
 <div class="modal-content modal-snhcenter" id="modalLoading">
     @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "frmShift", @class = "form-detail" }))
     {
@@ -33,19 +38,23 @@
             </div>
             <div class="row form-group">
                 <label class="col-sm-12 form-label">Days <span class="text-danger">(*)</span></label>
-                    @foreach (var day in new List<string> { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" })
-                    {
-                        <div class="col-sm-3">
-                        @Html.CheckBox("SelectDays", new { @value = day, @style="width: auto;" })
-                            @Html.Label(day)
-                        </div>
-                    }
+                @for (int i = 0; i < daysOfWeek.Count; i++)
+                {
+                var day = daysOfWeek[i];
+                bool isChecked = selectDays.Contains(day);
+
+                <div class="col-sm-3">
+                    @Html.Hidden($"SelectDays[{i}]", isChecked ? day : "false")
+                    @Html.CheckBox($"DayCheckbox[{i}]", isChecked, new { @value = day, @style = "width: auto;" })
+                    @Html.Label(day)
+                </div>
+                }
                     @(Html.ValidationMessageFor(model => model.Days, "", new { @class = "text-danger" }))
             </div>
         </div>
         
         <div class="modal-footer">
-            <button type="submit" id="btnSave" class="btn btn-success btn-sm"><i class="fas fa-check-square"></i> Create</button>
+            <button type="submit" id="btnSave" class="btn btn-success btn-sm"><i class="fas fa-check-square"></i> @(Model.IsEdit ? "Update" : "Create")</button>
             <button type="button" class="btn btn-danger btn-sm" onclick="closePopup();"><i class="fas fa-times-square"></i> Cancel</button>
         </div>
     }
@@ -69,7 +78,12 @@
                     data: $("#frmShift").serialize(),
                     success: function (data) {
                         if (data.IsSuccess) {
-                            notyf.success(addSuccess);
+                            if (data.Data) {
+                                notyf.success(updateSuccess);
+                            }
+                            else {
+                                notyf.success(addSuccess);
+                            }
                             refreshGrid();
                             closePopup();
                         }

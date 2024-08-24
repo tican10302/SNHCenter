@@ -70,15 +70,19 @@ public class Repository<T>(DbContext dbContext, DataContext dataContext) : IRepo
     {
         try
         {
-            using (var connection = dataContext.Database.GetDbConnection())
-            {
-                var result = await connection.QueryAsync<T>(
-                    sql: query,
-                    param: parameters,
-                    commandType: CommandType.StoredProcedure);
+            var connection = dataContext.Database.GetDbConnection();
 
-                return result.ToList();
+            if (connection.State == ConnectionState.Closed)
+            {
+                await connection.OpenAsync();
             }
+
+            var result = await connection.QueryAsync<T>(
+                sql: query,
+                param: parameters,
+                commandType: CommandType.StoredProcedure);
+
+            return result.ToList();
         }
         catch (Exception ex)
         {

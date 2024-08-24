@@ -1,6 +1,8 @@
-namespace DTO.System.Account.Requests;
+using DTO.Base;
 
-public class RoleModel
+namespace DTO.System.Role.Dtos;
+
+public class RoleDto : DtoBase
 {
     public int RoleCode { get; set; }
     public string? Name { get; set; }

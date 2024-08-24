@@ -1,7 +1,7 @@
 using AspNetCoreHero.ToastNotification.Abstractions;
 using DTO.Base;
 using DTO.Category.Shift.Dtos;
-using DTO.Category.Shift.Requests;
+using DTO.Category.Shift.Models;
 using DTO.Common;
 using GUI.Constants;
 using GUI.Models;
@@ -156,8 +156,7 @@ public class ShiftController : BaseController<ShiftController>
     {
         try
         {
-            List<Guid> ids = listSelectedId;
-            ResponseData response = this.PostAPI(URL_API.SHIFT_DELETELIST, ids);
+            ResponseData response = this.PostAPI(URL_API.SHIFT_DELETELIST, new { ids = listSelectedId });
             return Json(new { IsSuccess = response.Status, Message = response.Message, Data = "" });
         }
         catch (Exception ex)

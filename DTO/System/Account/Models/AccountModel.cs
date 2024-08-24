@@ -1,4 +1,4 @@
-namespace DTO.System.Account.Requests;
+namespace DTO.System.Account.Models;
 
 public class AccountModel
 {

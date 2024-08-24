@@ -65,6 +65,10 @@
     padding: 4px;
 }
 
+.modal-snhcenter .modal-body .tickbox {
+    width: auto;
+}
+
 .modal-snhcenter .modal-body .form-group {
     margin-top: 8px;
 }

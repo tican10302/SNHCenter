@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using DAL.Entities;
 using DTO.Category.Shift.Dtos;
-using DTO.Category.Shift.Requests;
+using DTO.Category.Shift.Models;
 using System.Data;
 
 namespace REPOSITORY.Category

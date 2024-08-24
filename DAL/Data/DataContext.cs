@@ -20,6 +20,8 @@ public class DataContext : DbContext
     public DbSet<Level> Levels { get; set; }
     public DbSet<Parent> Parents { get; set; }
     public DbSet<Permission> Permissions { get; set; }
+    public DbSet<GroupPermission> GroupPermissions { get; set; }
+    public DbSet<Menu> Menu { get; set; }
     public DbSet<Program> Programs { get; set; }
     public DbSet<Role> Roles { get; set; }
     public DbSet<Shift> Shifts { get; set; }

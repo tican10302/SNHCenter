@@ -19,4 +19,8 @@
       <PackageReference Include="Stax.AutoDependencyInjectionRegistration" Version="3.1.1" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="System\Menu\" />
+    </ItemGroup>
+
 </Project>

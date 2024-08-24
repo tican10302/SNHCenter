@@ -1,10 +1,11 @@
 using System.Net.Http.Headers;
+using System.Runtime.Caching;
 using System.Security.Claims;
 using AspNetCoreHero.ToastNotification.Abstractions;
 using DTO.Base;
 using DTO.Common;
 using DTO.System.Account.Dtos;
-using DTO.System.Account.Requests;
+using DTO.System.Account.Models;
 using GUI.Constants;
 using GUI.Helpers;
 using GUI.Models;
@@ -48,9 +49,12 @@ public class AccountController : Controller
                 var userData = accountData.Account;
 
                 var claims = new List<Claim>();
-                
+
+                _cacheService.Set(userData.UserName + "_menu", JsonConvert.SerializeObject(accountData.Menu), 60);
                 _cacheService.Set(userData.UserName + "_role", JsonConvert.SerializeObject(accountData.Permission), 60);
-                
+                _cacheService.Set(userData.UserName + "_info", JsonConvert.SerializeObject(accountData.Account), 60);
+                _cacheService.Set(userData.UserName + "_grouprole", JsonConvert.SerializeObject(accountData.GroupPermission), 60);
+
                 claims.Add(new Claim(ClaimTypes.Name, userData.UserName));
                 claims.Add(new Claim(ClaimTypes.Surname, userData.FirstName ?? ""));
                 claims.Add(new Claim(ClaimTypes.GivenName, userData.LastName ?? ""));
@@ -83,6 +87,12 @@ public class AccountController : Controller
     [Authorize]
     public async Task<IActionResult> Logout()
     {
+        List<string> cacheKeys = MemoryCache.Default.Select(kvp => kvp.Key).ToList();
+        foreach (string cacheKey in cacheKeys)
+        {
+            MemoryCache.Default.Remove(cacheKey);
+        }
+
         await HttpContext.SignOutAsync();
         return RedirectToAction("Index", "Account");
     }

@@ -4,9 +4,8 @@ using FluentValidation;
 
 namespace DTO.Category.Shift.Dtos;
 
-public class ShiftDto : BaseRequest
+public class ShiftDto : DtoBase
 {
-    public Guid Id { get; set; }
     [Required(AllowEmptyStrings = false, ErrorMessage = "Name is required")]
     public string? Name { get; set; }
     [Required(AllowEmptyStrings = false, ErrorMessage = "Time is required")]

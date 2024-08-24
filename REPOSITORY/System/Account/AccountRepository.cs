@@ -6,17 +6,24 @@ using DAL.Entities;
 using Dapper;
 using DTO.Base;
 using DTO.System.Account.Dtos;
-using DTO.System.Account.Requests;
+using DTO.System.Account.Models;
 using Microsoft.Data.SqlClient;
 using REPOSITORY.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Http;
+using REPOSITORY.System.GroupPermission;
 
 namespace REPOSITORY.System.Account;
 
 [RegisterClassAsTransient]
-public class AccountRepository(IUnitOfWork unitOfWork, IMapper mapper, ITokenService tokenService, IConfiguration config, DataContext context, IHttpContextAccessor contextAccessor) : IAccountRepository
+public class AccountRepository(IUnitOfWork unitOfWork, 
+    IMapper mapper, 
+    ITokenService tokenService, 
+    IConfiguration config, 
+    DataContext context, 
+    IHttpContextAccessor contextAccessor,
+    IGroupPermissionRepository groupPermissionRepository) : IAccountRepository
 {
     public async Task<BaseResponse<AccountModel>> Register(RegisterDto request)
     {
@@ -109,13 +116,32 @@ public class AccountRepository(IUnitOfWork unitOfWork, IMapper mapper, ITokenSer
                 data.Account.Role = role.Name;
                 data.Account.Avatar = string.IsNullOrWhiteSpace(account.Avatar) ? "img/avatar/avatar-default.png" : account.Avatar;
                 data.Account.Token = tokenService.CreateToken(account, config);
-
-                var parameters = new DynamicParameters();
-                parameters.Add("@iAccountId", account.Id);
-                var permissions = await unitOfWork.GetRepository<PermissionModel>().ExecWithStoreProcedure("sp_Sys_Account_GetPermission", parameters);
-
-                data.Permission = mapper.Map<List<PermissionModel>>(permissions);
-
+                
+                // Get Menu
+                data.Menu = GetListMenu(new GetByIdRequest {Id = account.Id}).Result.Data
+                    .Select(x => new MenuModel
+                    {
+                        Action = x.Action,
+                        Controller = x.Controller,
+                        GroupPermissionId = x.GroupPermissionId,
+                        Name = x.Name,
+                        Sort = x.Sort,
+                        IsShowMenu = x.IsShowMenu
+                    }).ToList();
+                
+                // Get Permission
+                data.Permission = GetPermission(new GetByIdRequest { Id = account.Id }).Result.Data;
+                
+                // Get Group Permission
+                data.GroupPermission = groupPermissionRepository.GetList(new GetAllRequest()).Result.Data.Where(x => x.IsActived == true)
+                    .Select(x => new GroupPermissionModel()
+                    {
+                        Id = x.Id,
+                        Sort = x.Sort,
+                        Name = x.Name,
+                        Icon = x.Icon,
+                    }).ToList();
+                
                 response.Data = data;
             }
         }
@@ -127,7 +153,210 @@ public class AccountRepository(IUnitOfWork unitOfWork, IMapper mapper, ITokenSer
 
         return response;
     }
-    
+
+    public async Task<BaseResponse<GetListPagingResponse>> GetListPaging(GetListPagingRequest request)
+    {
+        var response = new BaseResponse<GetListPagingResponse>();
+
+        try
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("@iTextSearch", request.Search, DbType.String);
+            parameters.Add("@iPageIndex", request.Offset, DbType.Int32);
+            parameters.Add("@iRowsPerPage", request.Limit, DbType.Int32);
+            parameters.Add("@oTotalRow", dbType: DbType.Int64, direction: ParameterDirection.Output);
+
+            var result = await unitOfWork.GetRepository<UserModel>().ExecWithStoreProcedure("sp_Sys_User_GetListPaging", parameters);
+
+
+            var totalRow = parameters.Get<long>("@oTotalRow");
+            var responseData = new GetListPagingResponse
+            {
+                PageIndex = request.Offset,
+                Data = result,
+                TotalRow = Convert.ToInt32(totalRow)
+            };
+
+            response.Data = responseData;
+        }
+        catch (Exception ex)
+        {
+            response.Error = true;
+            response.Message = ex.Message;
+        }
+
+        return response;
+    }
+
+    public async Task<BaseResponse<UserModel>> GetById(GetByIdRequest request)
+    {
+        var response = new BaseResponse<UserModel>();
+
+        try
+        {
+            var data = await unitOfWork.GetRepository<User>().GetByIdAsync(request.Id);
+            if (data == null)
+            {
+                throw new Exception("Not data found");
+            }
+
+            var result = mapper.Map<UserModel>(data);
+            response.Data = result;
+        }
+        catch (Exception ex)
+        {
+            response.Error = true;
+            response.Message = ex.Message;
+        }
+
+        return response;
+    }
+
+    public async Task<BaseResponse<UserDto>> GetByPost(GetByIdRequest request)
+    {
+        var response = new BaseResponse<UserDto>();
+
+        try
+        {
+            var result = new UserDto();
+            var data = await unitOfWork.GetRepository<User>().GetByIdAsync(request.Id);
+            if (result == null)
+            {
+                result.Id = Guid.NewGuid();
+                result.IsEdit = false;
+            }
+            else
+            {
+                result = mapper.Map<UserDto>(data);
+                result.IsEdit = true;
+            }
+
+            response.Data = result;
+
+        }
+        catch (Exception ex)
+        {
+            response.Error = true;
+            response.Message = ex.Message;
+        }
+
+        return response;
+    }
+
+    public async Task<BaseResponse<UserModel>> Insert(UserDto request)
+    {
+        var response = new BaseResponse<UserModel>();
+        try
+        {
+            using var transaction = unitOfWork.BeginTransactionAsync();
+
+            var checkData = await unitOfWork.GetRepository<User>().Find(x =>
+                !x.IsDeleted &&
+                x.StaffCode == request.StaffCode);
+            if (checkData != null)
+            {
+                throw new Exception("Data already exists");
+            }
+
+            var entity = mapper.Map<User>(request);
+            entity.CreatedBy = contextAccessor.HttpContext.User.Identity.Name;
+            entity.CreatedAt = DateTime.Now; ;
+            entity.UpdatedBy = contextAccessor.HttpContext.User.Identity.Name;
+            entity.UpdatedAt = DateTime.Now;
+
+            var result = await unitOfWork.GetRepository<User>().AddAsync(entity);
+
+            await unitOfWork.SaveChangesAsync();
+            await unitOfWork.CommitAsync();
+
+            response.Data = mapper.Map<UserModel>(result);
+        }
+        catch (Exception ex)
+        {
+            await unitOfWork.RollbackAsync();
+            response.Error = true;
+            response.Message = ex.Message;
+        }
+
+        return response;
+    }
+
+    public async Task<BaseResponse<UserModel>> Update(UserDto request)
+    {
+        var response = new BaseResponse<UserModel>();
+        try
+        {
+            using var transaction = unitOfWork.BeginTransactionAsync();
+
+            var checkData = await unitOfWork.GetRepository<User>().Find(x =>
+                !x.IsDeleted &&
+                x.Id != request.Id &&
+                x.StaffCode == request.StaffCode);
+            if (checkData != null)
+            {
+                throw new Exception("Data already exists");
+            }
+
+            var data = await unitOfWork.GetRepository<User>().GetByIdAsync(request.Id);
+            if (data == null)
+            {
+                throw new Exception("Not data found");
+            }
+            var entity = mapper.Map(request, data);
+
+            entity.UpdatedAt = DateTime.Now;
+            entity.UpdatedBy = contextAccessor.HttpContext.User.Identity.Name;
+
+            await unitOfWork.GetRepository<User>().UpdateAsync(entity);
+
+            await unitOfWork.SaveChangesAsync();
+            await unitOfWork.CommitAsync();
+
+            response.Data = mapper.Map<UserModel>(entity);
+        }
+        catch (Exception ex)
+        {
+            await unitOfWork.RollbackAsync();
+            response.Error = true;
+            response.Message = ex.Message;
+        }
+
+        return response;
+    }
+
+
+    public async Task<BaseResponse<string>> DeLeteList(DeleteListRequest request)
+    {
+        var response = new BaseResponse<string>();
+        try
+        {
+            using var transaction = unitOfWork.BeginTransactionAsync();
+            foreach (var id in request.Ids)
+            {
+                var entity = await unitOfWork.GetRepository<User>().GetByIdAsync(id);
+
+                entity.IsDeleted = true;
+                entity.DeletedAt = DateTime.Now;
+                entity.DeletedBy = contextAccessor.HttpContext.User.Identity.Name;
+
+                await unitOfWork.GetRepository<User>().UpdateAsync(entity);
+
+                await unitOfWork.SaveChangesAsync();
+            }
+            await unitOfWork.CommitAsync();
+
+            response.Data = "Success";
+        }
+        catch (Exception ex)
+        {
+            await unitOfWork.RollbackAsync();
+            response.Error = true;
+            response.Message = ex.Message;
+        }
+
+        return response;
+    }
+
     //GET PERMISSION
     public async Task<BaseResponse<List<PermissionModel>>> GetPermission(GetByIdRequest request)
     {
@@ -137,7 +366,27 @@ public class AccountRepository(IUnitOfWork unitOfWork, IMapper mapper, ITokenSer
             var parameters = new DynamicParameters();
             parameters.Add("@iAccountId", request.Id);
 
-            response.Data = await unitOfWork.GetRepository<PermissionModel>().ExecWithStoreProcedure("sp_Sys_Account_GetPermission", parameters);
+            response.Data = await unitOfWork.GetRepository<PermissionModel>().ExecWithStoreProcedure("sp_Sys_Account_GetPermissionWithAccount", parameters);
+        }
+        catch (Exception ex)
+        {
+            response.Error = true;
+            response.Message = ex.Message;
+        }
+
+        return response;
+    }
+    
+    //GET MENU
+    public async Task<BaseResponse<List<MenuModel>>> GetListMenu(GetByIdRequest request)
+    {
+        var response = new BaseResponse<List<MenuModel>>();
+        try
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("@iAccountId", request.Id);
+
+            response.Data = await unitOfWork.GetRepository<MenuModel>().ExecWithStoreProcedure("sp_Sys_Account_GetMenu", parameters);
         }
         catch (Exception ex)
         {

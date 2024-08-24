@@ -1,7 +1,8 @@
 ﻿namespace DTO.Base
 {
-    public class BaseRequest
+    public class DtoBase
     {
+        public Guid Id { get; set; }
         public string FolderUpload { get; set; } = Guid.NewGuid().ToString();
         public bool IsActived { get; set; } = true;
         public bool IsEdit { get; set; } = false;
