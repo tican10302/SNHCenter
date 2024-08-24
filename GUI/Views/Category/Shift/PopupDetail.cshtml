@@ -1,8 +1,7 @@
 @model DTO.Category.Shift.Dtos.ShiftDto
 
 @{
-var daysOfWeek = new List<string> { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
-var selectDays = Model.SelectDays ?? new List<string>();
+    List<string> selectedDays = Model.SelectDays ?? new List<string>();
 }
 
 <div class="modal-content modal-snhcenter" id="modalLoading">
@@ -28,28 +27,27 @@ var selectDays = Model.SelectDays ?? new List<string>();
                 <label class="col-sm-2 form-label">Name <span class="text-danger">(*)</span></label>
                 <div class="col-sm-4">
                     @(Html.TextBoxFor(model => model.Name, new { @placeholder = "Enter name" }))
-                    @(Html.ValidationMessageFor(model => model.Name, "", new {@class = "text-danger" }))
+                    @(Html.ValidationMessageFor(model => model.Name, "Name field is required", new {@class = "text-danger" }))
                 </div>
                 <label class="col-sm-2 form-label">Time <span class="text-danger">(*)</span></label>
                 <div class="col-sm-4">
                     @(Html.TextBoxFor(model => model.Time, new { @type = "time", @placeholder = "Select a time" }))
-                    @(Html.ValidationMessageFor(model => model.Time, "", new {@class = "text-danger" }))
+                    @(Html.ValidationMessageFor(model => model.Time, "Time field is required", new {@class = "text-danger" }))
                 </div>
             </div>
             <div class="row form-group">
                 <label class="col-sm-12 form-label">Days <span class="text-danger">(*)</span></label>
-                @for (int i = 0; i < daysOfWeek.Count; i++)
+                @Html.HiddenFor(model => model.SelectDays)
+                @foreach (var day in new List<string> { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" })
                 {
-                var day = daysOfWeek[i];
-                bool isChecked = selectDays.Contains(day);
-
                 <div class="col-sm-3">
-                    @Html.Hidden($"SelectDays[{i}]", isChecked ? day : "false")
-                    @Html.CheckBox($"DayCheckbox[{i}]", isChecked, new { @value = day, @style = "width: auto;" })
+                    <input type="checkbox" name="days" value="@day"
+                           @(selectedDays.Contains(day) ? "checked='checked'" : "") style="width: auto;" />
                     @Html.Label(day)
                 </div>
                 }
-                    @(Html.ValidationMessageFor(model => model.Days, "", new { @class = "text-danger" }))
+                
+                @(Html.ValidationMessageFor(model => model.Days, "Days field is required", new { @class = "text-danger" }))
             </div>
         </div>
         
@@ -67,11 +65,11 @@ var selectDays = Model.SelectDays ?? new List<string>();
         //Save
         $("#frmShift").submit(async function (event) {
             event.preventDefault();
-            $("#frmShift").find("span.field-validation-valid").show();
             
             if ($("#frmShift").valid()) {
                 showLoading();
 
+                updateSelectedDays();
                 $.ajax({
                     url: '/Shift/Post',
                     type: "POST",
@@ -93,10 +91,23 @@ var selectDays = Model.SelectDays ?? new List<string>();
                     }
                 });
                 hideLoading();
+            } else {
+                $("#frmShift").find("span.field-validation-valid").show();
             }
         });
     })
+    
     function closePopup() {
         $('#modal-default').modal('hide');
+    }
+    
+    function updateSelectedDays() {
+        var selectedDays = [];
+        
+        $("input[name='days']:checked").each(function () {
+            selectedDays.push($(this).val());
+        });
+
+        $('input[name="SelectDays"]').val(selectedDays.join(', '));
     }
 </script>

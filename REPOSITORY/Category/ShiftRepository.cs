@@ -22,7 +22,7 @@ public class ShiftRepository(IUnitOfWork unitOfWork, IMapper mapper, IHttpContex
         {
             var parameters = new DynamicParameters();
             parameters.Add("@iTextSearch", request.Search, DbType.String);
-            parameters.Add("@iPageIndex", request.Offset, DbType.Int32);
+            parameters.Add("@iPageIndex", request.Offset / request.Limit, DbType.Int32);
             parameters.Add("@iRowsPerPage", request.Limit, DbType.Int32);
             parameters.Add("@oTotalRow", dbType: DbType.Int64, direction: ParameterDirection.Output);
 
