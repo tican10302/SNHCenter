@@ -66,23 +66,23 @@ public class Repository<T>(DbContext dbContext, DataContext dataContext) : IRepo
         return query;
     }
     
-    public async Task<List<T>> ExecWithStoreProcedure(string query, params SqlParameter[] parameters)
+    public async Task<List<T>> ExecWithStoreProcedure(string query, DynamicParameters parameters)
     {
         try
         {
-            using (var connection = dataContext.Database.GetDbConnection())
+            var connection = dataContext.Database.GetDbConnection();
+
+            if (connection.State == ConnectionState.Closed)
             {
-                var parametersList = parameters.ToDictionary(p => p.ParameterName, p => p.Value);
-
-                var result = await connection.QueryAsync<T>(
-                    sql: query,
-                    param: parametersList,
-                    commandType: CommandType.StoredProcedure);
-
-                
-                var test = result.ToList();
-                return result.ToList();
+                await connection.OpenAsync();
             }
+
+            var result = await connection.QueryAsync<T>(
+                sql: query,
+                param: parameters,
+                commandType: CommandType.StoredProcedure);
+
+            return result.ToList();
         }
         catch (Exception ex)
         {

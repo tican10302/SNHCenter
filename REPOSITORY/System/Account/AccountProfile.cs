@@ -1,6 +1,6 @@
 using AutoMapper;
 using DTO.System.Account.Dtos;
-using DTO.System.Account.Requests;
+using DTO.System.Account.Models;
 
 namespace REPOSITORY.System.Account;
 

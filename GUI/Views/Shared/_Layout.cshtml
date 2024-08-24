@@ -9,6 +9,9 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
     <link rel="stylesheet" href="~/css/style.css" asp-append-version="true"/>
     <link href="~/lib/fontawesome-6.5.2/css/all.min.css" rel="stylesheet" />
+    <script src="~/lib/jquery/jquery.js"></script>
+    <script src="~/lib/jquery-validate/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
 </head>
 <style>
     .main {
@@ -25,49 +28,106 @@
         padding: 30px;
     }
 </style>
+
+
+<script>
+    var addSuccess = "Created data successfully";
+    var updateSuccess = "Updated data successfully";
+    var deleteSuccess = "Deleted data successfully";
+    var deleteConfirmText = "Are you sure you want to delete the data?";
+    var titleConfirm = "Confirm";
+    var errorMessage = "System error";
+    var deleteDataFunction;
+
+    function showLoading() {
+        document.getElementById("pageLoading").style.display = "flex";
+    }
+
+    function hideLoading() {
+        document.getElementById("pageLoading").style.display = "none";
+    }
+
+    function sortTable(value, row, index) {
+        var pageSize = $('#ShiftTable').bootstrapTable('getOptions').pageSize;
+        var pageNumber = $('#ShiftTable').bootstrapTable('getOptions').pageNumber;
+        return (pageNumber - 1) * pageSize + index + 1;
+    }
+
+    function confirmDialogYesNo(titleConfirm, deleteConfirmText, deleteData) {
+        $('#modal-systemModal').find('.modal-title').text(titleConfirm);
+        $('#modal-systemModal').find('.modal-body').text(deleteConfirmText);
+        deleteDataFunction = deleteData;
+        $('#modal-systemModal').modal('show');
+    }
+</script>
 <body>
-    <div id="pageLoading" class="container-scroller">
-        <div class="wrapper">
-            <!-- SideBar -->
-            <aside id="sidebar">
-                @await Component.InvokeAsync("SideBar", null)
-            </aside>
-            <!-- End SideBar -->
-            <div class="main">
-                <!-- Header -->
-                @await Component.InvokeAsync("Header", null)
-                <!-- End Header -->
-                <div class="body">
-                    @RenderBody()
-                </div>
+<div class="container-scroller">
+    <div class="wrapper">
+        <!-- SideBar -->
+        <aside id="sidebar">
+            @await Component.InvokeAsync("SideBar", null)
+        </aside>
+        <!-- End SideBar -->
+        <div class="main">
+            <!-- Header -->
+            @await Component.InvokeAsync("Header", null)
+            <!-- End Header -->
+            <div class="body">
+                @RenderBody()
             </div>
         </div>
     </div>
-    
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</div>
+
+<div id="pageLoading" role="status">
+    <div class="spinner-border" role="status">
+    <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+   
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/lib/bootstrap-table-1.23.2/dist/bootstrap-table.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/lib/fontawesome-6.5.2/js/all.min.js"></script>
+
+    <div class="modal fade" id="modal-systemModal" tabindex="-1" role="basic" aria-hidden="true" data-backdrop="static">
+        <div class="modal-dialog modal-lg" id='modelContainer-systemModal'>
+        </div>
+        <!-- /.modal-dialog -->
+        <div>
+            <div class="modal-header">
+                <h4 class="modal-title"></h4>
+            </div>
+
+            <div class="modal-body">
+            </div>
+
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-success btn-sm" onclick="onDialogYes();"><i class="fa-solid fa-check"></i> Yes</button>
+                <button type="button" class="btn btn-danger btn-sm" onclick="onDialogNo();"><i class="fa-solid fa-xmark"></i> No</button>
+            </div>
+        </div>
+    </div>
 
 <script>
         const toggler = document.querySelector('.btn-toggler');
         toggler.addEventListener("click", function () {
             document.querySelector("#sidebar").classList.toggle('collapsed');
-        })
+        }) 
 
-        function getTableParams(params) {
-        return {
-            TextSearch: params.searchText,    // Đổi 'searchText' thành 'searchTerm'
-            SortBy: params.sort,              // Đổi 'sort' thành 'sortBy'
-            SortOrder: params.order,          // Đổi 'order' thành 'sortOrder'
-            RowPerPage: params.limit,           // Đổi 'limit' thành 'pageSize'
-            PageIndex: (params.offset / params.limit) + 1 // Đổi 'offset' thành 'pageNumber'
-        };
-    }
+        function onDialogYes() {
+            if (deleteDataFunction) {
+                deleteDataFunction();
+            }
+            $('#modal-systemModal').modal('hide');
+        }
 
-    </script>
-    @await Component.InvokeAsync("Notyf");
+        function onDialogNo() {
+            $('#modal-systemModal').modal('hide');
+        }
+
+</script>
+    @await Component.InvokeAsync("Notyf")
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

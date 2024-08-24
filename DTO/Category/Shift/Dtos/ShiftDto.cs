@@ -1,14 +1,18 @@
+using System.ComponentModel.DataAnnotations;
 using DTO.Base;
 using FluentValidation;
 
 namespace DTO.Category.Shift.Dtos;
 
-public class ShiftDto : BaseRequest
+public class ShiftDto : DtoBase
 {
-    public Guid Id { get; set; }
+    [Required(AllowEmptyStrings = false, ErrorMessage = "Name is required")]
     public string? Name { get; set; }
-    public string? Time { get; set; }
+    [Required(AllowEmptyStrings = false, ErrorMessage = "Time is required")]
+    public TimeSpan? Time { get; set; }
     public string? Days { get; set; }
+    [Required(AllowEmptyStrings = false, ErrorMessage = "Days is required")]
+    public List<string>? SelectDays { get; set; }
 }
 
 public class ShiftDtoValidator : AbstractValidator<ShiftDto>
@@ -17,6 +21,6 @@ public class ShiftDtoValidator : AbstractValidator<ShiftDto>
     {
         RuleFor(r => r.Name).NotEmpty().WithMessage("Name is not null");
         RuleFor(r => r.Time).NotEmpty().WithMessage("Time is not null");
-        RuleFor(r => r.Days).NotEmpty().WithMessage("Days is not null");
+        RuleFor(r => r.SelectDays).NotEmpty().WithMessage("Days is not null");
     }
 }

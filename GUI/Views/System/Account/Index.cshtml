@@ -14,6 +14,9 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
+    <script src="https://cdn.jsdelivr.net/npm/toastr@2.1.4/toastr.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/toastr@2.1.4/build/toastr.min.css" rel="stylesheet">
+
     <style>
         body, html {
             height: 100%;
@@ -207,10 +210,18 @@
                     type: "POST",
                     data: $("#frmLogin").serialize(),
                     success: function(result) {
-                        if (result.isSuccess) {
-                            window.location.href = "/Home/Index";
+                        console.log(result);
+                        if (result.IsSuccess) {
+                            toastr.success('Logged in successfully', 'Log in', {
+                                positionClass: 'toast-bottom-right'
+                            });
+                            setTimeout(function() {
+                                window.location.href = "/Home/Index";
+                            }, 1000);
                         } else {
-                            // Handle login failure
+                            toastr.error('Username or password is incorrect', 'Log in', {
+                                positionClass: 'toast-bottom-right'
+                            });
                         }
                     }
                 });

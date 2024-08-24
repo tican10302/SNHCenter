@@ -1,7 +1,13 @@
-﻿namespace DAL.Entities
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+
+namespace DAL.Entities
 {
-    public class Permission : EntitiesBase
+    public class Permission
     {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid Id { get; set; } = new();
         public required Role Role { get; set; }
         public required string ControllerName { get; set; }
         public bool IsView { get; set; }
