@@ -39,6 +39,14 @@
     var errorMessage = "System error";
     var deleteDataFunction;
 
+    function showLoading() {
+        document.getElementById("pageLoading").style.display = "flex";
+    }
+
+    function hideLoading() {
+        document.getElementById("pageLoading").style.display = "none";
+    }
+
     function sortTable(value, row, index) {
         var pageSize = $('#ShiftTable').bootstrapTable('getOptions').pageSize;
         var pageNumber = $('#ShiftTable').bootstrapTable('getOptions').pageNumber;
@@ -53,26 +61,31 @@
     }
 </script>
 <body>
-    <div id="pageLoading" class="container-scroller">
-        <div class="wrapper">
-            <!-- SideBar -->
-            <aside id="sidebar">
-                @await Component.InvokeAsync("SideBar", null)
-            </aside>
-            <!-- End SideBar -->
-            <div class="main">
-                <!-- Header -->
-                @await Component.InvokeAsync("Header", null)
-                <!-- End Header -->
-                <div class="body">
-                    @RenderBody()
-                </div>
+<div class="container-scroller">
+    <div class="wrapper">
+        <!-- SideBar -->
+        <aside id="sidebar">
+            @await Component.InvokeAsync("SideBar", null)
+        </aside>
+        <!-- End SideBar -->
+        <div class="main">
+            <!-- Header -->
+            @await Component.InvokeAsync("Header", null)
+            <!-- End Header -->
+            <div class="body">
+                @RenderBody()
             </div>
         </div>
     </div>
-    
+</div>
+
+<div id="pageLoading" role="status">
+    <div class="spinner-border" role="status">
+    <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
    
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/lib/bootstrap-table-1.23.2/dist/bootstrap-table.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/lib/fontawesome-6.5.2/js/all.min.js"></script>
@@ -114,7 +127,7 @@
         }
 
 </script>
-    @await Component.InvokeAsync("Notyf");
+    @await Component.InvokeAsync("Notyf")
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

@@ -96,7 +96,7 @@
         var selectedRows = getIdSelections();
         if (selectedRows.length > 0) {
             var deleteData = function () {
-                // showLoading(true);
+                showLoading();
                 $.ajax({
                     url: '@Url.Action("Delete", "Shift")',
                     type: 'POST',
@@ -117,7 +117,7 @@
                         notyf.error(errorMessage);
                     }
                 });
-                // showLoading(false);
+                hideLoading();
             }
             return confirmDialogYesNo(titleConfirm, deleteConfirmText, deleteData);
         } else {

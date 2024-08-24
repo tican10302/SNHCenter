@@ -2,8 +2,6 @@
 using DAL.Entities;
 using Dapper;
 using DTO.Base;
-using DTO.Category.DAL.Entities.Role.Dtos;
-using DTO.Category.DAL.Entities.Role.Models;
 using DTO.System.Role.Dtos;
 using DTO.System.Role.Models;
 using Microsoft.AspNetCore.Http;

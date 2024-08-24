@@ -72,3 +72,23 @@
 .modal-snhcenter .modal-body .form-group {
     margin-top: 8px;
 }
+
+#pageLoading {
+    position: fixed;
+    display: none;
+    z-index: 10000;
+    top: 0;
+    left: 0;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    background-color: rgb(0 0 0 / 20%);
+    color: #4880FF;
+    transition: all 0.2s;
+}
+
+#pageLoading .spinner-border {
+    width: 3rem;
+    height: 3rem;
+}
