@@ -4,6 +4,7 @@ using Dapper;
 using DTO.Base;
 using DTO.System.Account.Models;
 using DTO.System.GroupPermission.Dtos;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using REPOSITORY.Common;
 
 namespace REPOSITORY.System.GroupPermission;
@@ -180,9 +181,9 @@ public class GroupPermissionRepository(IUnitOfWork unitOfWork, IMapper mapper) :
         return response;
     }
 
-    public async Task<BaseResponse<List<ComboboxModel>>> GetAllForCombobox(GetAllRequest request)
+    public async Task<BaseResponse<List<SelectListItem>>> GetAllForCombobox(GetAllRequest request)
     {
-        var response = new BaseResponse<List<ComboboxModel>>();
+        var response = new BaseResponse<List<SelectListItem>>();
 
         try
         {
@@ -191,11 +192,11 @@ public class GroupPermissionRepository(IUnitOfWork unitOfWork, IMapper mapper) :
                 .OrderBy(x => x.Sort)
                 .ToList();
 
-            response.Data = result.Select(x => new ComboboxModel
+            response.Data = result.Select(x => new SelectListItem
             {
                 Text = x.Name,
                 Value = x.Id.ToString()
-            }).OrderBy(x => x.Sort).ToList();
+            }).ToList();
         }
         catch (Exception ex)
         {

@@ -1,0 +1,170 @@
+
+<div>
+    <div class="title">
+        <h2 class="title-content">
+            Group Permission
+        </h2>
+    </div>
+    <div class="content">
+        @* --- TABLE --- *@
+        <div class="">
+            <div class="row">
+                <div class="col-md-6">
+                    <div id="toolbar">
+                        <button class="btn btn-success" onclick="addData()"><i class="fa-solid fa-plus"></i> Add</button>
+                        <button class="btn btn-warning" onclick="updateData()"><i class="fa-solid fa-pen"></i> Update</button>
+                    </div>
+                </div>
+            </div>
+
+            <table class="bootstrap-table"
+                   id="GroupPermissionTable"
+                   data-toggle="table"
+                   data-height="460"
+                   data-ajax="getDataTable"
+                   data-search="true"
+                   data-side-pagination="server"
+                   data-click-to-select="true"
+                   data-toolbar="#toolbar">
+                <thead class="content-table-header">
+                <tr>
+                    <th data-checkbox="true"></th>
+                    <th data-formatter="sortTable" data-align="center" data-width="250">No.</th>
+                    <th data-field="Id" data-visible="false">ID</th>
+                    <th data-field="Name">Name</th>
+                    <th data-field="Icon">Icon</th>
+                    <th data-field="IsActived" data-formatter="activeFormatter">Active</th>
+                </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal-default" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-lg" id='modelContainer'>
+    </div>
+</div>
+
+<script>
+    function getIdSelections() {
+        return $.map($('#GroupPermissionTable').bootstrapTable('getSelections'), function (row) {
+            return row.Id
+        })
+    }
+
+    function showData() {
+        var selectedRows = getIdSelections();
+        if (selectedRows.length == 1) {
+            var url = '@Url.Action("ShowViewPopup", "GroupPermission")' + "?id=" + selectedRows[0];
+
+            $.get(url, function (data) {
+                $('#modelContainer').html(data);
+                $('#modal-default').modal('show');
+            });
+        } else {
+            notyf.error('Please select a row to view.');
+        }
+    }
+
+    function addData() {
+        var url = '@Url.Action("ShowInsertPopup", "GroupPermission")';
+
+        $.get(url, function (data) {
+            $('#modelContainer').html(data);
+            $('#modal-default').modal('show');
+        })
+    }
+
+    function updateData() {
+        var selectedRows = getIdSelections();
+        if (selectedRows.length == 1) {
+            var url = '@Url.Action("ShowUpdatePopup", "GroupPermission")' + "?id=" + selectedRows[0];
+
+            $.get(url, function (data) {
+                $('#modelContainer').html(data);
+                $('#modal-default').modal('show');
+            });
+        } else {
+            notyf.error('Please select a row to update.');
+        }
+    }
+
+    function setPermissionData() {
+        var selectedRows = getIdSelections();
+        if (selectedRows.length == 1) {
+            var url = '@Url.Action("ShowPermissionPopup", "GroupPermission")' + "?id=" + selectedRows[0];
+
+            $.get(url, function (data) {
+                $('#modelContainer').html(data);
+                $('#modal-default').modal('show');
+            });
+        } else {
+            notyf.error('Please select a row to set permission.');
+        }
+    }
+
+    function deleteData() {
+        var selectedRows = getIdSelections();
+        if (selectedRows.length > 0) {
+            var deleteData = function () {
+                showLoading();
+                $.ajax({
+                    url: '@Url.Action("Delete", "GroupPermission")',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        listSelectedId: selectedRows
+                    },
+                    success: function (data) {
+                        if (data.IsSuccess) {
+                            notyf.success(deleteSuccess);
+                            refreshGrid();
+                        }
+                        else {
+                            notyf.error(data.Message);
+                        }
+                    },
+                    error: function (request, status, err) {
+                        notyf.error(errorMessage);
+                    }
+                });
+                hideLoading();
+            }
+            return confirmDialogYesNo(titleConfirm, deleteConfirmText, deleteData);
+        } else {
+            notyf.error('Please select a row to delete.');
+        }
+    }
+
+    function getDataTable(params) {
+        var url = '@Url.Action("GetList", "GroupPermission")';
+        var data = params.data;
+
+        $.get(url, data, function (response) {
+            params.success({
+                total: response.total,
+                rows: response.data
+            });
+        });
+    }
+
+    function refreshGrid() {
+        $('#GroupPermissionTable').bootstrapTable('refresh');
+    }
+
+    function sortTable(value, row, index) {
+        var pageSize = $('#GroupPermissionTable').bootstrapTable('getOptions').pageSize;
+        var pageNumber = $('#GroupPermissionTable').bootstrapTable('getOptions').pageNumber;
+        return (pageNumber - 1) * pageSize + index + 1;
+    }
+    
+    function activeFormatter(value, row, index) {
+        if (value) {
+            return '<span style="color: #0d6efd;">Online</span>';
+        } else {
+            return '<span style="color: #dc3545;">Offline</span>';
+        }
+    }
+
+</script>
