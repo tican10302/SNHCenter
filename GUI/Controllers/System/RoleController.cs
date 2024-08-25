@@ -206,7 +206,7 @@ namespace GUI.Controllers.System
         }
         
         [HttpPost]
-        public JsonResult PostPhanQuyenVaiTro(Role_PermissionDto param)
+        public JsonResult PostRolePermission(Role_PermissionDto param)
         {
             try
             {

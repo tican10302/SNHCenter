@@ -18,12 +18,12 @@ namespace DAL.Entities
         public required string Action { get; set; }
         public GroupPermission GroupPermission { get; set; }
         public int Sort { get; set; }
-        public bool IsView { get; set; }
-        public bool IsAdd { get; set; }
-        public bool IsEdit { get; set; }
-        public bool IsDelete { get; set; }
-        public bool IsApprove { get; set; }
-        public bool IsStatistic { get; set; }
+        public bool HasView { get; set; }
+        public bool HasAdd { get; set; }
+        public bool HasEdit { get; set; }
+        public bool HasDelete { get; set; }
+        public bool HasApprove { get; set; }
+        public bool HasStatistic { get; set; }
         public bool IsActived { get; set; }
         public bool IsShowMenu { get; set; }
     }
