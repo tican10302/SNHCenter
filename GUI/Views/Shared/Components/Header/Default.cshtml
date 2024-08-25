@@ -9,6 +9,24 @@
     }
 
     /* NAVBAR LEFT */
+    .navbar-logo {
+        width: 230px;
+        display: flex;
+        align-items: center;
+        padding-left: 20px;
+    }
+
+    .navbar-logo a {
+        color: #000;
+        font-size: 1.25rem;
+        font-weight: 600;
+    }
+
+    .navbar-logo img {
+        max-width: 100px;
+        min-width: 60px;
+    }
+    
     .navbar-left .btn-toggler {
         height: 100%;
     }
@@ -120,6 +138,11 @@
 
 <nav class="header navbar-light navbar-expand px-3">
     <div class="navbar-left">
+        <div class="navbar-logo">
+            <a href="@Url.Action("Index", "Home")">
+                <img src="~/img/logo/logo.png" alt="SNHCenter" />
+            </a>
+        </div>
         <button class="btn btn-toggler" type="button" data-bs-theme="light">
             <span class="navbar-toggler-icon"></span>
         </button>

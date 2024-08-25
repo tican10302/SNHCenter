@@ -1,24 +1,17 @@
-﻿using BLL.Helpers;
+using System.Net;
+using BLL.Helpers;
 using DTO.Base;
-using DTO.Category.Shift.Dtos;
-using DTO.System.GroupPermission.Dtos;
+using DTO.System.Role.Dtos;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using REPOSITORY;
-using REPOSITORY.System.GroupPermission;
-using System.Net;
+using REPOSITORY.System.Role;
 
 namespace BLL.Controllers.System
 {
-    public class GroupPermissionController : BaseController<GroupPermissionController>
+    public class RoleController(IRoleRepository repository) : BaseController<RoleController>
     {
-        private readonly IGroupPermissionRepository repository;
-        public GroupPermissionController(IGroupPermissionRepository repository)
-        {
-            this.repository = repository;
-        }
-        [HttpPost, Route("get-list")]
-        public async Task<IActionResult> GetListAsync(GetAllRequest request)
+        [HttpPost, Route("get-list-paging")]
+        public async Task<IActionResult> GetListPagingAsync(GetListPagingRequest request)
         {
             try
             {
@@ -26,32 +19,7 @@ namespace BLL.Controllers.System
                 {
                     throw new Exception(DTO.Common.CommonFunc.GetModelStateAPI(ModelState));
                 }
-                var result = await repository.GetList(request);
-                if (result.Error)
-                {
-                    throw new Exception(result.Message);
-                }
-                else
-                {
-                    return Ok(new ApiOkResponse(result.Data));
-                }
-            }
-            catch (Exception ex)
-            {
-                return Ok(new ApiResponse(false, (int)HttpStatusCode.InternalServerError, ex.Message));
-            }
-        }
-        
-        [HttpPost, Route("get-all")]
-        public async Task<IActionResult> GetAllAsync(GetAllRequest request)
-        {
-            try
-            {
-                if (!ModelState.IsValid)
-                {
-                    throw new Exception(DTO.Common.CommonFunc.GetModelStateAPI(ModelState));
-                }
-                var result = await repository.GetAll(request);
+                var result = await repository.GetListPaging(request);
                 if (result.Error)
                 {
                     throw new Exception(result.Message);
@@ -118,7 +86,7 @@ namespace BLL.Controllers.System
         }
 
         [HttpPost("insert")]
-        public async Task<IActionResult> Post(GroupPermissionDto request)
+        public async Task<IActionResult> Post(RoleDto request)
         {
             try
             {
@@ -143,7 +111,7 @@ namespace BLL.Controllers.System
         }
 
         [HttpPost("update")]
-        public async Task<IActionResult> Update(GroupPermissionDto request)
+        public async Task<IActionResult> Update(RoleDto request)
         {
             try
             {
@@ -167,6 +135,31 @@ namespace BLL.Controllers.System
             }
         }
 
+        [HttpPost("delete-list")]
+        public async Task<IActionResult> Detele(DeleteListRequest request)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    throw new Exception(DTO.Common.CommonFunc.GetModelStateAPI(ModelState));
+                }
+                var result = await repository.DeLeteList(request);
+                if (result.Error)
+                {
+                    throw new Exception(result.Message);
+                }
+                else
+                {
+                    return Ok(new ApiOkResponse(result.Data));
+                }
+            }
+            catch (Exception ex)
+            {
+                return Ok(new ApiResponse(false, (int)HttpStatusCode.InternalServerError, ex.Message));
+            }
+        }
+        
         [HttpPost("get-all-for-combobox")]
         public async Task<IActionResult> GetAllForCombobox(GetAllRequest request)
         {
@@ -177,6 +170,56 @@ namespace BLL.Controllers.System
                     throw new Exception(DTO.Common.CommonFunc.GetModelStateAPI(ModelState));
                 }
                 var result = await repository.GetAllForCombobox(request);
+                if (result.Error)
+                {
+                    throw new Exception(result.Message);
+                }
+                else
+                {
+                    return Ok(new ApiOkResponse(result.Data));
+                }
+            }
+            catch (Exception ex)
+            {
+                return Ok(new ApiResponse(false, (int)HttpStatusCode.InternalServerError, ex.Message));
+            }
+        }
+        
+        [HttpPost("get-list-role-permission")]
+        public async Task<IActionResult> GetListRolePermission(GetRole_PermissionDto request)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    throw new Exception(DTO.Common.CommonFunc.GetModelStateAPI(ModelState));
+                }
+                var result = await repository.GetListRolePermission(request);
+                if (result.Error)
+                {
+                    throw new Exception(result.Message);
+                }
+                else
+                {
+                    return Ok(new ApiOkResponse(result.Data));
+                }
+            }
+            catch (Exception ex)
+            {
+                return Ok(new ApiResponse(false, (int)HttpStatusCode.InternalServerError, ex.Message));
+            }
+        }
+        
+        [HttpPost("post-role-permission")]
+        public async Task<IActionResult> Detele(Role_PermissionDto request)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    throw new Exception(DTO.Common.CommonFunc.GetModelStateAPI(ModelState));
+                }
+                var result = await repository.PostRolePermission(request);
                 if (result.Error)
                 {
                     throw new Exception(result.Message);

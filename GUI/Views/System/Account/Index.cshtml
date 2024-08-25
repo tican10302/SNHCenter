@@ -11,6 +11,7 @@
     <title>SNHCenter - Login</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
@@ -136,8 +137,39 @@
         .mb-40 {
             margin-bottom: 40px;
         }
+
+        /* LOADING */
+        #pageLoading {
+            position: fixed;
+            display: none;
+            z-index: 10000;
+            top: 0;
+            left: 0;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            justify-content: center;
+            background-color: rgb(0 0 0 / 20%);
+            color: #4880FF;
+            transition: all 0.2s;
+        }
+
+        #pageLoading .spinner-border {
+            width: 3rem;
+            height: 3rem;
+        }
         
     </style>
+    
+    <script>
+        function showLoading() {
+            document.getElementById("pageLoading").style.display = "flex";
+        }
+
+        function hideLoading() {
+            document.getElementById("pageLoading").style.display = "none";
+        }
+    </script>
 </head>
 
 <body>
@@ -178,6 +210,12 @@
         }
     </div>
 </div>
+
+<div id="pageLoading" role="status">
+    <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
 </body>
 </html>
 
@@ -205,13 +243,14 @@
         $("#frmLogin").submit(async function(event) {
             event.preventDefault();
             if ($("#frmLogin").valid()) {
+                showLoading();
                 $.ajax({
                     url: '@Url.Action("Login", "Account")',
                     type: "POST",
                     data: $("#frmLogin").serialize(),
                     success: function(result) {
-                        console.log(result);
                         if (result.IsSuccess) {
+                            hideLoading();
                             toastr.success('Logged in successfully', 'Log in', {
                                 positionClass: 'toast-bottom-right'
                             });
@@ -219,12 +258,14 @@
                                 window.location.href = "/Home/Index";
                             }, 1000);
                         } else {
+                            hideLoading();
                             toastr.error('Username or password is incorrect', 'Log in', {
                                 positionClass: 'toast-bottom-right'
                             });
                         }
                     }
                 });
+                
             }
         });
     });

@@ -44,7 +44,7 @@ public class ShiftController : BaseController<ShiftController>
         }
         catch (Exception ex)
         {
-            return Json("Error");
+            return Json("Error: " + ex.Message);
         }
     }
 
