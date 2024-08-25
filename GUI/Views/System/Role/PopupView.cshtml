@@ -1,0 +1,37 @@
+@model DTO.System.Role.Models.RoleModel
+
+<div class="modal-content modal-snhcenter" id="modalLoading">
+    @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "frmRole", @class = "form-detail" }))
+    {
+    @Html.AntiForgeryToken()
+    <div class="modal-header">
+        <h4 class="modal-title">Role Detail</h4>
+        <button type="button" class="btn-close" onclick="closePopup();" aria-label="Close" data-bs-dimiss="modal"></button>
+    </div>
+
+    <div class="modal-body">
+        @Html.HiddenFor(m => m.Id)
+        @Html.HiddenFor(m => m.IsEdit)
+        <div class="row form-group">
+            <label class="col-sm-2 form-label">Role Code <span class="text-danger">(*)</span></label>
+            <div class="col-sm-4">
+                @(Html.TextBoxFor(model => model.RoleCode, new { @placeholder = "Select a role code", @readonly = true }))
+            </div>
+            <label class="col-sm-2 form-label">Name <span class="text-danger">(*)</span></label>
+            <div class="col-sm-4">
+                @(Html.TextBoxFor(model => model.Name, new { @placeholder = "Enter name", @readonly = true }))
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger btn-sm" onclick="closePopup();"><i class="fas fa-times-square"></i> Cancel</button>
+    </div>
+    }
+</div>
+
+<script>
+    function closePopup() {
+        $('#modal-default').modal('hide');
+    }
+</script>

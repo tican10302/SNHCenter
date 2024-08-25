@@ -83,10 +83,12 @@
                                 notyf.success(addSuccess);
                             }
                             refreshGrid();
+                            hideLoading();
                             closePopup();
                         }
                         else {
                             notyf.error(data.Message);
+                            hideLoading();
                         }
                     }
                 });
