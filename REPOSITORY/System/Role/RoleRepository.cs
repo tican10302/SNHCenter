@@ -8,9 +8,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Data.SqlClient;
 using REPOSITORY.Common;
 using System.Data;
+using AutoDependencyRegistration.Attributes;
 
 namespace REPOSITORY.System.Role
 {
+    [RegisterClassAsTransient]
     public class RoleRepository(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor) : IRoleRepository
     {
         public async Task<BaseResponse<GetListPagingResponse>> GetListPaging(GetListPagingRequest request)

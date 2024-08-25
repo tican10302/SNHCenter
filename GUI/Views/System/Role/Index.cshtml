@@ -1,7 +1,8 @@
+
 <div>
     <div class="title">
         <h2 class="title-content">
-            Shift
+            Role
         </h2>
     </div>
     <div class="content">
@@ -13,13 +14,14 @@
                         <button class="btn btn-primary" onclick="showData()"><i class="fa-solid fa-eye"></i> View</button>
                         <button class="btn btn-success" onclick="addData()"><i class="fa-solid fa-plus"></i> Add</button>
                         <button class="btn btn-warning" onclick="updateData()"><i class="fa-solid fa-pen"></i> Update</button>
+                        <button class="btn btn-secondary" onclick="setPermissionData()"><i class="fa-solid fa-gears"></i> Set Permission</button>
                         <button class="btn btn-danger" onclick="deleteData()"><i class="fa-solid fa-trash"></i> Delete</button>
                     </div>
                 </div>
             </div>
 
             <table class="bootstrap-table"
-                   id="ShiftTable"
+                   id="RoleTable"
                    data-toggle="table"
                    data-height="460"
                    data-ajax="getDataTable"
@@ -31,11 +33,10 @@
                 <thead class="content-table-header">
                 <tr>
                     <th data-checkbox="true"></th>
-                    <th data-formatter="sortTable" data-align="center">No.</th>
+                    <th data-formatter="sortTable" data-align="center" data-width="250">No.</th>
                     <th data-field="Id" data-visible="false">ID</th>
+                    <th data-field="RoleCode" data-align="center" data-width="250">Role Code</th>
                     <th data-field="Name">Name</th>
-                    <th data-field="Time" data-formatter="timeFormatter">Time</th>
-                    <th data-field="Days">Days</th>
                 </tr>
                 </thead>
             </table>
@@ -50,7 +51,7 @@
 
 <script>
     function getIdSelections() {
-        return $.map($('#ShiftTable').bootstrapTable('getSelections'), function (row) {
+        return $.map($('#RoleTable').bootstrapTable('getSelections'), function (row) {
             return row.Id
         })
     }
@@ -58,7 +59,7 @@
     function showData() {
         var selectedRows = getIdSelections();
         if (selectedRows.length == 1) {
-            var url = '@Url.Action("ShowViewPopup", "Shift")' + "?id=" + selectedRows[0];
+            var url = '@Url.Action("ShowViewPopup", "Role")' + "?id=" + selectedRows[0];
 
             $.get(url, function (data) {
                 $('#modelContainer').html(data);
@@ -70,8 +71,8 @@
     }
 
     function addData() {
-        var url = '@Url.Action("ShowInsertPopup", "Shift")';
-        
+        var url = '@Url.Action("ShowInsertPopup", "Role")';
+
         $.get(url, function (data) {
             $('#modelContainer').html(data);
             $('#modal-default').modal('show');
@@ -81,7 +82,7 @@
     function updateData() {
         var selectedRows = getIdSelections();
         if (selectedRows.length == 1) {
-            var url = '@Url.Action("ShowUpdatePopup", "Shift")' + "?id=" + selectedRows[0];
+            var url = '@Url.Action("ShowUpdatePopup", "Role")' + "?id=" + selectedRows[0];
 
             $.get(url, function (data) {
                 $('#modelContainer').html(data);
@@ -92,13 +93,27 @@
         }
     }
 
+    function setPermissionData() {
+        var selectedRows = getIdSelections();
+        if (selectedRows.length == 1) {
+            var url = '@Url.Action("ShowPermissionPopup", "Role")' + "?id=" + selectedRows[0];
+
+            $.get(url, function (data) {
+                $('#modelContainer').html(data);
+                $('#modal-default').modal('show');
+            });
+        } else {
+            notyf.error('Please select a row to set permission.');
+        }
+    }
+
     function deleteData() {
         var selectedRows = getIdSelections();
         if (selectedRows.length > 0) {
             var deleteData = function () {
                 showLoading();
                 $.ajax({
-                    url: '@Url.Action("Delete", "Shift")',
+                    url: '@Url.Action("Delete", "Role")',
                     type: 'POST',
                     dataType: 'json',
                     data: {
@@ -124,9 +139,9 @@
             notyf.error('Please select a row to delete.');
         }
     }
-    
+
     function getDataTable(params) {
-        var url = '@Url.Action("GetList", "Shift")';
+        var url = '@Url.Action("GetList", "Role")';
         var data = params.data;
 
         $.get(url, data, function (response) {
@@ -138,20 +153,13 @@
     }
 
     function refreshGrid() {
-        $('#ShiftTable').bootstrapTable('refresh');
+        $('#RoleTable').bootstrapTable('refresh');
     }
 
     function sortTable(value, row, index) {
-        var pageSize = $('#ShiftTable').bootstrapTable('getOptions').pageSize;
-        var pageNumber = $('#ShiftTable').bootstrapTable('getOptions').pageNumber;
+        var pageSize = $('#RoleTable').bootstrapTable('getOptions').pageSize;
+        var pageNumber = $('#RoleTable').bootstrapTable('getOptions').pageNumber;
         return (pageNumber - 1) * pageSize + index + 1;
     }
-
-    function timeFormatter(value, row, index) {
-        if (value) {
-            let time = value.split(":");
-            return time[0] + ":" + time[1];
-        }
-        return value;
-    }
+    
 </script>

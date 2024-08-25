@@ -20,11 +20,23 @@ public class URL_API
 
     // Group Permission
     public const string GROUPPERMISSION_GETLIST = "grouppermission/get-list";
+    public const string GROUPPERMISSION_GETALL = "grouppermission/get-all";
     public const string GROUPPERMISSION_GETBYPOST = "grouppermission/get-by-post";
     public const string GROUPPERMISSION_GETBYID = "grouppermission/get-by-id";
     public const string GROUPPERMISSION_INSERT = "grouppermission/insert";
     public const string GROUPPERMISSION_UPDATE = "grouppermission/update";
     public const string GROUPPERMISSION_GETALLFORCOMBOBOX = "grouppermission/get-all-for-combobox";
+    
+    // Role
+    public const string ROLE_GETLIST = "role/get-list-paging";
+    public const string ROLE_GETBYPOST = "role/get-by-post";
+    public const string ROLE_GETBYID = "role/get-by-id";
+    public const string ROLE_INSERT = "role/insert";
+    public const string ROLE_UPDATE = "role/update";
+    public const string ROLE_DELETELIST = "role/delete-list";
+    public const string ROLE_GETALLFORCOMBOBOX = "role/get-all-for-combobox";
+    public const string ROLE_GETLISTROLEPERMISSION = "role/get-list-role-permission";
+    public const string ROLE_POSTROLEPERMISSION = "role/post-role-permission";
 
     #endregion
 

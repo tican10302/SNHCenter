@@ -11,6 +11,9 @@
     }
 
     #sidebar {
+        height: calc(100vh - 70px);
+        overflow-y: scroll;
+        overflow-x: hidden;
         max-width: 240px;
         min-width: 240px;
         transition: all 0.35s ease-in-out;
@@ -20,22 +23,6 @@
     /* Sidebar collapse*/
     #sidebar.collapsed {
         margin-left: -240px;
-    }
-
-    .sidebar-logo {
-        padding-top: 4px;
-        padding-left: 40px;
-    }
-
-    .sidebar-logo a {
-        color: #000;
-        font-size: 1.25rem;
-        font-weight: 600;
-    }
-
-    .sidebar-logo img {
-        max-width: 100px;
-        min-width: 60px;
     }
 
     .sidebar-nav {
@@ -115,11 +102,6 @@
 </style>
 
 <div class="h-100">
-    <div class="sidebar-logo">
-        <a href="@Url.Action("Index", "Home")">
-            <img src="~/img/logo/logo.png" alt="SNHCenter" />
-        </a>
-    </div>
     <ul class="sidebar-nav">
         <li class="sidebar-header">
             Home
@@ -209,6 +191,37 @@
             <a href="@Url.Action("Index", "Parent")" class="sidebar-link">
                 <i class="fa-solid fa-person-breastfeeding"></i>
                 Parent
+            </a>
+        </li>
+    </ul>
+
+    <hr class="hr" />
+    <ul class="sidebar-nav">
+        <li class="sidebar-header">
+            System
+        </li>
+        <li class="sidebar-item">
+            <a href="@Url.Action("Index", "Role")" class="sidebar-link">
+                <i class="fa-solid fa-calendar"></i>
+                Role
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a href="@Url.Action("Index", "Menu")" class="sidebar-link">
+                <i class="fa-solid fa-calendar"></i>
+                Menu
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a href="@Url.Action("Index", "Permission")" class="sidebar-link">
+                <i class="fa-solid fa-graduation-cap"></i>
+                Permission
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a href="@Url.Action("Index", "GroupPermission")" class="sidebar-link">
+                <i class="fa-solid fa-book"></i>
+                Group Permission
             </a>
         </li>
     </ul>

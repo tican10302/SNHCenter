@@ -1,0 +1,71 @@
+<div class="modal-content modal-snhcenter" id="modalLoading">
+    @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "frmRolePermission", @class = "form-detail" }))
+    {
+    @Html.AntiForgeryToken()
+    <div class="modal-header">
+        <h4 class="modal-title">Update Role Permission</h4>
+        <button type="button" class="btn-close" onclick="closePopup();" aria-label="Close" data-bs-dimiss="modal"></button>
+    </div>
+
+    <div class="modal-body">
+        <input type="hidden" id="snhRoleId" value="@ViewBag.RoleId" />
+        <input type="hidden" id="snhGroupId" value="0" />
+        <div class="form-group">
+            @foreach (DTO.Base.ComboboxModel item in ViewBag.GroupPermission)
+            {
+                <button type="button" class="btn btn-primary btn-sm" style="width: 120px;" onclick="groupClick('@item.Value');">@item.Text</button>
+            }
+        </div>
+        <div class="form-group">
+            @* --- TABLE --- *@
+            <div class="">
+                <table class="bootstrap-table"
+                       id="RolePermissionTable"
+                       data-toggle="table"
+                       data-height="460"
+                       data-ajax="getDataTable"
+                       data-search="true"
+                       data-side-pagination="server"
+                       data-pagination="true"
+                       data-click-to-select="true">
+                    <thead class="content-table-header">
+                    <tr>
+                        <th data-field="Name">Name</th>
+                        <th data-field="IsView">View</th>
+                        <th data-field="IsAdd">Add</th>
+                        <th data-field="IsEdit">Edit</th>
+                        <th data-field="IsDelete">Delete</th>
+                        <th data-field="IsApprove">Approve</th>
+                        <th data-field="IsStatistic">Statistic</th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="submit" id="btnSave" class="btn btn-success btn-sm"><i class="fas fa-check-square"></i> @(Model.IsEdit ? "Update" : "Create")</button>
+        <button type="button" class="btn btn-danger btn-sm" onclick="closePopup();"><i class="fas fa-times-square"></i> Cancel</button>
+    </div>
+    }
+</div>
+
+<script>
+    $(document).ready(function () {
+        
+    })
+
+    function groupClick(groupId) {
+        $('#snhGroupId').val(groupId);
+        refreshRolePermissionGrid();
+    }
+
+    function closePopup() {
+        $('#modal-default').modal('hide');
+    }
+
+    function refreshRolePermissionGrid() {
+        $('#RolePermissionTable').bootstrapTable('refresh');
+    }
+</script>
