@@ -37,6 +37,13 @@ public class URL_API
     public const string ROLE_GETALLFORCOMBOBOX = "role/get-all-for-combobox";
     public const string ROLE_GETLISTROLEPERMISSION = "role/get-list-role-permission";
     public const string ROLE_POSTROLEPERMISSION = "role/post-role-permission";
+    
+    // Menu
+    public const string MENU_GETLIST = "menu/get-list-paging";
+    public const string MENU_GETBYPOST = "menu/get-by-post";
+    public const string MENU_GETBYID = "menu/get-by-id";
+    public const string MENU_INSERT = "menu/insert";
+    public const string MENU_UPDATE = "menu/update";
 
     #endregion
 

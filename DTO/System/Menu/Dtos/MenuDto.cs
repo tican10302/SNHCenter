@@ -9,7 +9,7 @@ public class MenuDto : DtoBase
     public string? Controller { get; set; }
     public string? Action { get; set; } = "index";
     public string? Name { get; set; }
-    public Guid? GroupId { get; set; }
+    public Guid? GroupPermissionId { get; set; }
     public bool HasView { get; set; } = false;
     public bool HasAdd { get; set; } = false;
     public bool HasEdit { get; set; } = false;
@@ -27,6 +27,6 @@ public class MenuDtoValidator : AbstractValidator<MenuDto>
         RuleFor(r => r.Controller).NotEmpty().WithMessage("The controller field is required");
         RuleFor(r => r.Action).NotEmpty().WithMessage("The action field is required");
         RuleFor(r => r.Name).NotEmpty().WithMessage("The name field is required");
-        RuleFor(r => r.GroupId).NotEmpty().WithMessage("The group field is required");
+        RuleFor(r => r.GroupPermissionId).NotEmpty().WithMessage("The group permission field is required");
     }
 }

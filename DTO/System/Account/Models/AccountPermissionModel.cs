@@ -1,3 +1,5 @@
+using DTO.System.Menu.Models;
+
 namespace DTO.System.Account.Models;
 
 public class AccountPermissionModel

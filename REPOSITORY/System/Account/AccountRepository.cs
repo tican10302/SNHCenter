@@ -7,7 +7,7 @@ using Dapper;
 using DTO.Base;
 using DTO.System.Account.Dtos;
 using DTO.System.Account.Models;
-using Microsoft.Data.SqlClient;
+using DTO.System.Menu.Models;
 using REPOSITORY.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -119,7 +119,7 @@ public class AccountRepository(IUnitOfWork unitOfWork,
                 
                 // Get Menu
                 data.Menu = GetListMenu(new GetByIdRequest {Id = account.Id}).Result.Data
-                    .Select(x => new MenuModel
+                    .Select(x => new MenuModel()
                     {
                         Action = x.Action,
                         Controller = x.Controller,
