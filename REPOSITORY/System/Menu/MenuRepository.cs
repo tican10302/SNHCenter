@@ -115,6 +115,8 @@ public class MenuRepository(IUnitOfWork unitOfWork, IMapper mapper) : IMenuRepos
         try
         {
             using var transaction = unitOfWork.BeginTransactionAsync();
+            request.ControllerName = request.ControllerName?.ToLower().Trim();
+            request.Controller = request.Controller?.ToLower().Trim();
 
             var checkData = await unitOfWork.GetRepository<DAL.Entities.Menu>().Find(x => 
                 x.Name == request.Name);
@@ -147,7 +149,9 @@ public class MenuRepository(IUnitOfWork unitOfWork, IMapper mapper) : IMenuRepos
         try
         {
             using var transaction = unitOfWork.BeginTransactionAsync();
-
+            request.ControllerName = request.ControllerName?.ToLower().Trim();
+            request.Controller = request.Controller?.ToLower().Trim();
+            
             var checkData = await unitOfWork.GetRepository<DAL.Entities.Menu>().Find(x =>
                 x.Id != request.Id &&
                 x.Name == request.Name);

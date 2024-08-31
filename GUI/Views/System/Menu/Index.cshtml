@@ -35,13 +35,13 @@
                     <th data-field="ControllerName">Controller Name</th>
                     <th data-field="Controller">Controller</th>
                     <th data-field="Action">Action</th>
-                    <th data-field="HasView">View</th>
-                    <th data-field="HasAdd">Add</th>
-                    <th data-field="HasEdit">Edit</th>
-                    <th data-field="HasDelete">Delete</th>
-                    <th data-field="HasApprove">Approve</th>
-                    <th data-field="HasStatistic">Statistic</th>
-                    <th data-field="IsActived" data-formatter="activeFormatter">Active</th>
+                    <th data-field="HasView" data-align="center" data-formatter="booleanFormatter">View</th>
+                    <th data-field="HasAdd" data-align="center" data-formatter="booleanFormatter">Add</th>
+                    <th data-field="HasEdit" data-align="center" data-formatter="booleanFormatter">Edit</th>
+                    <th data-field="HasDelete" data-align="center" data-formatter="booleanFormatter">Delete</th>
+                    <th data-field="HasApprove" data-align="center" data-formatter="booleanFormatter">Approve</th>
+                    <th data-field="HasStatistic" data-align="center" data-formatter="booleanFormatter">Statistic</th>
+                    <th data-field="IsActived" data-align="center" data-formatter="activeFormatter">Active</th>
                 </tr>
                 </thead>
             </table>
@@ -50,7 +50,7 @@
 </div>
 
 <div class="modal fade" id="modal-default" aria-hidden="true" data-backdrop="static">
-    <div class="modal-dialog modal-lg" id='modelContainer'>
+    <div class="modal-dialog modal-xl" id='modelContainer'>
     </div>
 </div>
 
@@ -165,6 +165,14 @@
         var pageSize = $('#MenuTable').bootstrapTable('getOptions').pageSize;
         var pageNumber = $('#MenuTable').bootstrapTable('getOptions').pageNumber;
         return (pageNumber - 1) * pageSize + index + 1;
+    }
+
+    function booleanFormatter(value, row, index) {
+        if (value) {
+            return '<span style="color: #0d6efd"><i class="fa-solid fa-check"></i></span>';
+        } else {
+            return '<span style="color: #dc3545;"><i class="fa-solid fa-xmark"></i></span>';
+        }
     }
 
     function activeFormatter(value, row, index) {

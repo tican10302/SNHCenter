@@ -28,4 +28,6 @@ public class DataContext : DbContext
     public DbSet<Student> Students { get; set; }
     public DbSet<StudentCourse> StudentCourses { get; set; }
     public DbSet<User> Users { get; set; }
+    
+    
 }

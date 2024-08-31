@@ -12,6 +12,11 @@ namespace REPOSITORY.System.Role
             CreateMap<RoleDto, DAL.Entities.Role>();
             CreateMap<RoleModel, DAL.Entities.Role>();
             CreateMap<DAL.Entities.Role, RoleModel>();
+            
+            CreateMap<DAL.Entities.Permission, Role_PermissionModel>();
+            CreateMap<Role_PermissionModel, DAL.Entities.Permission>();
+            CreateMap<Role_PermissionDto, DAL.Entities.Permission>();
+            CreateMap<DAL.Entities.Permission, Role_PermissionDto>();
         }
     }
 }

@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using DTO.Base;
 using FluentValidation;
 
@@ -5,10 +6,15 @@ namespace DTO.System.Menu.Dtos;
 
 public class MenuDto : DtoBase
 {
+    [Required(AllowEmptyStrings = false, ErrorMessage = "The ControllerName field is required")]
     public string? ControllerName { get; set; }
+    [Required(AllowEmptyStrings = false, ErrorMessage = "The controller field is required")]
     public string? Controller { get; set; }
+    [Required(AllowEmptyStrings = false, ErrorMessage = "The action field is required")]
     public string? Action { get; set; } = "index";
+    [Required(AllowEmptyStrings = false, ErrorMessage = "The name field is required")]
     public string? Name { get; set; }
+    [Required(AllowEmptyStrings = false, ErrorMessage = "The group permission field is required")]
     public Guid? GroupPermissionId { get; set; }
     public bool HasView { get; set; } = false;
     public bool HasAdd { get; set; } = false;

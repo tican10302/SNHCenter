@@ -16,6 +16,7 @@ namespace DAL.Entities
         public required string ControllerName { get; set; }
         public required string Controller { get; set; }
         public required string Action { get; set; }
+        public Guid GroupPermissionId { get; set; }
         public GroupPermission GroupPermission { get; set; }
         public int Sort { get; set; }
         public bool HasView { get; set; }

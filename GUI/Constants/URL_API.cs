@@ -39,7 +39,7 @@ public class URL_API
     public const string ROLE_POSTROLEPERMISSION = "role/post-role-permission";
     
     // Menu
-    public const string MENU_GETLIST = "menu/get-list-paging";
+    public const string MENU_GETLIST = "menu/get-list";
     public const string MENU_GETBYPOST = "menu/get-by-post";
     public const string MENU_GETBYID = "menu/get-by-id";
     public const string MENU_INSERT = "menu/insert";

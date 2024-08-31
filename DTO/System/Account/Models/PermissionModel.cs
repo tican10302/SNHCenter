@@ -5,6 +5,7 @@ namespace DTO.System.Account.Models;
 public class PermissionModel
 {
     public RoleModel? Role { get; set; }
+    public Guid? RoleId { get; set; }
     public string? ControllerName { get; set; }
     public bool? IsView { get; set; }
     public bool? IsAdd { get; set; }

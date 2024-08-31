@@ -175,12 +175,27 @@ namespace GUI.Controllers.System
                 return Json(new { IsSuccess = false, Message = message, Data = "" });
             }
         }
-        
-        public List<SelectListItem> GetList_Combobox()
+
+        public JsonResult GetList_Combobox()
         {
-            ResponseData response = this.PostAPI(URL_API.GROUPPERMISSION_GETALLFORCOMBOBOX, new GetAllRequest());
-            var result = JsonConvert.DeserializeObject<List<SelectListItem>>(response.Data.ToString());
-            return result;
+            try
+            {
+                ResponseData response = this.PostAPI(URL_API.GROUPPERMISSION_GETALLFORCOMBOBOX, new GetAllRequest());
+
+                if (!response.Status)
+                {
+                    return Json(new { IsSuccess = false, Message = response.Message, Data = "" });
+                }
+
+                var result = JsonConvert.DeserializeObject<List<SelectListItem>>(response.Data.ToString());
+
+                return Json(new { IsSuccess = true, Message = "", Data = result });
+            }
+            catch (Exception ex)
+            {
+                string message = "Get combobox error: " + ex.Message;
+                return Json(new { IsSuccess = false, Message = message, Data = "" });
+            }
         }
 
     }

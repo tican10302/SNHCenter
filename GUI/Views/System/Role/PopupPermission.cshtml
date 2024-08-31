@@ -1,3 +1,16 @@
+
+
+<script>
+    function groupClick(groupId) {
+
+        var params = {
+            groupId: groupId,
+            roleId: "@ViewBag.RoleId.ToString()",
+        };
+        getDataTable_Permission(params);
+    }
+</script>
+
 <div class="modal-content modal-snhcenter" id="modalLoading">
     @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "frmRolePermission", @class = "form-detail" }))
     {
@@ -11,7 +24,7 @@
         <input type="hidden" id="snhRoleId" value="@ViewBag.RoleId" />
         <input type="hidden" id="snhGroupId" value="0" />
         <div class="form-group">
-            @foreach (DTO.Base.ComboboxModel item in ViewBag.GroupPermission)
+            @foreach (SelectListItem item in ViewBag.GroupPermission)
             {
                 <button type="button" class="btn btn-primary btn-sm" style="width: 120px;" onclick="groupClick('@item.Value');">@item.Text</button>
             }
@@ -19,24 +32,27 @@
         <div class="form-group">
             @* --- TABLE --- *@
             <div class="">
-                <table class="bootstrap-table"
-                       id="RolePermissionTable"
-                       data-toggle="table"
-                       data-height="460"
-                       data-ajax="getDataTable"
-                       data-search="true"
-                       data-side-pagination="server"
-                       data-pagination="true"
-                       data-click-to-select="true">
+                <table  class="bootstrap-table"
+                        id="RolePermissionTable"
+                        data-toggle="table"
+                        data-height="460">
                     <thead class="content-table-header">
                     <tr>
+                        <th data-field="Id" data-visible="false">ID</th>
+                        <th data-field="ControllerName" data-visible="false">Controller Name</th>
+                        <th data-field="HasView" data-visible="false">Has View</th>
+                        <th data-field="HasAdd" data-visible="false">Has Add</th>
+                        <th data-field="HasEdit" data-visible="false">Has Edit</th>
+                        <th data-field="HasDelete" data-visible="false">Has Delete</th>
+                        <th data-field="HasApprove" data-visible="false">Has Approve</th>
+                        <th data-field="HasStatistic" data-visible="false">Has Statistic</th>
                         <th data-field="Name">Name</th>
-                        <th data-field="IsView">View</th>
-                        <th data-field="IsAdd">Add</th>
-                        <th data-field="IsEdit">Edit</th>
-                        <th data-field="IsDelete">Delete</th>
-                        <th data-field="IsApprove">Approve</th>
-                        <th data-field="IsStatistic">Statistic</th>
+                        <th data-field="IsView" data-align="center" data-formatter="booleanFormatter">View</th>
+                        <th data-field="IsAdd" data-align="center" data-formatter="booleanFormatter">Add</th>
+                        <th data-field="IsEdit" data-align="center" data-formatter="booleanFormatter">Edit</th>
+                        <th data-field="IsDelete" data-align="center" data-formatter="booleanFormatter">Delete</th>
+                        <th data-field="IsApprove" data-align="center" data-formatter="booleanFormatter">Approve</th>
+                        <th data-field="IsStatistic" data-align="center" data-formatter="booleanFormatter">Statistic</th>
                     </tr>
                     </thead>
                 </table>
@@ -45,7 +61,6 @@
     </div>
 
     <div class="modal-footer">
-        <button type="submit" id="btnSave" class="btn btn-success btn-sm"><i class="fas fa-check-square"></i> @(Model.IsEdit ? "Update" : "Create")</button>
         <button type="button" class="btn btn-danger btn-sm" onclick="closePopup();"><i class="fas fa-times-square"></i> Cancel</button>
     </div>
     }
@@ -53,13 +68,8 @@
 
 <script>
     $(document).ready(function () {
-        
+        $('#RolePermissionTable').bootstrapTable();
     })
-
-    function groupClick(groupId) {
-        $('#snhGroupId').val(groupId);
-        refreshRolePermissionGrid();
-    }
 
     function closePopup() {
         $('#modal-default').modal('hide');
@@ -67,5 +77,106 @@
 
     function refreshRolePermissionGrid() {
         $('#RolePermissionTable').bootstrapTable('refresh');
+    }
+
+    function getDataTable_Permission(params) {
+    
+        var url = '@Url.Action("GetListRolePermission", "Role")';
+        var data = params;
+        var rows = [];
+
+        $.get(url, data, function (response) {
+            if(response.data != null){
+                rows = [];
+                
+                response.data.forEach(function (item) {
+                    rows.push({
+                        Id: item.Id,
+                        Name: item.Name,
+                        ControllerName: item.ControllerName,
+                        IsView: item.IsView,
+                        IsAdd: item.IsAdd,
+                        IsEdit: item.IsEdit,
+                        IsDelete: item.IsDelete,
+                        IsApprove: item.IsApprove,
+                        IsStatistic: item.IsStatistic,
+                        HasView: item.HasView,
+                        HasAdd: item.HasAdd,
+                        HasEdit: item.HasEdit,
+                        HasDelete: item.HasDelete,
+                        HasApprove: item.HasApprove,
+                        HasStatistic: item.HasStatistic,
+                    })
+                });
+
+                $('#RolePermissionTable').bootstrapTable('load', rows);
+                
+            }
+        });
+    }
+
+    function booleanFormatter(value, row, index, field) {
+        var correspondingHasField;
+        
+        switch (field) {
+            case 'IsView':
+                correspondingHasField = row.HasView;
+                break;
+            case 'IsAdd':
+                correspondingHasField = row.HasAdd;
+                break;
+            case 'IsEdit':
+                correspondingHasField =row.HasEdit;
+                break;
+            case 'IsDelete':
+                correspondingHasField = row.HasDelete;
+                break;
+            case 'IsApprove':
+                correspondingHasField = row.HasApprove;
+                break;
+            case 'IsStatistic':
+                correspondingHasField = row.HasStatistic;
+                break;
+            default:
+                correspondingHasField = false;
+        }
+        
+        return `<input type="checkbox" onclick="setPermission(this)" ${value ? 'checked' : ''} ${correspondingHasField ? '' : 'disabled'} />`;
+    }
+
+    function setPermission(el) {
+        const parentElement = $(el).closest('tr')[0];
+        var index = $(parentElement).data('index');
+        const tableData = $('#RolePermissionTable').bootstrapTable('getData')[index];
+        
+        var data = {
+            Id: tableData.Id,
+            RoleId: "@ViewBag.RoleId",
+            ControllerName: tableData.ControllerName,
+            IsView: parentElement.cells[1].children[0].checked,
+            IsAdd: parentElement.cells[2].children[0].checked,
+            IsEdit: parentElement.cells[3].children[0].checked,
+            IsDelete: parentElement.cells[4].children[0].checked,
+            IsApprove: parentElement.cells[5].children[0].checked,
+            IsStatistic: parentElement.cells[6].children[0].checked,
+        };
+
+        $.ajax({
+            url: '@Url.Action("PostRolePermission", "Role")',
+            type: 'POST',
+            dataType: 'json',
+            data: data,
+            success: function (response) {
+                if (response.IsSuccess) {
+                    tableData.Id = response.Data;
+                }
+                else {
+                    notyf.error(response.Message);
+                }
+            },
+            error: function (request, status, err) {
+                notyf.error("Error: Can't update permission");
+            }
+        });
     }
 </script>

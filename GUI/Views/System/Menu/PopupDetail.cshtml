@@ -1,10 +1,6 @@
 @using GUI.Constants
 @model DTO.System.Menu.Dtos.MenuDto
 
-@{
-    var comboboxGroupPermission = ViewBag.Combobox_GroupPermission as List<SelectListItem> ?? [];
-}
-
 <div class="modal-content modal-snhcenter" id="modalLoading">
     @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "frmMenu", @class = "form-detail" }))
     {
@@ -51,8 +47,7 @@
         <div class="row form-group">
             <label class="col-sm-2 form-label">Group Permission <span class="text-danger">(*)</span></label>
             <div class="col-sm-4">
-                <select asp-for="GroupPermissionId" asp-items=""></select>
-                <option value=""> -- Select group permission --</option>
+                <select asp-for="GroupPermissionId"></select>
                 @(Html.ValidationMessageFor(model => model.GroupPermissionId, "Group permission field is required", new {@class = "text-danger" }))
             </div>
             <label class="col-sm-2 form-label">Active </label>
@@ -67,18 +62,36 @@
             </div>
             <label class="col-sm-2 form-label">Show on menu</label>
             <div class="col-sm-4">
-                @(Html.CheckBoxFor(model => model.IsShowMenu))
+                @(Html.CheckBoxFor(model => model.IsShowMenu, new { @style = "width: auto;" }))
             </div>
         </div>
         <div class="row form-group">
-            <label class="col-sm-2 form-label">Set permission</label>
-            <div class="col-sm-10">
-                @(Html.CheckBoxFor(model => model.HasView))
-                @(Html.CheckBoxFor(model => model.HasAdd))
-                @(Html.CheckBoxFor(model => model.HasEdit))
-                @(Html.CheckBoxFor(model => model.HasDelete))
-                @(Html.CheckBoxFor(model => model.HasApprove))
-                @(Html.CheckBoxFor(model => model.HasStatistic))
+            <label class="col-sm-12 form-label">Set permission</label>
+        </div>
+        <div class="row form-group">
+            <div class="col-sm-2">
+                @(Html.CheckBoxFor(model => model.HasView, new { @style = "width: auto;" }))
+                <label class="col-sm-2 form-label"> View</label>
+            </div>
+            <div class="col-sm-2">
+                @(Html.CheckBoxFor(model => model.HasAdd, new { @style = "width: auto;" }))
+                <label class="col-sm-2 form-label"> Add</label>
+            </div>
+            <div class="col-sm-2">
+                @(Html.CheckBoxFor(model => model.HasEdit, new { @style = "width: auto;" }))
+                <label class="col-sm-2 form-label"> Edit</label>
+            </div>
+            <div class="col-sm-2">
+                @(Html.CheckBoxFor(model => model.HasDelete, new { @style = "width: auto;" }))
+                <label class="col-sm-2 form-label"> Delete</label>
+            </div>
+            <div class="col-sm-2">
+                @(Html.CheckBoxFor(model => model.HasApprove, new { @style = "width: auto;" }))
+                <label class="col-sm-2 form-label"> Approve</label>
+            </div>
+            <div class="col-sm-2">
+                @(Html.CheckBoxFor(model => model.HasStatistic, new { @style = "width: auto;" }))
+                <label class="col-sm-2 form-label"> Statistic</label>
             </div>
         </div>
     </div>
@@ -125,6 +138,34 @@
 
             } else {
                 $("#frmMenu").find("span.field-validation-valid").show();
+            }
+        });
+        
+        // Get Combobox Group Permission
+        $.ajax({
+            url: '/GroupPermission/GetList_Combobox',
+            type: "GET",
+            success: function (data) {
+                if (data.IsSuccess) {
+                    let select = $("#GroupPermissionId");
+                    select.empty();
+
+                    select.append($('<option>', {
+                        value: '',
+                        text: '-- Select group --'
+                    }));
+                    
+                    $.each(data.Data, function (index, item) {
+                        select.append($('<option>', {
+                            value: item.Value,
+                            text : item.Text
+                        }));
+                    });
+
+                    select.val("@Model.GroupPermissionId");
+                }
+                else {
+                }
             }
         });
     })
