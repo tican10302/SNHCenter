@@ -1,4 +1,11 @@
-﻿<style>
+﻿@using DTO.System.Account.Models
+@using DTO.System.Menu.Models
+@{
+    var menu = ViewBag.Menu as List<GroupPermissionModel>;
+    var menuItem = ViewBag.MenuItem as List<MenuModel>;
+}
+
+<style>
     li {
         list-style: none;
     }
@@ -133,90 +140,22 @@
         @*     </ul> *@
         @* </li> *@
     </ul>
-    <hr class="hr" />
     <ul class="sidebar-nav">
-        <li class="sidebar-header">
-            Management
-        </li>
-        <li class="sidebar-item">
-            <a href="@Url.Action("Index", "Home")" class="sidebar-link">
-                <i class="fa-solid fa-chalkboard-user"></i>
-                Teacher
-            </a>
-        </li>
-        <li class="sidebar-item">
-            <a href="@Url.Action("Index", "Home")" class="sidebar-link">
-                <i class="fa-solid fa-graduation-cap"></i>
-                Student
-            </a>
-        </li>
-        <li class="sidebar-item">
-            <a href="@Url.Action("Index", "Home")" class="sidebar-link">
-                <i class="fa-solid fa-book"></i>
-                Course
-            </a>
-        </li>
-    </ul>
-
-    <hr class="hr" />
-    <ul class="sidebar-nav">
-        <li class="sidebar-header">
-            Category
-        </li>
-        <li class="sidebar-item">
-            <a href="@Url.Action("Index", "Shift")" class="sidebar-link">
-                <i class="fa-solid fa-calendar"></i>
-                Shift
-            </a>
-        </li>
-        <li class="sidebar-item">
-            <a href="@Url.Action("Index", "Home")" class="sidebar-link">
-                <i class="fa-solid fa-graduation-cap"></i>
-                Student
-            </a>
-        </li>
-        <li class="sidebar-item">
-            <a href="@Url.Action("Index", "Home")" class="sidebar-link">
-                <i class="fa-solid fa-book"></i>
-                Course
-            </a>
-        </li>
-        <li class="sidebar-item">
-            <a href="@Url.Action("Index", "Program")" class="sidebar-link">
-                <i class="fa-solid fa-gears"></i>
-                Program
-            </a>
-        </li>
-        <li class="sidebar-item">
-            <a href="@Url.Action("Index", "Parent")" class="sidebar-link">
-                <i class="fa-solid fa-person-breastfeeding"></i>
-                Parent
-            </a>
-        </li>
-    </ul>
-
-    <hr class="hr" />
-    <ul class="sidebar-nav">
-        <li class="sidebar-header">
-            System
-        </li>
-        <li class="sidebar-item">
-            <a href="@Url.Action("Index", "Role")" class="sidebar-link">
-                <i class="fa-solid fa-calendar"></i>
-                Role
-            </a>
-        </li>
-        <li class="sidebar-item">
-            <a href="@Url.Action("Index", "Menu")" class="sidebar-link">
-                <i class="fa-solid fa-calendar"></i>
-                Menu
-            </a>
-        </li>
-        <li class="sidebar-item">
-            <a href="@Url.Action("Index", "GroupPermission")" class="sidebar-link">
-                <i class="fa-solid fa-book"></i>
-                Group Permission
-            </a>
-        </li>
+        @foreach(var item in menu)
+        {
+            <hr class="hr" />
+            <li class="sidebar-header">
+                @item.Name
+            </li>
+            @foreach(var subItem in menuItem.Where(x => x.GroupPermissionId == item.Id))
+            {
+                <li class="sidebar-item">
+                    <a href="@Url.Action(subItem.Action, subItem.Controller)" class="sidebar-link">
+                        <i class="fa-solid fa-list-ul"></i>
+                        @subItem.Name
+                    </a>
+                </li>
+            }
+        }
     </ul>
 </div>

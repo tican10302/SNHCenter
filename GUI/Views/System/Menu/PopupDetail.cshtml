@@ -1,0 +1,177 @@
+@using GUI.Constants
+@model DTO.System.Menu.Dtos.MenuDto
+
+<div class="modal-content modal-snhcenter" id="modalLoading">
+    @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "frmMenu", @class = "form-detail" }))
+    {
+    @Html.AntiForgeryToken()
+    <div class="modal-header">
+        @if (!Model.IsEdit)
+        {
+        <h4 class="modal-title">Create Menu</h4>
+        }
+        else
+        {
+        <h4 class="modal-title">Update Menu</h4>
+        }
+        <button type="button" class="btn-close" onclick="closePopup();" aria-label="Close" data-bs-dimiss="modal"></button>
+    </div>
+
+    <div class="modal-body">
+        @Html.HiddenFor(m => m.Id)
+        @Html.HiddenFor(m => m.IsEdit)
+        <div class="row form-group">
+            <label class="col-sm-2 form-label">Name <span class="text-danger">(*)</span></label>
+            <div class="col-sm-4">
+                @(Html.TextBoxFor(model => model.Name, new { @placeholder = "Enter name" }))
+                @(Html.ValidationMessageFor(model => model.Name, "Name field is required", new {@class = "text-danger" }))
+            </div>
+            <label class="col-sm-2 form-label">Controller Name <span class="text-danger">(*)</span></label>
+            <div class="col-sm-4">
+                @(Html.TextBoxFor(model => model.ControllerName, new { @placeholder = "Enter controller name" }))
+                @(Html.ValidationMessageFor(model => model.ControllerName, "Controller name field is required", new {@class = "text-danger" }))
+            </div>
+        </div>
+        <div class="row form-group">
+            <label class="col-sm-2 form-label">Controller <span class="text-danger">(*)</span></label>
+            <div class="col-sm-4">
+                @(Html.TextBoxFor(model => model.Controller, new { @placeholder = "Enter controller" }))
+                @(Html.ValidationMessageFor(model => model.Controller, "Controller field is required", new {@class = "text-danger" }))
+            </div>
+            <label class="col-sm-2 form-label">Action <span class="text-danger">(*)</span></label>
+            <div class="col-sm-4">
+                @(Html.TextBoxFor(model => model.Action, new { @placeholder = "Enter action" }))
+                @(Html.ValidationMessageFor(model => model.Action, "Action field is required", new {@class = "text-danger" }))
+            </div>
+        </div>
+        <div class="row form-group">
+            <label class="col-sm-2 form-label">Group Permission <span class="text-danger">(*)</span></label>
+            <div class="col-sm-4">
+                <select asp-for="GroupPermissionId"></select>
+                @(Html.ValidationMessageFor(model => model.GroupPermissionId, "Group permission field is required", new {@class = "text-danger" }))
+            </div>
+            <label class="col-sm-2 form-label">Active </label>
+            <div class="col-sm-4">
+                <select asp-for="IsActived" asp-items="@SYS_CONFIG.ISACTIVE"></select>
+            </div>
+        </div>
+        <div class="row form-group">
+            <label class="col-sm-2 form-label">Sort</label>
+            <div class="col-sm-4">
+                @(Html.TextBoxFor(model => model.Sort, new { @type = "number", @placeholder = "Enter sort", @min = 0 }))
+            </div>
+            <label class="col-sm-2 form-label">Show on menu</label>
+            <div class="col-sm-4">
+                @(Html.CheckBoxFor(model => model.IsShowMenu, new { @style = "width: auto;" }))
+            </div>
+        </div>
+        <div class="row form-group">
+            <label class="col-sm-12 form-label">Set permission</label>
+        </div>
+        <div class="row form-group">
+            <div class="col-sm-2">
+                @(Html.CheckBoxFor(model => model.HasView, new { @style = "width: auto;" }))
+                <label class="col-sm-2 form-label"> View</label>
+            </div>
+            <div class="col-sm-2">
+                @(Html.CheckBoxFor(model => model.HasAdd, new { @style = "width: auto;" }))
+                <label class="col-sm-2 form-label"> Add</label>
+            </div>
+            <div class="col-sm-2">
+                @(Html.CheckBoxFor(model => model.HasEdit, new { @style = "width: auto;" }))
+                <label class="col-sm-2 form-label"> Edit</label>
+            </div>
+            <div class="col-sm-2">
+                @(Html.CheckBoxFor(model => model.HasDelete, new { @style = "width: auto;" }))
+                <label class="col-sm-2 form-label"> Delete</label>
+            </div>
+            <div class="col-sm-2">
+                @(Html.CheckBoxFor(model => model.HasApprove, new { @style = "width: auto;" }))
+                <label class="col-sm-2 form-label"> Approve</label>
+            </div>
+            <div class="col-sm-2">
+                @(Html.CheckBoxFor(model => model.HasStatistic, new { @style = "width: auto;" }))
+                <label class="col-sm-2 form-label"> Statistic</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="submit" id="btnSave" class="btn btn-success btn-sm"><i class="fas fa-check-square"></i> @(Model.IsEdit ? "Update" : "Create")</button>
+        <button type="button" class="btn btn-danger btn-sm" onclick="closePopup();"><i class="fas fa-times-square"></i> Cancel</button>
+    </div>
+    }
+</div>
+
+<script>
+    $(document).ready(function () {
+        $("#frmMenu").find("span.field-validation-valid").hide();
+
+        //Save
+        $("#frmMenu").submit(async function (event) {
+            event.preventDefault();
+
+            if ($("#frmMenu").valid()) {
+                showLoading();
+
+                $.ajax({
+                    url: '/Menu/Post',
+                    type: "POST",
+                    data: $("#frmMenu").serialize(),
+                    success: function (data) {
+                        if (data.IsSuccess) {
+                            if (data.Data) {
+                                notyf.success(updateSuccess);
+                            }
+                            else {
+                                notyf.success(addSuccess);
+                            }
+                            hideLoading();
+                            closePopup();
+                        }
+                        else {
+                            notyf.error(data.Message);
+                            hideLoading();
+                        }
+                    }
+                });
+
+            } else {
+                $("#frmMenu").find("span.field-validation-valid").show();
+            }
+        });
+        
+        // Get Combobox Group Permission
+        $.ajax({
+            url: '/GroupPermission/GetList_Combobox',
+            type: "GET",
+            success: function (data) {
+                if (data.IsSuccess) {
+                    let select = $("#GroupPermissionId");
+                    select.empty();
+
+                    select.append($('<option>', {
+                        value: '',
+                        text: '-- Select group --'
+                    }));
+                    
+                    $.each(data.Data, function (index, item) {
+                        select.append($('<option>', {
+                            value: item.Value,
+                            text : item.Text
+                        }));
+                    });
+
+                    select.val("@Model.GroupPermissionId");
+                }
+                else {
+                }
+            }
+        });
+    })
+
+    function closePopup() {
+        $('#modal-default').modal('hide');
+        refreshGrid();
+    }
+</script>

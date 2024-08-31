@@ -251,7 +251,9 @@ namespace REPOSITORY.System.Role
                 parameters.Add("@iGroupId", request.GroupId);
                 parameters.Add("@iRoleId", request.RoleId);
 
-                response.Data = await unitOfWork.GetRepository<Role_PermissionModel>().ExecWithStoreProcedure("sp_Sys_Account_GetPermission", parameters);
+                var data = await unitOfWork.GetRepository<Role_PermissionModel>().ExecWithStoreProcedure("sp_Sys_Account_GetPermission", parameters);
+
+                response.Data = data;
             }
             catch (Exception ex)
             {
@@ -274,8 +276,7 @@ namespace REPOSITORY.System.Role
                 {
                     request.Id = Guid.NewGuid();
                     var add = mapper.Map<DAL.Entities.Permission>(request);
-                    unitOfWork.GetRepository<DAL.Entities.Permission>().AddAsync(add);
-                    unitOfWork.CommitAsync();
+                    await unitOfWork.GetRepository<DAL.Entities.Permission>().AddAsync(add);
                     response.Data = mapper.Map<Role_PermissionModel>(add);
                 }
                 else
@@ -286,10 +287,10 @@ namespace REPOSITORY.System.Role
                     resultUpdate.IsStatistic = request.IsStatistic;
                     resultUpdate.IsView = request.IsView;
                     resultUpdate.IsDelete = request.IsDelete;
-                    unitOfWork.GetRepository<DAL.Entities.Permission>().UpdateAsync(resultUpdate);
-                    unitOfWork.CommitAsync();
+                    await unitOfWork.GetRepository<DAL.Entities.Permission>().UpdateAsync(resultUpdate);
                     response.Data = mapper.Map<Role_PermissionModel>(resultUpdate);
                 }
+                await unitOfWork.CommitAsync();
             }
             catch (Exception ex)
             {

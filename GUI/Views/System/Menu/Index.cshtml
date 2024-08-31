@@ -2,7 +2,7 @@
 <div>
     <div class="title">
         <h2 class="title-content">
-            Role
+            Menu
         </h2>
     </div>
     <div class="content">
@@ -11,32 +11,37 @@
             <div class="row">
                 <div class="col-md-6">
                     <div id="toolbar">
-                        <button class="btn btn-primary" onclick="showData()"><i class="fa-solid fa-eye"></i> View</button>
                         <button class="btn btn-success" onclick="addData()"><i class="fa-solid fa-plus"></i> Add</button>
                         <button class="btn btn-warning" onclick="updateData()"><i class="fa-solid fa-pen"></i> Update</button>
-                        <button class="btn btn-secondary" onclick="setPermissionData()"><i class="fa-solid fa-gears"></i> Set Permission</button>
-                        <button class="btn btn-danger" onclick="deleteData()"><i class="fa-solid fa-trash"></i> Delete</button>
                     </div>
                 </div>
             </div>
 
             <table class="bootstrap-table"
-                   id="RoleTable"
+                   id="MenuTable"
                    data-toggle="table"
                    data-height="460"
                    data-ajax="getDataTable"
                    data-search="true"
                    data-side-pagination="server"
-                   data-pagination="true"
                    data-click-to-select="true"
                    data-toolbar="#toolbar">
                 <thead class="content-table-header">
                 <tr>
                     <th data-checkbox="true"></th>
-                    <th data-formatter="sortTable" data-align="center" data-width="250">No.</th>
+                    <th data-formatter="sortTable" data-align="center">No.</th>
                     <th data-field="Id" data-visible="false">ID</th>
-                    <th data-field="RoleCode" data-align="center" data-width="250">Role Code</th>
                     <th data-field="Name">Name</th>
+                    <th data-field="ControllerName">Controller Name</th>
+                    <th data-field="Controller">Controller</th>
+                    <th data-field="Action">Action</th>
+                    <th data-field="HasView" data-align="center" data-formatter="booleanFormatter">View</th>
+                    <th data-field="HasAdd" data-align="center" data-formatter="booleanFormatter">Add</th>
+                    <th data-field="HasEdit" data-align="center" data-formatter="booleanFormatter">Edit</th>
+                    <th data-field="HasDelete" data-align="center" data-formatter="booleanFormatter">Delete</th>
+                    <th data-field="HasApprove" data-align="center" data-formatter="booleanFormatter">Approve</th>
+                    <th data-field="HasStatistic" data-align="center" data-formatter="booleanFormatter">Statistic</th>
+                    <th data-field="IsActived" data-align="center" data-formatter="activeFormatter">Active</th>
                 </tr>
                 </thead>
             </table>
@@ -51,7 +56,7 @@
 
 <script>
     function getIdSelections() {
-        return $.map($('#RoleTable').bootstrapTable('getSelections'), function (row) {
+        return $.map($('#MenuTable').bootstrapTable('getSelections'), function (row) {
             return row.Id
         })
     }
@@ -59,7 +64,7 @@
     function showData() {
         var selectedRows = getIdSelections();
         if (selectedRows.length == 1) {
-            var url = '@Url.Action("ShowViewPopup", "Role")' + "?id=" + selectedRows[0];
+            var url = '@Url.Action("ShowViewPopup", "Menu")' + "?id=" + selectedRows[0];
 
             $.get(url, function (data) {
                 $('#modelContainer').html(data);
@@ -71,7 +76,7 @@
     }
 
     function addData() {
-        var url = '@Url.Action("ShowInsertPopup", "Role")';
+        var url = '@Url.Action("ShowInsertPopup", "Menu")';
 
         $.get(url, function (data) {
             $('#modelContainer').html(data);
@@ -82,7 +87,7 @@
     function updateData() {
         var selectedRows = getIdSelections();
         if (selectedRows.length == 1) {
-            var url = '@Url.Action("ShowUpdatePopup", "Role")' + "?id=" + selectedRows[0];
+            var url = '@Url.Action("ShowUpdatePopup", "Menu")' + "?id=" + selectedRows[0];
 
             $.get(url, function (data) {
                 $('#modelContainer').html(data);
@@ -96,7 +101,7 @@
     function setPermissionData() {
         var selectedRows = getIdSelections();
         if (selectedRows.length == 1) {
-            var url = '@Url.Action("ShowPermissionPopup", "Role")' + "?id=" + selectedRows[0];
+            var url = '@Url.Action("ShowPermissionPopup", "Menu")' + "?id=" + selectedRows[0];
 
             $.get(url, function (data) {
                 $('#modelContainer').html(data);
@@ -113,7 +118,7 @@
             var deleteData = function () {
                 showLoading();
                 $.ajax({
-                    url: '@Url.Action("Delete", "Role")',
+                    url: '@Url.Action("Delete", "Menu")',
                     type: 'POST',
                     dataType: 'json',
                     data: {
@@ -141,7 +146,7 @@
     }
 
     function getDataTable(params) {
-        var url = '@Url.Action("GetList", "Role")';
+        var url = '@Url.Action("GetList", "Menu")';
         var data = params.data;
 
         $.get(url, data, function (response) {
@@ -153,13 +158,29 @@
     }
 
     function refreshGrid() {
-        $('#RoleTable').bootstrapTable('refresh');
+        $('#MenuTable').bootstrapTable('refresh');
     }
 
     function sortTable(value, row, index) {
-        var pageSize = $('#RoleTable').bootstrapTable('getOptions').pageSize;
-        var pageNumber = $('#RoleTable').bootstrapTable('getOptions').pageNumber;
+        var pageSize = $('#MenuTable').bootstrapTable('getOptions').pageSize;
+        var pageNumber = $('#MenuTable').bootstrapTable('getOptions').pageNumber;
         return (pageNumber - 1) * pageSize + index + 1;
     }
-    
+
+    function booleanFormatter(value, row, index) {
+        if (value) {
+            return '<span style="color: #0d6efd"><i class="fa-solid fa-check"></i></span>';
+        } else {
+            return '<span style="color: #dc3545;"><i class="fa-solid fa-xmark"></i></span>';
+        }
+    }
+
+    function activeFormatter(value, row, index) {
+        if (value) {
+            return '<span style="color: #0d6efd;">Online</span>';
+        } else {
+            return '<span style="color: #dc3545;">Offline</span>';
+        }
+    }
+
 </script>

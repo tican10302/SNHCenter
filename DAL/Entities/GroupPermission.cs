@@ -1,4 +1,7 @@
-﻿namespace DAL.Entities
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace DAL.Entities
 {
     public class GroupPermission
     {
@@ -7,7 +10,10 @@
             Sort = 0;
             IsActived = true;
         }
-        public Guid Id { get; set; }
+
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid Id { get; set; } = new();
         public required string Name { get; set; }
         public int Sort { get; set; }
         public string? Icon { get; set; }

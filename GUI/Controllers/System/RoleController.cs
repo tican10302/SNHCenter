@@ -6,6 +6,7 @@ using DTO.System.Role.Models;
 using GUI.Constants;
 using GUI.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 
 namespace GUI.Controllers.System
@@ -145,7 +146,7 @@ namespace GUI.Controllers.System
         {
             try
             {
-                var listGroup = new List<ComboboxModel>();
+                var listGroup = new List<SelectListItem>();
 
                 ResponseData response = this.PostAPI(URL_API.GROUPPERMISSION_GETALL, new GetAllRequest());
 
@@ -153,7 +154,7 @@ namespace GUI.Controllers.System
                 {
                     var data = JsonConvert.DeserializeObject<List<GroupPermissionModel>>(response.Data.ToString());
             
-                    listGroup = data.Select(x => new ComboboxModel()
+                    listGroup = data.Select(x => new SelectListItem()
                     {
                         Text = x.Name,
                         Value = x.Id.ToString()

@@ -37,6 +37,13 @@ public class URL_API
     public const string ROLE_GETALLFORCOMBOBOX = "role/get-all-for-combobox";
     public const string ROLE_GETLISTROLEPERMISSION = "role/get-list-role-permission";
     public const string ROLE_POSTROLEPERMISSION = "role/post-role-permission";
+    
+    // Menu
+    public const string MENU_GETLIST = "menu/get-list";
+    public const string MENU_GETBYPOST = "menu/get-by-post";
+    public const string MENU_GETBYID = "menu/get-by-id";
+    public const string MENU_INSERT = "menu/insert";
+    public const string MENU_UPDATE = "menu/update";
 
     #endregion
 
@@ -48,5 +55,13 @@ public class URL_API
     public const string SHIFT_INSERT = "shift/insert";
     public const string SHIFT_UPDATE = "shift/update";
     public const string SHIFT_DELETELIST = "shift/delete-list";
+
+    //Program
+    public const string PROGRAM_GETLIST = "program/get-list-paging";
+    public const string PROGRAM_GETBYPOST = "program/get-by-post";
+    public const string PROGRAM_GETBYID = "program/get-by-id";
+    public const string PROGRAM_INSERT = "program/insert";
+    public const string PROGRAM_UPDATE = "program/update";
+    public const string PROGRAM_DELETELIST = "program/delete-list";
     #endregion
 }

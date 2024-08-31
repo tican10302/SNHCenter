@@ -4,6 +4,7 @@ using DAL.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240831083948_update-grouppermission-and-menu")]
+    partial class updategrouppermissionandmenu
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -211,6 +214,9 @@ namespace DAL.Migrations
                     b.Property<bool>("IsActived")
                         .HasColumnType("bit");
 
+                    b.Property<Guid?>("MenuId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -219,6 +225,10 @@ namespace DAL.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("MenuId")
+                        .IsUnique()
+                        .HasFilter("[MenuId] IS NOT NULL");
 
                     b.ToTable("GroupPermissions");
                 });
@@ -416,9 +426,6 @@ namespace DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("GroupPermissionId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<bool>("HasAdd")
                         .HasColumnType("bit");
 
@@ -451,8 +458,6 @@ namespace DAL.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("GroupPermissionId");
 
                     b.ToTable("Menu");
                 });
@@ -935,6 +940,15 @@ namespace DAL.Migrations
                     b.Navigation("Shift");
                 });
 
+            modelBuilder.Entity("DAL.Entities.GroupPermission", b =>
+                {
+                    b.HasOne("DAL.Entities.Menu", "Menu")
+                        .WithOne("GroupPermission")
+                        .HasForeignKey("DAL.Entities.GroupPermission", "MenuId");
+
+                    b.Navigation("Menu");
+                });
+
             modelBuilder.Entity("DAL.Entities.Homework", b =>
                 {
                     b.HasOne("DAL.Entities.Student", "Student")
@@ -970,17 +984,6 @@ namespace DAL.Migrations
                         .HasForeignKey("DAL.Entities.Level", "CourseId");
 
                     b.Navigation("Course");
-                });
-
-            modelBuilder.Entity("DAL.Entities.Menu", b =>
-                {
-                    b.HasOne("DAL.Entities.GroupPermission", "GroupPermission")
-                        .WithMany()
-                        .HasForeignKey("GroupPermissionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("GroupPermission");
                 });
 
             modelBuilder.Entity("DAL.Entities.Permission", b =>
@@ -1072,6 +1075,12 @@ namespace DAL.Migrations
             modelBuilder.Entity("DAL.Entities.Level", b =>
                 {
                     b.Navigation("Program")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("DAL.Entities.Menu", b =>
+                {
+                    b.Navigation("GroupPermission")
                         .IsRequired();
                 });
 #pragma warning restore 612, 618

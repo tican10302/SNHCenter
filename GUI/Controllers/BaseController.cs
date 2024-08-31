@@ -187,10 +187,10 @@ namespace GUI.Controllers
                 var readTask = result.Content.ReadAsStringAsync();
                 readTask.Wait();
 
-                if (readTask == null)
+                if (string.IsNullOrEmpty(readTask.Result))
                 {
                     response.Status = false;
-                    response.Message = "Error system";
+                    response.Message = "Error system: Path not found";
                 }
                 else
                 {

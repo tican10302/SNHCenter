@@ -102,6 +102,11 @@
             margin-bottom: 16px;
         }
         
+        .login-card-form-check-password {
+            display: flex;
+            justify-content: space-between;
+        }
+        
         .login-card-form-remember-password {
             display: flex;
             align-items: center;
@@ -194,14 +199,18 @@
                 <div class="login-card-form-row mb-24">
                     <div class="login-card-form-column">
                         <label class="login-card-form-row-title">Password:</label>
-                        <a href="#">Forget Password?</a>
                     </div>
                     <input id="Password" name="password" placeholder="••••••••" type="password" required/>
                     @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
                 </div>
-                <div class="login-card-form-remember-password">
-                    <input type="checkbox"/>
-                    <span>Remember Password</span>
+                <div class="login-card-form-check-password">
+                    <div class="login-card-form-remember-password">
+                        <input type="checkbox"/>
+                        <span>&nbsp;Remember Password</span>
+                    </div>
+                    <div class="login-card-form-forget-password">
+                        <a href="#">Forget Password?</a>
+                    </div>
                 </div>
             </div>
             <div class="login-card-button">

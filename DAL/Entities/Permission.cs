@@ -8,7 +8,8 @@ namespace DAL.Entities
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; } = new();
-        public required Role Role { get; set; }
+        public Role? Role { get; set; }
+        public Guid RoleId { get; set; }
         public required string ControllerName { get; set; }
         public bool IsView { get; set; }
         public bool IsAdd { get; set; }
