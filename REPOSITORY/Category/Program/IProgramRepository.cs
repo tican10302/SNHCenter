@@ -10,7 +10,7 @@ using DTO.Category.Program.Dtos;
 
 namespace REPOSITORY.Category
 {
-    public interface IsProgramRepository
+    public interface IProgramRepository
     {
         Task<BaseResponse<GetListPagingResponse>> GetListPaging(GetListPagingRequest request);
         Task<BaseResponse<ProgramDto>> GetByPost(GetByIdRequest request);

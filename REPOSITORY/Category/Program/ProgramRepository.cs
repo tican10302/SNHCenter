@@ -16,7 +16,7 @@ using DTO.Category.Shift.Models;
 namespace REPOSITORY.Category;
 
 [RegisterClassAsTransient]
-public class ProgramRepository(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor) : IsProgramRepository
+public class ProgramRepository(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor) : IProgramRepository
 {
     public async Task<BaseResponse<string>> DeLeteList(DeleteListRequest request)
     {
@@ -109,7 +109,8 @@ public class ProgramRepository(IUnitOfWork unitOfWork, IMapper mapper, IHttpCont
         {
             var result = new ProgramDto();
             var data = await unitOfWork.GetRepository<Program>().GetByIdAsync(request.Id);
-            if (result == null)
+
+            if (data == null)
             {
                 result.Id = Guid.NewGuid();
                 result.IsEdit = false;
@@ -117,12 +118,11 @@ public class ProgramRepository(IUnitOfWork unitOfWork, IMapper mapper, IHttpCont
             else
             {
                 result = mapper.Map<ProgramDto>(data);
-                //result.SelectDays = data.Days.Split(", ").ToList();
+                // result.SelectDays = data.Days.Split(", ").ToList(); 
                 result.IsEdit = true;
             }
 
             response.Data = result;
-
         }
         catch (Exception ex)
         {
@@ -132,6 +132,7 @@ public class ProgramRepository(IUnitOfWork unitOfWork, IMapper mapper, IHttpCont
 
         return response;
     }
+
 
     public async Task<BaseResponse<GetListPagingResponse>> GetListPaging(GetListPagingRequest request)
     {
@@ -146,12 +147,6 @@ public class ProgramRepository(IUnitOfWork unitOfWork, IMapper mapper, IHttpCont
             parameters.Add("@oTotalRow", dbType: DbType.Int64, direction: ParameterDirection.Output);
 
             var result = await unitOfWork.GetRepository<ProgramModel>().ExecWithStoreProcedure("sp_Category_Program_GetListPaging", parameters);
-            /*
-            foreach (var item in result)
-            {
-                item.SelectDays = item.Days.Split(", ").ToList();
-            }
-            */
 
             var totalRow = parameters.Get<long>("@oTotalRow");
             var responseData = new GetListPagingResponse
@@ -188,8 +183,6 @@ public class ProgramRepository(IUnitOfWork unitOfWork, IMapper mapper, IHttpCont
             }
 
             var entity = mapper.Map<Program>(request);
-            //request.SelectDays = request.SelectDays?.Where(x => x != "false").ToList();
-            //entity.Days = string.Join(", ", request.SelectDays);
             entity.CreatedBy = httpContextAccessor.HttpContext.User.Identity.Name;
             entity.CreatedAt = DateTime.Now; ;
             entity.UpdatedBy = httpContextAccessor.HttpContext.User.Identity.Name;
@@ -235,9 +228,6 @@ public class ProgramRepository(IUnitOfWork unitOfWork, IMapper mapper, IHttpCont
             }
             var entity = mapper.Map(request, data);
 
-            //entity.Days = string.Join(", ", request.SelectDays);
-            //request.SelectDays = request.SelectDays?.Where(x => x != "false").ToList();
-            //entity.Days = string.Join(", ", request.SelectDays);
             entity.UpdatedAt = DateTime.Now;
             entity.UpdatedBy = httpContextAccessor.HttpContext.User.Identity.Name;
 
