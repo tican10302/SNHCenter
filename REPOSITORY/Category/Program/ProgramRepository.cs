@@ -147,12 +147,6 @@ public class ProgramRepository(IUnitOfWork unitOfWork, IMapper mapper, IHttpCont
             parameters.Add("@oTotalRow", dbType: DbType.Int64, direction: ParameterDirection.Output);
 
             var result = await unitOfWork.GetRepository<ProgramModel>().ExecWithStoreProcedure("sp_Category_Program_GetListPaging", parameters);
-            /*
-            foreach (var item in result)
-            {
-                item.SelectDays = item.Days.Split(", ").ToList();
-            }
-            */
 
             var totalRow = parameters.Get<long>("@oTotalRow");
             var responseData = new GetListPagingResponse
@@ -189,8 +183,6 @@ public class ProgramRepository(IUnitOfWork unitOfWork, IMapper mapper, IHttpCont
             }
 
             var entity = mapper.Map<Program>(request);
-            //request.SelectDays = request.SelectDays?.Where(x => x != "false").ToList();
-            //entity.Days = string.Join(", ", request.SelectDays);
             entity.CreatedBy = httpContextAccessor.HttpContext.User.Identity.Name;
             entity.CreatedAt = DateTime.Now; ;
             entity.UpdatedBy = httpContextAccessor.HttpContext.User.Identity.Name;
@@ -236,9 +228,6 @@ public class ProgramRepository(IUnitOfWork unitOfWork, IMapper mapper, IHttpCont
             }
             var entity = mapper.Map(request, data);
 
-            //entity.Days = string.Join(", ", request.SelectDays);
-            //request.SelectDays = request.SelectDays?.Where(x => x != "false").ToList();
-            //entity.Days = string.Join(", ", request.SelectDays);
             entity.UpdatedAt = DateTime.Now;
             entity.UpdatedBy = httpContextAccessor.HttpContext.User.Identity.Name;
 

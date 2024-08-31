@@ -4,6 +4,7 @@ using DAL.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240831072546_update-2024-08-31-14-35")]
+    partial class update202408311435
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -164,7 +167,7 @@ namespace DAL.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<Guid?>("LessonId")
+                    b.Property<Guid>("LessonId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
@@ -191,8 +194,7 @@ namespace DAL.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("LessonId")
-                        .IsUnique()
-                        .HasFilter("[LessonId] IS NOT NULL");
+                        .IsUnique();
 
                     b.HasIndex("ShiftId");
 
@@ -306,7 +308,7 @@ namespace DAL.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<Guid?>("HomeworkId")
+                    b.Property<Guid>("HomeworkId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("HourDone")
@@ -337,8 +339,7 @@ namespace DAL.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("HomeworkId")
-                        .IsUnique()
-                        .HasFilter("[HomeworkId] IS NOT NULL");
+                        .IsUnique();
 
                     b.HasIndex("UserId");
 
@@ -351,7 +352,7 @@ namespace DAL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("CourseId")
+                    b.Property<Guid>("CourseId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
@@ -392,8 +393,7 @@ namespace DAL.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CourseId")
-                        .IsUnique()
-                        .HasFilter("[CourseId] IS NOT NULL");
+                        .IsUnique();
 
                     b.ToTable("Levels");
                 });
@@ -576,7 +576,7 @@ namespace DAL.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<Guid?>("LevelId")
+                    b.Property<Guid>("LevelId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
@@ -593,8 +593,7 @@ namespace DAL.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("LevelId")
-                        .IsUnique()
-                        .HasFilter("[LevelId] IS NOT NULL");
+                        .IsUnique();
 
                     b.ToTable("Programs");
                 });
@@ -922,7 +921,9 @@ namespace DAL.Migrations
                 {
                     b.HasOne("DAL.Entities.Lesson", "Lesson")
                         .WithOne("Course")
-                        .HasForeignKey("DAL.Entities.Course", "LessonId");
+                        .HasForeignKey("DAL.Entities.Course", "LessonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("DAL.Entities.Shift", "Shift")
                         .WithMany()
@@ -950,7 +951,9 @@ namespace DAL.Migrations
                 {
                     b.HasOne("DAL.Entities.Homework", "Homework")
                         .WithOne("Lesson")
-                        .HasForeignKey("DAL.Entities.Lesson", "HomeworkId");
+                        .HasForeignKey("DAL.Entities.Lesson", "HomeworkId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("DAL.Entities.User", "User")
                         .WithMany()
@@ -967,7 +970,9 @@ namespace DAL.Migrations
                 {
                     b.HasOne("DAL.Entities.Course", "Course")
                         .WithOne("Level")
-                        .HasForeignKey("DAL.Entities.Level", "CourseId");
+                        .HasForeignKey("DAL.Entities.Level", "CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Course");
                 });
@@ -998,7 +1003,9 @@ namespace DAL.Migrations
                 {
                     b.HasOne("DAL.Entities.Level", "Level")
                         .WithOne("Program")
-                        .HasForeignKey("DAL.Entities.Program", "LevelId");
+                        .HasForeignKey("DAL.Entities.Program", "LevelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Level");
                 });
@@ -1054,7 +1061,8 @@ namespace DAL.Migrations
 
             modelBuilder.Entity("DAL.Entities.Course", b =>
                 {
-                    b.Navigation("Level");
+                    b.Navigation("Level")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("DAL.Entities.Homework", b =>
