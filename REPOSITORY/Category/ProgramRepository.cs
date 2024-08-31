@@ -16,7 +16,7 @@ using DTO.Category.Shift.Models;
 namespace REPOSITORY.Category;
 
 [RegisterClassAsTransient]
-public class ProgramRepository(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor) : IsProgramRepository
+public class ProgramRepository(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor) : IProgramRepository
 {
     public async Task<BaseResponse<string>> DeLeteList(DeleteListRequest request)
     {
@@ -109,7 +109,8 @@ public class ProgramRepository(IUnitOfWork unitOfWork, IMapper mapper, IHttpCont
         {
             var result = new ProgramDto();
             var data = await unitOfWork.GetRepository<Program>().GetByIdAsync(request.Id);
-            if (result == null)
+
+            if (data == null)
             {
                 result.Id = Guid.NewGuid();
                 result.IsEdit = false;
@@ -117,12 +118,11 @@ public class ProgramRepository(IUnitOfWork unitOfWork, IMapper mapper, IHttpCont
             else
             {
                 result = mapper.Map<ProgramDto>(data);
-                //result.SelectDays = data.Days.Split(", ").ToList();
+                // result.SelectDays = data.Days.Split(", ").ToList(); 
                 result.IsEdit = true;
             }
 
             response.Data = result;
-
         }
         catch (Exception ex)
         {
@@ -132,6 +132,7 @@ public class ProgramRepository(IUnitOfWork unitOfWork, IMapper mapper, IHttpCont
 
         return response;
     }
+
 
     public async Task<BaseResponse<GetListPagingResponse>> GetListPaging(GetListPagingRequest request)
     {
