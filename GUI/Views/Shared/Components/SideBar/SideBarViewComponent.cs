@@ -9,9 +9,11 @@ namespace FE.Views.Shared.Components.SideBar
     public class SideBarViewComponent : ViewComponent
     {
         private readonly ICacheService _cacheService;
-        public SideBarViewComponent()
+        private readonly IHttpContextAccessor _contextAccessor;
+        public SideBarViewComponent(IHttpContextAccessor contextAccessor)
         {
             _cacheService = new InMemoryCache();
+            _contextAccessor = contextAccessor;
         }
 
         public IViewComponentResult Invoke()
@@ -32,6 +34,9 @@ namespace FE.Views.Shared.Components.SideBar
 
             ViewBag.Menu = groupPermission.OrderBy(x => x.Sort).ToList();
             ViewBag.MenuItem = menu.Where(x => x.IsShowMenu).ToList();
+            
+            var routeData = _contextAccessor.HttpContext?.GetRouteData();
+            ViewBag.CurrentController = routeData?.Values["controller"]?.ToString()?.ToLower() ?? string.Empty;
             return View();
         }
     }
