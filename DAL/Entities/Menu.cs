@@ -18,6 +18,7 @@ namespace DAL.Entities
         public required string Action { get; set; }
         public Guid GroupPermissionId { get; set; }
         public GroupPermission GroupPermission { get; set; }
+        public string? Icon { get; set; }
         public int Sort { get; set; }
         public bool HasView { get; set; }
         public bool HasAdd { get; set; }

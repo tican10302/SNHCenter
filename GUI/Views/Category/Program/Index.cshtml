@@ -1,47 +1,74 @@
-<div>
-    <div class="title">
-        <h2 class="title-content">
-            Program
-        </h2>
-    </div>
-    <div class="content">
-        @* --- TABLE --- *@
-        <div class="">
-            <div class="row">
-                <div class="col-md-6">
-                    <div id="toolbar">
-                        <button class="btn btn-primary" onclick="showData()"><i class="fa-solid fa-eye"></i> View</button>
-                        <button class="btn btn-success" onclick="addData()"><i class="fa-solid fa-plus"></i> Add</button>
-                        <button class="btn btn-warning" onclick="updateData()"><i class="fa-solid fa-pen"></i> Update</button>
-                        <button class="btn btn-danger" onclick="deleteData()"><i class="fa-solid fa-trash"></i> Delete</button>
+@{
+    ViewData["Title"] = "Program";
+}
+
+@model DTO.System.Account.Models.PermissionModel
+
+@if (Model.IsView == true)
+{
+    <div>
+        <div class="title">
+            <h2 class="title-content">
+                Program
+            </h2>
+        </div>
+        <div class="content">
+            @* --- TABLE --- *@
+            <div class="">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div id="toolbar">
+                            @{
+                                if (Model.IsView == true)
+                                {
+                                    <button class="btn btn-primary" onclick="showData()"><i class="fa-solid fa-eye"></i> View</button>
+                                }
+
+                                if (Model.IsAdd == true)
+                                {
+                                    <button class="btn btn-success" onclick="addData()"><i class="fa-solid fa-plus"></i> Add</button>
+                                }
+
+                                if (Model.IsEdit == true)
+                                {
+                                    <button class="btn btn-warning" onclick="updateData()"><i class="fa-solid fa-pen"></i> Update</button>
+                                }
+
+                                if (Model.IsDelete == true)
+                                {
+                                    <button class="btn btn-danger" onclick="deleteData()"><i class="fa-solid fa-trash"></i> Delete</button>
+                                }
+                            }
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <table class="bootstrap-table"
-                   id="ShiftTable"
-                   data-toggle="table"
-                   data-height="460"
-                   data-ajax="getDataTable"
-                   data-search="true"
-                   data-side-pagination="server"
-                   data-pagination="true"
-                   data-click-to-select="true"
-                   data-toolbar="#toolbar">
-                <thead class="content-table-header">
-                <tr>
-                    <th data-checkbox="true"></th>
-                    <th data-formatter="sortTable" data-align="center">No.</th>
-                    <th data-field="Id" data-visible="false">ID</th>
-                    <th data-field="Name">Name</th>
-                    <th data-field="Time" data-formatter="timeFormatter">Time</th>
-                    <th data-field="Days">Days</th>
-                </tr>
-                </thead>
-            </table>
+                <table class="bootstrap-table"
+                       id="ShiftTable"
+                       data-toggle="table"
+                       data-height="460"
+                       data-ajax="getDataTable"
+                       data-search="true"
+                       data-mobile-responsive="true"
+                       data-side-pagination="server"
+                       data-pagination="true"
+                       data-click-to-select="true"
+                       data-toolbar="#toolbar">
+                    <thead class="content-table-header">
+                    <tr>
+                        <th data-checkbox="true"></th>
+                        <th data-formatter="sortTable" data-align="center">No.</th>
+                        <th data-field="Id" data-visible="false">ID</th>
+                        <th data-field="Name">Name</th>
+                        <th data-field="Time" data-formatter="timeFormatter">Time</th>
+                        <th data-field="Days">Days</th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
         </div>
     </div>
-</div>
+}
 
 <div class="modal fade" id="modal-default" aria-hidden="true" data-backdrop="static">
     <div class="modal-dialog modal-lg" id='modelContainer'>

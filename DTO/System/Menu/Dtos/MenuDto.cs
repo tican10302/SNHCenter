@@ -14,6 +14,7 @@ public class MenuDto : DtoBase
     public string? Action { get; set; } = "index";
     [Required(AllowEmptyStrings = false, ErrorMessage = "The name field is required")]
     public string? Name { get; set; }
+    public string? Icon { get; set; }
     [Required(AllowEmptyStrings = false, ErrorMessage = "The group permission field is required")]
     public Guid? GroupPermissionId { get; set; }
     public bool HasView { get; set; } = false;

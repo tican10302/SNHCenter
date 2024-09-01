@@ -6,7 +6,7 @@ namespace REPOSITORY.System.Menu;
 
 public interface IMenuRepository
 {
-    Task<BaseResponse<List<MenuModel>>> GetList(GetAllRequest request);
+    Task<BaseResponse<GetListPagingResponse>> GetList(MenuGetListDto request);
     Task<BaseResponse<List<MenuModel>>> GetAll(GetAllRequest request);
     Task<BaseResponse<MenuModel>> GetById(GetByIdRequest request);
     Task<BaseResponse<MenuDto>> GetByPost(GetByIdRequest request);

@@ -16,7 +16,7 @@ namespace BLL.Controllers.System
             this.repository = repository;
         }
         [HttpPost, Route("get-list")]
-        public async Task<IActionResult> GetListAsync(GetAllRequest request)
+        public async Task<IActionResult> GetListAsync(MenuGetListDto request)
         {
             try
             {

@@ -8,6 +8,7 @@ public class MenuModel : ModelBase
     public string? Controller { get; set; }
     public string? Action { get; set; }
     public string? Name { get; set; }
+    public string? Icon { get; set; }
     public Guid GroupPermissionId { get; set; }
     public string? GroupName { get; set; }
     public int GroupSort { get; set; }

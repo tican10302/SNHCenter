@@ -60,6 +60,12 @@
             <div class="col-sm-4">
                 @(Html.TextBoxFor(model => model.Sort, new { @type = "number", @placeholder = "Enter sort", @min = 0 }))
             </div>
+            <label class="col-sm-2 form-label">Icon</label>
+            <div class="col-sm-4">
+                @(Html.TextBoxFor(model => model.Icon, new { @placeholder = "Enter icon" }))
+            </div>
+        </div>
+        <div class="row form-group">
             <label class="col-sm-2 form-label">Show on menu</label>
             <div class="col-sm-4">
                 @(Html.CheckBoxFor(model => model.IsShowMenu, new { @style = "width: auto;" }))
@@ -143,7 +149,7 @@
         
         // Get Combobox Group Permission
         $.ajax({
-            url: '/GroupPermission/GetList_Combobox',
+            url: '@Url.Action("GetList_Combobox", "GroupPermission")',
             type: "GET",
             success: function (data) {
                 if (data.IsSuccess) {

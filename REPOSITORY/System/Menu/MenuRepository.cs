@@ -1,5 +1,7 @@
+using System.Data;
 using AutoDependencyRegistration.Attributes;
 using AutoMapper;
+using Dapper;
 using DTO.Base;
 using DTO.System.Menu.Dtos;
 using DTO.System.Menu.Models;
@@ -10,18 +12,30 @@ namespace REPOSITORY.System.Menu;
 [RegisterClassAsTransient]
 public class MenuRepository(IUnitOfWork unitOfWork, IMapper mapper) : IMenuRepository
 {
-    public async Task<BaseResponse<List<MenuModel>>> GetList(GetAllRequest request)
+    public async Task<BaseResponse<GetListPagingResponse>> GetList(MenuGetListDto request)
     {
-        var response = new BaseResponse<List<MenuModel>>();
+        var response = new BaseResponse<GetListPagingResponse>();
 
         try
         {
-            var result = unitOfWork.GetRepository<DAL.Entities.Menu>()
-                .GetAll(x => x.IsActived || !x.IsActived)
-                .OrderBy(x => x.Sort)
-                .ToList();
+            var parameters = new DynamicParameters();
+            parameters.Add("@iTextSearch", request.Search, DbType.String);
+            parameters.Add("@iGroupPermission", request.GroupPermissionId, DbType.Guid);
+            parameters.Add("@iPageIndex", request.Offset / request.Limit, DbType.Int32);
+            parameters.Add("@iRowsPerPage", request.Limit, DbType.Int32);
+            parameters.Add("@oTotalRow", dbType: DbType.Int64, direction: ParameterDirection.Output);
+            var result = await unitOfWork.GetRepository<MenuModel>()
+                .ExecWithStoreProcedure("sp_Category_Menu_GetListPaging", parameters);
 
-            response.Data = mapper.Map<List<MenuModel>>(result);
+            var totalRow = parameters.Get<long>("@oTotalRow");
+            var responseData = new GetListPagingResponse
+            {
+                PageIndex = request.Offset,
+                Data = result,
+                TotalRow = Convert.ToInt32(totalRow)
+            };
+
+            response.Data = responseData;
         }
         catch (Exception ex)
         {

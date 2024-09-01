@@ -1,3 +1,6 @@
+@{
+ViewData["Title"] = "Role";
+}
 
 <div>
     <div class="title">
@@ -26,6 +29,7 @@
                    data-height="460"
                    data-ajax="getDataTable"
                    data-search="true"
+                   data-mobile-responsive="true"
                    data-side-pagination="server"
                    data-pagination="true"
                    data-click-to-select="true"
@@ -45,7 +49,12 @@
 </div>
 
 <div class="modal fade" id="modal-default" aria-hidden="true" data-backdrop="static">
-    <div class="modal-dialog modal-xl" id='modelContainer'>
+    <div class="modal-dialog modal-lg" id='modelContainer'>
+    </div>
+</div>
+
+<div class="modal fade" id="modal-default-xl" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-xl" id='modelContainer-xl'>
     </div>
 </div>
 
@@ -99,8 +108,8 @@
             var url = '@Url.Action("ShowPermissionPopup", "Role")' + "?id=" + selectedRows[0];
 
             $.get(url, function (data) {
-                $('#modelContainer').html(data);
-                $('#modal-default').modal('show');
+                $('#modelContainer-xl').html(data);
+                $('#modal-default-xl').modal('show');
             });
         } else {
             notyf.error('Please select a row to set permission.');

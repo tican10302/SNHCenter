@@ -115,7 +115,7 @@
         </li>
         <li class="sidebar-item active">
             <a href="@Url.Action("Index", "Home")" class="sidebar-link">
-                <i class="fa-solid fa-house"></i>
+                <i class="fa-solid fa-house" style="width: 20px;"></i>
                 Dashboard
             </a>
         </li>
@@ -151,7 +151,7 @@
             {
                 <li class="sidebar-item">
                     <a href="@Url.Action(subItem.Action, subItem.Controller)" class="sidebar-link">
-                        <i class="fa-solid fa-list-ul"></i>
+                        <i class='@(string.IsNullOrEmpty(subItem.Icon) ? "fa-solid fa-list-ul" : subItem.Icon)' style="width: 20px;"></i>
                         @subItem.Name
                     </a>
                 </li>

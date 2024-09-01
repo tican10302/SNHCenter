@@ -124,6 +124,7 @@ public class AccountRepository(IUnitOfWork unitOfWork,
                         Action = x.Action,
                         Controller = x.Controller,
                         GroupPermissionId = x.GroupPermissionId,
+                        Icon = x.Icon,
                         Name = x.Name,
                         Sort = x.Sort,
                         IsShowMenu = x.IsShowMenu

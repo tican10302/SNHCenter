@@ -35,6 +35,7 @@
                 <table  class="bootstrap-table"
                         id="RolePermissionTable"
                         data-toggle="table"
+                        data-mobile-responsive="true"
                         data-height="460">
                     <thead class="content-table-header">
                     <tr>
@@ -72,7 +73,7 @@
     })
 
     function closePopup() {
-        $('#modal-default').modal('hide');
+        $('#modal-default-xl').modal('hide');
     }
 
     function refreshRolePermissionGrid() {
@@ -145,6 +146,7 @@
     }
 
     function setPermission(el) {
+        showLoading();
         const parentElement = $(el).closest('tr')[0];
         var index = $(parentElement).data('index');
         const tableData = $('#RolePermissionTable').bootstrapTable('getData')[index];
@@ -173,9 +175,11 @@
                 else {
                     notyf.error(response.Message);
                 }
+                hideLoading();
             },
             error: function (request, status, err) {
                 notyf.error("Error: Can't update permission");
+                hideLoading();
             }
         });
     }

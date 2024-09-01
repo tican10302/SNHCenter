@@ -17,7 +17,7 @@ public class MenuController : BaseController<MenuController>
         return View("~/Views/System/Menu/Index.cshtml", GetPerMission());
     }
     
-    public IActionResult GetList(GetListPagingRequest param)
+    public IActionResult GetList(MenuGetListDto param)
     {
         try
         {
@@ -27,7 +27,8 @@ public class MenuController : BaseController<MenuController>
             ResponseData response = this.PostAPI(URL_API.MENU_GETLIST, param);
             if (response.Status)
             {
-                result = JsonConvert.DeserializeObject<List<MenuModel>>(response.Data.ToString());
+                dataResult = JsonConvert.DeserializeObject<GetListPagingResponse>(response.Data.ToString());
+                result = JsonConvert.DeserializeObject<List<MenuModel>>(dataResult.Data.ToString());
             }
             else
             {

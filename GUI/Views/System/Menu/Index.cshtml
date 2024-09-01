@@ -1,3 +1,6 @@
+@{
+ViewData["Title"] = "Menu";
+}
 
 <div>
     <div class="title">
@@ -9,10 +12,16 @@
         @* --- TABLE --- *@
         <div class="">
             <div class="row">
-                <div class="col-md-6">
-                    <div id="toolbar">
-                        <button class="btn btn-success" onclick="addData()"><i class="fa-solid fa-plus"></i> Add</button>
-                        <button class="btn btn-warning" onclick="updateData()"><i class="fa-solid fa-pen"></i> Update</button>
+                <div class="col-md-12">
+                    <div id="toolbar" class="d-flex justify-content-between">
+                        <div class="me-2">
+                            <button class="btn btn-success" onclick="addData()"><i class="fa-solid fa-plus"></i> Add</button>
+                            <button class="btn btn-warning" onclick="updateData()"><i class="fa-solid fa-pen"></i> Update</button>
+                        </div>
+                        <div class="d-flex">
+                            <select class="form-select me-2" id="GroupPermissionFilter">
+                            </select>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -23,6 +32,7 @@
                    data-height="460"
                    data-ajax="getDataTable"
                    data-search="true"
+                   data-mobile-responsive="true"
                    data-side-pagination="server"
                    data-click-to-select="true"
                    data-toolbar="#toolbar">
@@ -32,9 +42,7 @@
                     <th data-formatter="sortTable" data-align="center">No.</th>
                     <th data-field="Id" data-visible="false">ID</th>
                     <th data-field="Name">Name</th>
-                    <th data-field="ControllerName">Controller Name</th>
-                    <th data-field="Controller">Controller</th>
-                    <th data-field="Action">Action</th>
+                    <th data-field="GroupName">Group Permission</th>
                     <th data-field="HasView" data-align="center" data-formatter="booleanFormatter">View</th>
                     <th data-field="HasAdd" data-align="center" data-formatter="booleanFormatter">Add</th>
                     <th data-field="HasEdit" data-align="center" data-formatter="booleanFormatter">Edit</th>
@@ -55,6 +63,37 @@
 </div>
 
 <script>
+    $(document).ready(function () {
+    
+        // Get Group Permission Combobox
+        $.ajax({
+            url: '@Url.Action("GetList_Combobox", "GroupPermission")',
+            type: 'GET',
+            success: function (data) {
+               if (data.IsSuccess)
+               {
+                   var select = $('#GroupPermissionFilter');
+                   select.empty();
+
+                   select.append($('<option>', {
+                       value: '',
+                       text: '-- Select group --'
+                   }));
+                   
+                   $.each(data.Data, function (index, item) {
+                       select.append($('<option>', {
+                            value: item.Value,
+                            text: item.Text
+                       }));
+                   });
+               }
+            },
+            error: function (request, status, err) {
+                notyf.error(errorMessage);
+            }
+        });
+    })
+    
     function getIdSelections() {
         return $.map($('#MenuTable').bootstrapTable('getSelections'), function (row) {
             return row.Id
@@ -182,5 +221,6 @@
             return '<span style="color: #dc3545;">Offline</span>';
         }
     }
+
 
 </script>
