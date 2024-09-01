@@ -3,6 +3,7 @@
 @{
     var menu = ViewBag.Menu as List<GroupPermissionModel>;
     var menuItem = ViewBag.MenuItem as List<MenuModel>;
+    var currentController = ViewBag.CurrentController as string;
 }
 
 <style>
@@ -52,11 +53,11 @@
         font-size: 1rem;
     }
 
-    .sidebar-item {
+    .sidebar-sub-item {
         position: relative;
     }
 
-    .sidebar-item.active::before {
+    .sidebar-sub-item.active::before {
         border-left: 4px solid #4880FF;
         border-radius: 4px 0 0 4px;
         height: 100%;
@@ -68,8 +69,8 @@
         transform: rotate(180deg);  
     }
 
-    .sidebar-item:hover a.sidebar-link,
-    .sidebar-item.active a.sidebar-link {
+    .sidebar-sub-item:hover a.sidebar-link,
+    .sidebar-sub-item.active a.sidebar-link {
         margin: 0 24px;
         color: #fff;
         background-color: #4880FF;
@@ -79,12 +80,12 @@
         font-size: 1rem;
     }
 
-    .sidebar-item:hover a.sidebar-link {
-        background-color: #F5F6FA;
+    .sidebar-sub-item:hover a.sidebar-link {
+        background-color: #e6e6e6;
         color: #202224;
     }
     
-    .sidebar-item.active:hover a.sidebar-link {
+    .sidebar-sub-item.active:hover a.sidebar-link {
         background-color: #4880FF;
         color: #fff;
     }
@@ -106,6 +107,33 @@
         transform: rotate(45deg);
         transition: all 0.2s ease-out;
     }
+    
+    .sidebar-item.active a.sidebar-link{
+        background-color: #F5F6FA;
+        border-radius: inherit;
+    }
+
+    .sidebar-item.active a:first-child {
+        border-top-left-radius: 6px;
+        border-top-right-radius: 6px;
+    }
+
+    .sidebar-item.active a:last-child {
+        border-bottom-left-radius: 6px;
+        border-bottom-right-radius: 6px;
+    }
+    .sidebar-item.active .sidebar-sub-item:hover a.sidebar-link{
+        background-color: #e6e6e6;
+        border-radius: 6px;
+    }
+
+    .sidebar-item.active .sidebar-sub-item.active:hover a.sidebar-link,
+    .sidebar-item.active .sidebar-sub-item.active a{
+        background-color: #4880FF;
+        border-radius: 6px;
+    }
+    
+    
 </style>
 
 <div class="h-100">
@@ -113,49 +141,43 @@
         <li class="sidebar-header">
             Home
         </li>
-        <li class="sidebar-item active">
+        <li class="sidebar-sub-item @(currentController == "home" ? "active" : "")">
             <a href="@Url.Action("Index", "Home")" class="sidebar-link">
                 <i class="fa-solid fa-house" style="width: 20px;"></i>
                 Dashboard
             </a>
         </li>
-
-        @* ---------------- DROPDOWN ---------------- *@
-        @* <li class="sidebar-item"> *@
-        @*     <a href="#" class="sidebar-link collapsed" data-bs-toggle="collapse" data-bs-target="#pages" *@
-        @*        aria-expanded="false" aria-controls="pages"> *@
-        @*         <i class="fa-solid fa-list pe-2"></i> *@
-        @*         Pages *@
-        @*     </a> *@
-        @*     <ul id="pages" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar"> *@
-        @*         <li class="sidebar-item"> *@
-        @*             <a href="#" class="sidebar-link">Analytics</a> *@
-        @*         </li> *@
-        @*         <li class="sidebar-item"> *@
-        @*             <a href="#" class="sidebar-link">Analytics</a> *@
-        @*         </li> *@
-        @*         <li class="sidebar-item"> *@
-        @*             <a href="#" class="sidebar-link">Analytics</a> *@
-        @*         </li> *@
-        @*     </ul> *@
-        @* </li> *@
     </ul>
     <ul class="sidebar-nav">
         @foreach(var item in menu)
         {
-            <hr class="hr" />
-            <li class="sidebar-header">
-                @item.Name
+            var slug = item.Name.Replace(" ", "-").ToLower();
+            <li class="sidebar-item">
+                <a href="#" class="sidebar-link collapsed" data-bs-toggle="collapse" data-bs-target="#pages-@slug"
+                   aria-expanded="false" aria-controls="pages">
+                    <i class='@(string.IsNullOrEmpty(item.Icon) ? "fa-solid fa-list-ul" : item.Icon)'></i>
+                        @item.Name
+                </a>
+                <ul id="pages-@slug" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
+                @foreach(var subItem in menuItem.Where(x => x.GroupPermissionId == item.Id))
+                {
+                    var isActive = subItem.Controller?.ToLower() == currentController;
+                    if(isActive)
+                    {
+                        <script>
+                            document.getElementById("pages-@slug").classList.add("show");
+                            document.getElementById("pages-@slug").closest("li").classList.add("active");
+                        </script>
+                    }
+                    <li class="sidebar-sub-item @(isActive ? "active" : "")">
+                        <a href="@Url.Action(subItem.Action, subItem.Controller)" class="sidebar-link">
+                            <i class='@(string.IsNullOrEmpty(subItem.Icon) ? "fa-solid fa-list-ul" : subItem.Icon)' style="width: 20px;"></i>
+                            @subItem.Name
+                        </a>
+                    </li>
+                }
+                </ul>
             </li>
-            @foreach(var subItem in menuItem.Where(x => x.GroupPermissionId == item.Id))
-            {
-                <li class="sidebar-item">
-                    <a href="@Url.Action(subItem.Action, subItem.Controller)" class="sidebar-link">
-                        <i class='@(string.IsNullOrEmpty(subItem.Icon) ? "fa-solid fa-list-ul" : subItem.Icon)' style="width: 20px;"></i>
-                        @subItem.Name
-                    </a>
-                </li>
-            }
         }
     </ul>
 </div>
