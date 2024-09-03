@@ -1,6 +1,6 @@
 namespace GUI.Constants;
 
-public class URL_API
+public static class UrlApi
 {
     #region Base
     public const string PING = "ping";
@@ -63,5 +63,17 @@ public class URL_API
     public const string PROGRAM_INSERT = "program/insert";
     public const string PROGRAM_UPDATE = "program/update";
     public const string PROGRAM_DELETELIST = "program/delete-list";
+    #endregion
+
+    #region Management
+
+    // Teacher
+    public const string TEACHER_GETLIST = "teacher/get-list-paging";
+    public const string TEACHER_GETBYPOST = "teacher/get-by-post";
+    public const string TEACHER_GETBYID = "teacher/get-by-id";
+    public const string TEACHER_INSERT = "teacher/insert";
+    public const string TEACHER_UPDATE = "teacher/update";
+    public const string TEACHER_DELETELIST = "teacher/delete-list";
+
     #endregion
 }

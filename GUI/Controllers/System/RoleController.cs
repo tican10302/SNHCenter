@@ -26,7 +26,7 @@ namespace GUI.Controllers.System
                 var dataResult = new GetListPagingResponse();
                 var result = new List<RoleModel>();
 
-                ResponseData response = this.PostAPI(URL_API.ROLE_GETLIST, param);
+                ResponseData response = this.PostAPI(UrlApi.ROLE_GETLIST, param);
                 if (response.Status)
                 {
                     dataResult = JsonConvert.DeserializeObject<GetListPagingResponse>(response.Data.ToString());
@@ -51,7 +51,7 @@ namespace GUI.Controllers.System
             {
                 if (groupId == null) groupId = Guid.Empty;
                 var result = new List<Role_PermissionModel>();
-                ResponseData response = this.PostAPI(URL_API.ROLE_GETLISTROLEPERMISSION, new GetRole_PermissionDto()
+                ResponseData response = this.PostAPI(UrlApi.ROLE_GETLISTROLEPERMISSION, new GetRole_PermissionDto()
                 {
                     GroupId = groupId,
                     RoleId = roleId
@@ -81,7 +81,7 @@ namespace GUI.Controllers.System
 
                 if (id != null)
                 {
-                    ResponseData response = this.PostAPI(URL_API.ROLE_GETBYID, new { Id = id });
+                    ResponseData response = this.PostAPI(UrlApi.ROLE_GETBYID, new { Id = id });
 
                     if (response.Status)
                     {
@@ -94,7 +94,7 @@ namespace GUI.Controllers.System
             catch (Exception ex)
             {
                 ViewBag.ErrorMessage = ex.Message;
-                return PartialView("~/Views/Shared/ErrorPartial.cshtml");
+                return View("~/Views/Shared/ErrorPartial.cshtml");
             }
         }
 
@@ -104,7 +104,7 @@ namespace GUI.Controllers.System
             {
                 RoleDto obj = new RoleDto();
 
-                ResponseData response = this.PostAPI(URL_API.ROLE_GETBYPOST, new { Id = Guid.Empty });
+                ResponseData response = this.PostAPI(UrlApi.ROLE_GETBYPOST, new { Id = Guid.Empty });
 
                 if (response.Status)
                 {
@@ -116,7 +116,7 @@ namespace GUI.Controllers.System
             catch (Exception ex)
             {
                 ViewBag.ErrorMessage = ex.Message;
-                return PartialView("~/Views/Shared/ErrorPartial.cshtml");
+                return View("~/Views/Shared/ErrorPartial.cshtml");
             }
         }
 
@@ -126,7 +126,7 @@ namespace GUI.Controllers.System
             {
                 RoleDto obj = new RoleDto();
 
-                ResponseData response = this.PostAPI(URL_API.ROLE_GETBYPOST, new { Id = id });
+                ResponseData response = this.PostAPI(UrlApi.ROLE_GETBYPOST, new { Id = id });
 
                 if (response.Status)
                 {
@@ -138,7 +138,7 @@ namespace GUI.Controllers.System
             catch (Exception ex)
             {
                 ViewBag.ErrorMessage = ex.Message;
-                return PartialView("~/Views/Shared/ErrorPartial.cshtml");
+                return View("~/Views/Shared/ErrorPartial.cshtml");
             }
         }
         
@@ -148,7 +148,7 @@ namespace GUI.Controllers.System
             {
                 var listGroup = new List<SelectListItem>();
 
-                ResponseData response = this.PostAPI(URL_API.GROUPPERMISSION_GETALL, new GetAllRequest());
+                ResponseData response = this.PostAPI(UrlApi.GROUPPERMISSION_GETALL, new GetAllRequest());
 
                 if (response.Status)
                 {
@@ -168,7 +168,7 @@ namespace GUI.Controllers.System
             catch (Exception ex)
             {
                 ViewBag.ErrorMessage = ex.Message;
-                return PartialView("~/Views/Shared/ErrorPartial.cshtml");
+                return View("~/Views/Shared/ErrorPartial.cshtml");
             }
         }
 
@@ -182,11 +182,11 @@ namespace GUI.Controllers.System
                     ResponseData response;
                     if (param.IsEdit)
                     {
-                        response = this.PostAPI(URL_API.ROLE_UPDATE, param);
+                        response = this.PostAPI(UrlApi.ROLE_UPDATE, param);
                     }
                     else
                     {
-                        response = this.PostAPI(URL_API.ROLE_INSERT, param);
+                        response = this.PostAPI(UrlApi.ROLE_INSERT, param);
                     }
                     if (!response.Status)
                     {
@@ -214,7 +214,7 @@ namespace GUI.Controllers.System
                 var idReturn = new Guid();
                 if (param != null && ModelState.IsValid)
                 {
-                    ResponseData response = this.PostAPI(URL_API.ROLE_POSTROLEPERMISSION, param);
+                    ResponseData response = this.PostAPI(UrlApi.ROLE_POSTROLEPERMISSION, param);
 
                     if (response.Status)
                     {
@@ -244,7 +244,7 @@ namespace GUI.Controllers.System
         {
             try
             {
-                ResponseData response = this.PostAPI(URL_API.ROLE_DELETELIST, new { ids = listSelectedId });
+                ResponseData response = this.PostAPI(UrlApi.ROLE_DELETELIST, new { ids = listSelectedId });
                 return Json(new { IsSuccess = response.Status, Message = response.Message, Data = "" });
             }
             catch (Exception ex)
@@ -256,7 +256,7 @@ namespace GUI.Controllers.System
         
         public ActionResult GetList_Combobox()
         {
-            ResponseData response = this.PostAPI(URL_API.ROLE_GETALLFORCOMBOBOX, new GetAllRequest());
+            ResponseData response = this.PostAPI(UrlApi.ROLE_GETALLFORCOMBOBOX, new GetAllRequest());
             var result = JsonConvert.DeserializeObject<List<ComboboxModel>>(response.Data.ToString());
             return Json(result);
         }

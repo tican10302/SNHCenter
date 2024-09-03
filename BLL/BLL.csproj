@@ -27,4 +27,9 @@
       <ProjectReference Include="..\REPOSITORY\REPOSITORY.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Controllers\Management\" />
+      <Folder Include="Controllers\Training\" />
+    </ItemGroup>
+
 </Project>

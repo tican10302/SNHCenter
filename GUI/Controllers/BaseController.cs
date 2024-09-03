@@ -29,7 +29,7 @@ namespace GUI.Controllers
             string cacheGroupRole = _cacheService.Get<string>(GetUserName() + "_grouprole");
             if (string.IsNullOrEmpty(cacheRole))
             {
-                ResponseData response = this.PostAPI(URL_API.ACCOUNT_GETPERMISSION, new { Id = GetUserId() });
+                ResponseData response = this.PostAPI(UrlApi.ACCOUNT_GETPERMISSION, new { Id = GetUserId() });
                 if (response.Status)
                 {
                     _cacheService.Set(GetUserName() + "_role", response.Data.ToString(), 60);
@@ -42,7 +42,7 @@ namespace GUI.Controllers
             }
             if (string.IsNullOrEmpty(cacheMenu))
             {
-                ResponseData response = this.PostAPI(URL_API.ACCOUNT_GETLISTMENU, new { Id = GetUserId() });
+                ResponseData response = this.PostAPI(UrlApi.ACCOUNT_GETLISTMENU, new { Id = GetUserId() });
                 if (response.Status)
                 {
                     _cacheService.Set(GetUserName() + "_menu", response.Data.ToString(), 60);
@@ -50,7 +50,7 @@ namespace GUI.Controllers
             }
             if (string.IsNullOrEmpty(cacheInfo))
             {
-                ResponseData response = this.PostAPI(URL_API.ACCOUNT_GETBYID, new { UserId = GetUserId() });
+                ResponseData response = this.PostAPI(UrlApi.ACCOUNT_GETBYID, new { UserId = GetUserId() });
                 if (response.Status)
                 {
                     _cacheService.Set(GetUserName() + "_info", response.Data.ToString(), 60);
@@ -58,7 +58,7 @@ namespace GUI.Controllers
             }
             if (string.IsNullOrEmpty(cacheGroupRole))
             {
-                ResponseData response = this.PostAPI(URL_API.GROUPPERMISSION_GETLIST, new GetAllRequest());
+                ResponseData response = this.PostAPI(UrlApi.GROUPPERMISSION_GETLIST, new GetAllRequest());
                 if (response.Status)
                 {
                     _cacheService.Set(GetUserName() + "_grouprole", response.Data.ToString(), 60);
@@ -246,7 +246,7 @@ namespace GUI.Controllers
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                     client.DefaultRequestHeaders.Accept.Clear();
-                    var responseTask = client.PostAsJsonAsync(URL_API.PING, new { });
+                    var responseTask = client.PostAsJsonAsync(UrlApi.PING, new { });
                     responseTask.Wait();
                     var result = responseTask.Result;
 

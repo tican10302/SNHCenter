@@ -1,0 +1,196 @@
+@{
+ViewData["Title"] = "Teacher";
+}
+
+@model DTO.System.Account.Models.PermissionModel
+
+@if (Model.IsView == true)
+{
+<div>
+    <div class="title">
+        <h2 class="title-content">
+            Teacher
+        </h2>
+    </div>
+    <div class="content">
+        @* --- TABLE --- *@
+        <div class="">
+            <div class="row">
+                <div class="col-md-6">
+                    <div id="toolbar">
+                        @{
+                        if (Model.IsView == true)
+                        {
+                        <button class="btn btn-primary" onclick="showData()"><i class="fa-solid fa-eye"></i> View</button>
+                        }
+
+                        if (Model.IsAdd == true)
+                        {
+                        <button class="btn btn-success" onclick="addData()"><i class="fa-solid fa-plus"></i> Add</button>
+                        }
+
+                        if (Model.IsEdit == true)
+                        {
+                        <button class="btn btn-warning" onclick="updateData()"><i class="fa-solid fa-pen"></i> Update</button>
+                        }
+
+                        if (Model.IsDelete == true)
+                        {
+                        <button class="btn btn-danger" onclick="deleteData()"><i class="fa-solid fa-trash"></i> Delete</button>
+                        }
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <table class="bootstrap-table"
+                   id="TeacherTable"
+                   data-toggle="table"
+                   data-height="460"
+                   data-ajax="getDataTable"
+                   data-search="true"
+                   data-mobile-responsive="true"
+                   data-side-pagination="server"
+                   data-pagination="true"
+                   data-click-to-select="true"
+                   data-toolbar="#toolbar">
+                <thead class="content-table-header">
+                <tr>
+                    <th data-checkbox="true"></th>
+                    <th data-formatter="sortTable" data-align="center">No.</th>
+                    <th data-field="Id" data-visible="false">ID</th>
+                    <th data-field="StaffCode">Staff code</th>
+                    <th data-field="FirstName">First name</th>
+                    <th data-field="LastName">Last name</th>
+                    <th data-field="Gender" data-formatter="genderFormatter">Gender</th>
+                    <th data-field="DateOfBirth" data-formatter="dateFormatter">Date of birth</th>
+                </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+}
+
+<div class="modal fade" id="modal-default" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-lg" id='modelContainer'>
+    </div>
+</div>
+
+<script>
+    function getIdSelections() {
+        return $.map($('#TeacherTable').bootstrapTable('getSelections'), function (row) {
+            return row.Id
+        })
+    }
+
+    function showData() {
+        var selectedRows = getIdSelections();
+        if (selectedRows.length == 1) {
+            var url = '@Url.Action("ShowViewPopup", "Teacher")' + "?id=" + selectedRows[0];
+
+            $.get(url, function (data) {
+                $('#modelContainer').html(data);
+                $('#modal-default').modal('show');
+            });
+        } else {
+            notyf.error('Please select a row to view.');
+        }
+    }
+
+    function addData() {
+        var url = '@Url.Action("ShowInsertPopup", "Teacher")';
+
+        $.get(url, function (data) {
+            $('#modelContainer').html(data);
+            $('#modal-default').modal('show');
+        })
+    }
+
+    function updateData() {
+        var selectedRows = getIdSelections();
+        if (selectedRows.length == 1) {
+            var url = '@Url.Action("ShowUpdatePopup", "Teacher")' + "?id=" + selectedRows[0];
+
+            $.get(url, function (data) {
+                $('#modelContainer').html(data);
+                $('#modal-default').modal('show');
+            });
+        } else {
+            notyf.error('Please select a row to update.');
+        }
+    }
+
+    function deleteData() {
+        var selectedRows = getIdSelections();
+        if (selectedRows.length > 0) {
+            var deleteData = function () {
+                showLoading();
+                $.ajax({
+                    url: '@Url.Action("Delete", "Teacher")',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        listSelectedId: selectedRows
+                    },
+                    success: function (data) {
+                        if (data.IsSuccess) {
+                            notyf.success(deleteSuccess);
+                            refreshGrid();
+                        }
+                        else {
+                            notyf.error(data.Message);
+                        }
+                    },
+                    error: function (request, status, err) {
+                        notyf.error(errorMessage);
+                    }
+                });
+                hideLoading();
+            }
+            return confirmDialogYesNo(titleConfirm, deleteConfirmText, deleteData);
+        } else {
+            notyf.error('Please select a row to delete.');
+        }
+    }
+
+    function getDataTable(params) {
+        var url = '@Url.Action("GetList", "Teacher")';
+        var data = params.data;
+
+        $.get(url, data, function (response) {
+            params.success({
+                total: response.total,
+                rows: response.data
+            });
+        });
+    }
+
+    function refreshGrid() {
+        $('#TeacherTable').bootstrapTable('refresh');
+    }
+
+    function sortTable(value, row, index) {
+        var pageSize = $('#TeacherTable').bootstrapTable('getOptions').pageSize;
+        var pageNumber = $('#TeacherTable').bootstrapTable('getOptions').pageNumber;
+        return (pageNumber - 1) * pageSize + index + 1;
+    }
+
+    function dateFormatter(value) {
+        if (!value) return '';
+
+        const date = new Date(value);
+        const day = ('0' + date.getDate()).slice(-2);
+        const month = ('0' + (date.getMonth() + 1)).slice(-2);
+        const year = date.getFullYear();
+
+        return `${day}/${month}/${year}`;
+    }
+
+    function genderFormatter(value) {
+        if (value === 1) return 'Male'
+        else if (value === 2) return 'Female'
+        else return 'Other';
+
+    }
+</script>

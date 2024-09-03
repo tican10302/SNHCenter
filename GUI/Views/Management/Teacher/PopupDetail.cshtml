@@ -1,0 +1,129 @@
+@using GUI.Constants
+@model DTO.Management.Teacher.Dtos.TeacherDto
+
+<div class="modal-content modal-snhcenter" id="modalLoading">
+    @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "frmTeacher", @class = "form-detail" }))
+    {
+        @Html.AntiForgeryToken()
+        <div class="modal-header">
+            @if (!Model.IsEdit)
+            {
+                <h4 class="modal-title">Create Teacher</h4>
+            }
+            else
+            {
+                <h4 class="modal-title">Update Teacher</h4>
+            }
+            <button type="button" class="btn-close" onclick="closePopup();" aria-label="Close" data-bs-dimiss="modal"></button>
+        </div>
+        
+        <div class="modal-body">
+            @Html.HiddenFor(m => m.Id)
+            @Html.HiddenFor(m => m.IsEdit)
+            <div class="row form-group">
+                <label class="col-sm-2 form-label">Staff code <span class="text-danger">(*)</span></label>
+                <div class="col-sm-4">
+                    @(Html.TextBoxFor(model => model.StaffCode, new { @placeholder = "Enter staff code" }))
+                    @(Html.ValidationMessageFor(model => model.StaffCode, "Staff code field is required", new {@class = "text-danger" }))
+                </div>
+            </div>
+            <div class="row form-group">
+                <label class="col-sm-2 form-label">Username <span class="text-danger">(*)</span></label>
+                <div class="col-sm-4">
+                    @Html.TextBoxFor(model => model.Account!.UserName, new { @placeholder = "Enter username" })
+                    @(Html.ValidationMessageFor(model => model.Account!.UserName, "Username field is required", new {@class = "text-danger" }))
+                </div>
+                <label class="col-sm-2 form-label">Password <span class="text-danger">(*)</span></label>
+                <div class="col-sm-4">
+                    @(Html.TextBoxFor(model => model.Account!.Password, new { @type = "password", @placeholder = "Enter password" }))
+                    @(Html.ValidationMessageFor(model => model.Account!.Password, "Password field is required", new {@class = "text-danger" }))
+                </div>
+            </div>
+            <div class="row form-group">
+                <label class="col-sm-2 form-label">First name <span class="text-danger">(*)</span></label>
+                <div class="col-sm-4">
+                    @(Html.TextBoxFor(model => model.FirstName, new { @placeholder = "Enter first name" }))
+                    @(Html.ValidationMessageFor(model => model.FirstName, "First name field is required", new {@class = "text-danger" }))
+                </div>
+                <label class="col-sm-2 form-label">Last name <span class="text-danger">(*)</span></label>
+                <div class="col-sm-4">
+                    @(Html.TextBoxFor(model => model.LastName, new { @placeholder = "Enter last name" }))
+                    @(Html.ValidationMessageFor(model => model.LastName, "Last name field is required", new {@class = "text-danger" }))
+                </div>
+            </div>
+            <div class="row form-group">
+                <label class="col-sm-2 form-label">Gender <span class="text-danger">(*)</span></label>
+                <div class="col-sm-4">
+                    <select asp-for="Gender" asp-items="@SysConfig.Gender"></select>
+                    @(Html.ValidationMessageFor(model => model.Gender, "Gender field is required", new {@class = "text-danger" }))
+                </div>
+                <label class="col-sm-2 form-label">Date of birth <span class="text-danger">(*)</span></label>
+                <div class="col-sm-4">
+                    @(Html.TextBoxFor(model => model.DateOfBirth, new { @type = "date", @placeholder = "Select date of birth" }))
+                    @(Html.ValidationMessageFor(model => model.DateOfBirth, "Date of birth field is required", new {@class = "text-danger" }))
+                </div>
+            </div>
+            <div class="row form-group">
+                <label class="col-sm-2 form-label">Address</label>
+                <div class="col-sm-4">
+                    @(Html.TextBoxFor(model => model.Address, new { @placeholder = "Enter address" }))
+                </div>
+                <label class="col-sm-2 form-label">Province <span class="text-danger">(*)</span></label>
+                <div class="col-sm-4">
+                    <select asp-for="ProvinceCode"></select>
+                    @(Html.ValidationMessageFor(model => model.ProvinceCode, "Province field is required", new {@class = "text-danger" }))
+                </div>
+            </div>
+        </div>
+        
+        <div class="modal-footer">
+            <button type="submit" id="btnSave" class="btn btn-success btn-sm"><i class="fas fa-check-square"></i> @(Model.IsEdit ? "Update" : "Create")</button>
+            <button type="button" class="btn btn-danger btn-sm" onclick="closePopup();"><i class="fas fa-times-square"></i> Cancel</button>
+        </div>
+    }
+</div>
+
+<script>
+    $(document).ready(function () {
+        const frmTeacher = $("#frmTeacher");
+        frmTeacher.find("span.field-validation-valid").hide();
+        
+        //Save
+        frmTeacher.submit(async function (event) {
+            event.preventDefault();
+            
+            if ($(frmTeacher).valid()) {
+                showLoading();
+                $.ajax({
+                    url: '/Shift/Post',
+                    type: "POST",
+                    data: $(frmTeacher).serialize(),
+                    success: function (data) {
+                        if (data.IsSuccess) {
+                            if (data.Data) {
+                                notyf.success(updateSuccess);
+                            }
+                            else {
+                                notyf.success(addSuccess);
+                            }
+                            refreshGrid();
+                            hideLoading();
+                            closePopup();
+                        }
+                        else {
+                            notyf.error(data.Message);
+                            hideLoading();
+                        }
+                    }
+                });
+                hideLoading();
+            } else {
+                $(frmTeacher).find("span.field-validation-valid").show();
+            }
+        });
+    })
+    
+    function closePopup() {
+        $('#modal-default').modal('hide');
+    }
+</script>

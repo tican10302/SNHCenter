@@ -25,7 +25,7 @@ namespace GUI.Controllers.System
                 var dataResult = new GetListPagingResponse();
                 var result = new List<GroupPermissionModel>();
 
-                ResponseData response = this.PostAPI(URL_API.GROUPPERMISSION_GETLIST, param);
+                ResponseData response = this.PostAPI(UrlApi.GROUPPERMISSION_GETLIST, param);
                 if (response.Status)
                 {
                     result = JsonConvert.DeserializeObject<List<GroupPermissionModel>>(response.Data.ToString());
@@ -51,7 +51,7 @@ namespace GUI.Controllers.System
 
                 if (id != null)
                 {
-                    ResponseData response = this.PostAPI(URL_API.GROUPPERMISSION_GETBYID, new { Id = id });
+                    ResponseData response = this.PostAPI(UrlApi.GROUPPERMISSION_GETBYID, new { Id = id });
 
                     if (response.Status)
                     {
@@ -64,7 +64,7 @@ namespace GUI.Controllers.System
             catch (Exception ex)
             {
                 ViewBag.ErrorMessage = ex.Message;
-                return PartialView("~/Views/Shared/ErrorPartial.cshtml");
+                return View("~/Views/Shared/ErrorPartial.cshtml");
             }
         }
 
@@ -74,7 +74,7 @@ namespace GUI.Controllers.System
             {
                 GroupPermissionDto obj = new GroupPermissionDto();
 
-                ResponseData response = this.PostAPI(URL_API.GROUPPERMISSION_GETBYPOST, new { Id = Guid.Empty });
+                ResponseData response = this.PostAPI(UrlApi.GROUPPERMISSION_GETBYPOST, new { Id = Guid.Empty });
 
                 if (response.Status)
                 {
@@ -86,7 +86,7 @@ namespace GUI.Controllers.System
             catch (Exception ex)
             {
                 ViewBag.ErrorMessage = ex.Message;
-                return PartialView("~/Views/Shared/ErrorPartial.cshtml");
+                return View("~/Views/Shared/ErrorPartial.cshtml");
             }
         }
 
@@ -96,7 +96,7 @@ namespace GUI.Controllers.System
             {
                 GroupPermissionDto obj = new GroupPermissionDto();
 
-                ResponseData response = this.PostAPI(URL_API.GROUPPERMISSION_GETBYPOST, new { Id = id });
+                ResponseData response = this.PostAPI(UrlApi.GROUPPERMISSION_GETBYPOST, new { Id = id });
 
                 if (response.Status)
                 {
@@ -108,7 +108,7 @@ namespace GUI.Controllers.System
             catch (Exception ex)
             {
                 ViewBag.ErrorMessage = ex.Message;
-                return PartialView("~/Views/Shared/ErrorPartial.cshtml");
+                return View("~/Views/Shared/ErrorPartial.cshtml");
             }
         }
         
@@ -118,7 +118,7 @@ namespace GUI.Controllers.System
             {
                 var listGroup = new List<ComboboxModel>();
 
-                ResponseData response = this.PostAPI(URL_API.GROUPPERMISSION_GETALL, new GetAllRequest());
+                ResponseData response = this.PostAPI(UrlApi.GROUPPERMISSION_GETALL, new GetAllRequest());
 
                 if (response.Status)
                 {
@@ -138,7 +138,7 @@ namespace GUI.Controllers.System
             catch (Exception ex)
             {
                 ViewBag.ErrorMessage = ex.Message;
-                return PartialView("~/Views/Shared/ErrorPartial.cshtml");
+                return View("~/Views/Shared/ErrorPartial.cshtml");
             }
         }
 
@@ -152,11 +152,11 @@ namespace GUI.Controllers.System
                     ResponseData response;
                     if (param.IsEdit)
                     {
-                        response = this.PostAPI(URL_API.GROUPPERMISSION_UPDATE, param);
+                        response = this.PostAPI(UrlApi.GROUPPERMISSION_UPDATE, param);
                     }
                     else
                     {
-                        response = this.PostAPI(URL_API.GROUPPERMISSION_INSERT, param);
+                        response = this.PostAPI(UrlApi.GROUPPERMISSION_INSERT, param);
                     }
                     if (!response.Status)
                     {
@@ -180,7 +180,7 @@ namespace GUI.Controllers.System
         {
             try
             {
-                ResponseData response = this.PostAPI(URL_API.GROUPPERMISSION_GETALLFORCOMBOBOX, new GetAllRequest());
+                ResponseData response = this.PostAPI(UrlApi.GROUPPERMISSION_GETALLFORCOMBOBOX, new GetAllRequest());
 
                 if (!response.Status)
                 {

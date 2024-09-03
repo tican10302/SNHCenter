@@ -70,6 +70,64 @@ namespace DAL.Migrations
                     b.ToTable("Accounts");
                 });
 
+            modelBuilder.Entity("DAL.Entities.AdministrativeRegions", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CodeName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CodeNameEn")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NameEn")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AdministrativeRegions");
+                });
+
+            modelBuilder.Entity("DAL.Entities.AdministrativeUnits", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CodeName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CodeNameEn")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FullName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FullNameEn")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ShortName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ShortNameEn")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AdministrativeUnits");
+                });
+
             modelBuilder.Entity("DAL.Entities.Attendance", b =>
                 {
                     b.Property<Guid>("Id")
@@ -197,6 +255,42 @@ namespace DAL.Migrations
                     b.HasIndex("ShiftId");
 
                     b.ToTable("Courses");
+                });
+
+            modelBuilder.Entity("DAL.Entities.Districts", b =>
+                {
+                    b.Property<string>("Code")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int?>("AdministrativeUnitId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CodeName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FullName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FullNameEn")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NameEn")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProvinceCode")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Code");
+
+                    b.HasIndex("ProvinceCode");
+
+                    b.HasIndex("AdministrativeUnitId", "ProvinceCode");
+
+                    b.ToTable("Districts");
                 });
 
             modelBuilder.Entity("DAL.Entities.GroupPermission", b =>
@@ -602,6 +696,43 @@ namespace DAL.Migrations
                     b.ToTable("Programs");
                 });
 
+            modelBuilder.Entity("DAL.Entities.Provinces", b =>
+                {
+                    b.Property<string>("Code")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int?>("AdministrativeRegionId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("AdministrativeUnitId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CodeName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FullNameEn")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NameEn")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Code");
+
+                    b.HasIndex("AdministrativeRegionId");
+
+                    b.HasIndex("AdministrativeUnitId", "AdministrativeRegionId");
+
+                    b.ToTable("Provinces");
+                });
+
             modelBuilder.Entity("DAL.Entities.Role", b =>
                 {
                     b.Property<Guid>("Id")
@@ -827,12 +958,6 @@ namespace DAL.Migrations
                     b.Property<Guid>("AccountId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Address")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("City")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -851,6 +976,9 @@ namespace DAL.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<string>("DistrictCode")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -867,9 +995,8 @@ namespace DAL.Migrations
                     b.Property<string>("LastName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Province")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<string>("ProvinceCode")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<Guid>("RoleId")
                         .HasColumnType("uniqueidentifier");
@@ -885,13 +1012,58 @@ namespace DAL.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<string>("WardCode")
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AccountId");
 
+                    b.HasIndex("DistrictCode");
+
+                    b.HasIndex("ProvinceCode");
+
                     b.HasIndex("RoleId");
 
+                    b.HasIndex("WardCode");
+
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("DAL.Entities.Wards", b =>
+                {
+                    b.Property<string>("Code")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int?>("AdministrativeUnitId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CodeName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DistrictCode")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("FullName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FullNameEn")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NameEn")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Code");
+
+                    b.HasIndex("DistrictCode");
+
+                    b.HasIndex("AdministrativeUnitId", "DistrictCode");
+
+                    b.ToTable("Wards");
                 });
 
             modelBuilder.Entity("DAL.Entities.Attendance", b =>
@@ -936,6 +1108,21 @@ namespace DAL.Migrations
                     b.Navigation("Lesson");
 
                     b.Navigation("Shift");
+                });
+
+            modelBuilder.Entity("DAL.Entities.Districts", b =>
+                {
+                    b.HasOne("DAL.Entities.AdministrativeUnits", "AdministrativeUnit")
+                        .WithMany()
+                        .HasForeignKey("AdministrativeUnitId");
+
+                    b.HasOne("DAL.Entities.Provinces", "Province")
+                        .WithMany()
+                        .HasForeignKey("ProvinceCode");
+
+                    b.Navigation("AdministrativeUnit");
+
+                    b.Navigation("Province");
                 });
 
             modelBuilder.Entity("DAL.Entities.Homework", b =>
@@ -1006,6 +1193,21 @@ namespace DAL.Migrations
                     b.Navigation("Level");
                 });
 
+            modelBuilder.Entity("DAL.Entities.Provinces", b =>
+                {
+                    b.HasOne("DAL.Entities.AdministrativeRegions", "AdministrativeRegion")
+                        .WithMany()
+                        .HasForeignKey("AdministrativeRegionId");
+
+                    b.HasOne("DAL.Entities.AdministrativeUnits", "AdministrativeUnit")
+                        .WithMany()
+                        .HasForeignKey("AdministrativeUnitId");
+
+                    b.Navigation("AdministrativeRegion");
+
+                    b.Navigation("AdministrativeUnit");
+                });
+
             modelBuilder.Entity("DAL.Entities.Student", b =>
                 {
                     b.HasOne("DAL.Entities.Parent", "Parent")
@@ -1044,15 +1246,48 @@ namespace DAL.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("DAL.Entities.Districts", "District")
+                        .WithMany()
+                        .HasForeignKey("DistrictCode");
+
+                    b.HasOne("DAL.Entities.Provinces", "Province")
+                        .WithMany()
+                        .HasForeignKey("ProvinceCode");
+
                     b.HasOne("DAL.Entities.Role", "Role")
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("DAL.Entities.Wards", "Ward")
+                        .WithMany()
+                        .HasForeignKey("WardCode");
+
                     b.Navigation("Account");
 
+                    b.Navigation("District");
+
+                    b.Navigation("Province");
+
                     b.Navigation("Role");
+
+                    b.Navigation("Ward");
+                });
+
+            modelBuilder.Entity("DAL.Entities.Wards", b =>
+                {
+                    b.HasOne("DAL.Entities.AdministrativeUnits", "AdministrativeUnit")
+                        .WithMany()
+                        .HasForeignKey("AdministrativeUnitId");
+
+                    b.HasOne("DAL.Entities.Districts", "District")
+                        .WithMany()
+                        .HasForeignKey("DistrictCode");
+
+                    b.Navigation("AdministrativeUnit");
+
+                    b.Navigation("District");
                 });
 
             modelBuilder.Entity("DAL.Entities.Course", b =>
