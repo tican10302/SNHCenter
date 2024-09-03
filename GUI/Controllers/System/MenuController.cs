@@ -24,7 +24,7 @@ public class MenuController : BaseController<MenuController>
             var dataResult = new GetListPagingResponse();
             var result = new List<MenuModel>();
 
-            ResponseData response = this.PostAPI(URL_API.MENU_GETLIST, param);
+            ResponseData response = this.PostAPI(UrlApi.MENU_GETLIST, param);
             if (response.Status)
             {
                 dataResult = JsonConvert.DeserializeObject<GetListPagingResponse>(response.Data.ToString());
@@ -51,7 +51,7 @@ public class MenuController : BaseController<MenuController>
 
             if (id != null)
             {
-                ResponseData response = this.PostAPI(URL_API.MENU_GETBYID, new { Id = id });
+                ResponseData response = this.PostAPI(UrlApi.MENU_GETBYID, new { Id = id });
 
                 if (response.Status)
                 {
@@ -64,7 +64,7 @@ public class MenuController : BaseController<MenuController>
         catch (Exception ex)
         {
             ViewBag.ErrorMessage = ex.Message;
-            return PartialView("~/Views/Shared/ErrorPartial.cshtml");
+            return View("~/Views/Shared/ErrorPartial.cshtml");
         }
     }
 
@@ -74,7 +74,7 @@ public class MenuController : BaseController<MenuController>
         {
             MenuDto obj = new MenuDto();
 
-            ResponseData response = this.PostAPI(URL_API.MENU_GETBYPOST, new { Id = Guid.Empty });
+            ResponseData response = this.PostAPI(UrlApi.MENU_GETBYPOST, new { Id = Guid.Empty });
 
             if (response.Status)
             {
@@ -86,7 +86,7 @@ public class MenuController : BaseController<MenuController>
         catch (Exception ex)
         {
             ViewBag.ErrorMessage = ex.Message;
-            return PartialView("~/Views/Shared/ErrorPartial.cshtml");
+            return View("~/Views/Shared/ErrorPartial.cshtml");
         }
     }
 
@@ -96,7 +96,7 @@ public class MenuController : BaseController<MenuController>
         {
             MenuDto obj = new MenuDto();
 
-            ResponseData response = this.PostAPI(URL_API.MENU_GETBYPOST, new { Id = id });
+            ResponseData response = this.PostAPI(UrlApi.MENU_GETBYPOST, new { Id = id });
 
             if (response.Status)
             {
@@ -108,7 +108,7 @@ public class MenuController : BaseController<MenuController>
         catch (Exception ex)
         {
             ViewBag.ErrorMessage = ex.Message;
-            return PartialView("~/Views/Shared/ErrorPartial.cshtml");
+            return View("~/Views/Shared/ErrorPartial.cshtml");
         }
     }
 
@@ -122,11 +122,11 @@ public class MenuController : BaseController<MenuController>
                 ResponseData response;
                 if (param.IsEdit)
                 {
-                    response = this.PostAPI(URL_API.MENU_UPDATE, param);
+                    response = this.PostAPI(UrlApi.MENU_UPDATE, param);
                 }
                 else
                 {
-                    response = this.PostAPI(URL_API.MENU_INSERT, param);
+                    response = this.PostAPI(UrlApi.MENU_INSERT, param);
                 }
                 if (!response.Status)
                 {

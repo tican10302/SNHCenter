@@ -27,6 +27,6 @@ public class HomeController : BaseController<HomeController>
     public IActionResult Error()
     {
         // return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        return View("~/Views/System/Error/Index.cshtml");
+        return View("~/Views/Shared/ErrorPartial.cshtml");
     }
 }

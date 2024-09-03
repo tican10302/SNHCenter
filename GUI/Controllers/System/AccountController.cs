@@ -42,7 +42,7 @@ public class AccountController : Controller
                 throw new Exception(CommonFunc.GetModelState(this.ModelState));
             }
 
-            ResponseData response = this.LoginAPI(URL_API.ACCOUNT_LOGIN, request);
+            ResponseData response = this.LoginAPI(UrlApi.ACCOUNT_LOGIN, request);
             if (response.Status)
             {
                 var accountData = JsonConvert.DeserializeObject<AccountPermissionModel>(response.Data.ToString());

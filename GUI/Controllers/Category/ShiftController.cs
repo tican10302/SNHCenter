@@ -29,7 +29,7 @@ public class ShiftController : BaseController<ShiftController>
             var dataResult = new GetListPagingResponse();
             var result = new List<ShiftModel>();
 
-            ResponseData response = this.PostAPI(URL_API.SHIFT_GETLIST, param);
+            ResponseData response = this.PostAPI(UrlApi.SHIFT_GETLIST, param);
             if (response.Status)
             {
                 dataResult = JsonConvert.DeserializeObject<GetListPagingResponse>(response.Data.ToString());
@@ -56,7 +56,7 @@ public class ShiftController : BaseController<ShiftController>
 
             if (id != null)
             {
-                ResponseData response = this.PostAPI(URL_API.SHIFT_GETBYID, new { Id = id });
+                ResponseData response = this.PostAPI(UrlApi.SHIFT_GETBYID, new { Id = id });
 
                 if (response.Status)
                 {
@@ -69,7 +69,7 @@ public class ShiftController : BaseController<ShiftController>
         catch (Exception ex)
         {
             ViewBag.ErrorMessage = ex.Message;
-            return PartialView("~/Views/Shared/ErrorPartial.cshtml");
+            return View("~/Views/Shared/ErrorPartial.cshtml");
         }
     }
 
@@ -79,7 +79,7 @@ public class ShiftController : BaseController<ShiftController>
         {
             ShiftDto obj = new ShiftDto();
 
-            ResponseData response = this.PostAPI(URL_API.SHIFT_GETBYPOST, new { Id = Guid.Empty });
+            ResponseData response = this.PostAPI(UrlApi.SHIFT_GETBYPOST, new { Id = Guid.Empty });
 
             if (response.Status)
             {
@@ -91,7 +91,7 @@ public class ShiftController : BaseController<ShiftController>
         catch (Exception ex)
         {
             ViewBag.ErrorMessage = ex.Message;
-            return PartialView("~/Views/Shared/ErrorPartial.cshtml");
+            return View("~/Views/Shared/ErrorPartial.cshtml");
         }
     }
 
@@ -101,7 +101,7 @@ public class ShiftController : BaseController<ShiftController>
         {
             ShiftDto obj = new ShiftDto();
 
-            ResponseData response = this.PostAPI(URL_API.SHIFT_GETBYPOST, new { Id = id });
+            ResponseData response = this.PostAPI(UrlApi.SHIFT_GETBYPOST, new { Id = id });
 
             if (response.Status)
             {
@@ -113,7 +113,7 @@ public class ShiftController : BaseController<ShiftController>
         catch (Exception ex)
         {
             ViewBag.ErrorMessage = ex.Message;
-            return PartialView("~/Views/Shared/ErrorPartial.cshtml");
+            return View("~/Views/Shared/ErrorPartial.cshtml");
         }
     }
 
@@ -127,11 +127,11 @@ public class ShiftController : BaseController<ShiftController>
                 ResponseData response;
                 if (param.IsEdit)
                 {
-                    response = this.PostAPI(URL_API.SHIFT_UPDATE, param);
+                    response = this.PostAPI(UrlApi.SHIFT_UPDATE, param);
                 }
                 else
                 {
-                    response = this.PostAPI(URL_API.SHIFT_INSERT, param);
+                    response = this.PostAPI(UrlApi.SHIFT_INSERT, param);
                 }
                 if (!response.Status)
                 {
@@ -156,7 +156,7 @@ public class ShiftController : BaseController<ShiftController>
     {
         try
         {
-            ResponseData response = this.PostAPI(URL_API.SHIFT_DELETELIST, new { ids = listSelectedId });
+            ResponseData response = this.PostAPI(UrlApi.SHIFT_DELETELIST, new { ids = listSelectedId });
             return Json(new { IsSuccess = response.Status, Message = response.Message, Data = "" });
         }
         catch (Exception ex)

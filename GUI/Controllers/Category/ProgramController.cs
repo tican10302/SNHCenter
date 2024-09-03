@@ -29,7 +29,7 @@ public class ProgramController : BaseController<ProgramController>
             var dataResult = new GetListPagingResponse();
             var result = new List<ProgramModel>();
 
-            ResponseData response = this.PostAPI(URL_API.PROGRAM_GETLIST, param);
+            ResponseData response = this.PostAPI(UrlApi.PROGRAM_GETLIST, param);
             if (response.Status)
             {
                 dataResult = JsonConvert.DeserializeObject<GetListPagingResponse>(response.Data.ToString());
@@ -56,7 +56,7 @@ public class ProgramController : BaseController<ProgramController>
 
             if (id != null)
             {
-                ResponseData response = this.PostAPI(URL_API.PROGRAM_GETBYID, new { Id = id });
+                ResponseData response = this.PostAPI(UrlApi.PROGRAM_GETBYID, new { Id = id });
 
                 if (response.Status)
                 {
@@ -69,7 +69,7 @@ public class ProgramController : BaseController<ProgramController>
         catch (Exception ex)
         {
             ViewBag.ErrorMessage = ex.Message;
-            return PartialView("~/Views/Shared/ErrorPartial.cshtml");
+            return View("~/Views/Shared/ErrorPartial.cshtml");
         }
     }
 
@@ -80,7 +80,7 @@ public class ProgramController : BaseController<ProgramController>
         {
             ProgramDto obj = new ProgramDto();
 
-            ResponseData response = this.PostAPI(URL_API.PROGRAM_GETBYPOST, new { Id = Guid.Empty });
+            ResponseData response = this.PostAPI(UrlApi.PROGRAM_GETBYPOST, new { Id = Guid.Empty });
 
             if (response.Status)
             {
@@ -92,7 +92,7 @@ public class ProgramController : BaseController<ProgramController>
         catch (Exception ex)
         {
             ViewBag.ErrorMessage = ex.Message;
-            return PartialView("~/Views/Shared/ErrorPartial.cshtml");
+            return View("~/Views/Shared/ErrorPartial.cshtml");
         }
     }
     
@@ -102,7 +102,7 @@ public class ProgramController : BaseController<ProgramController>
         {
             ProgramDto obj = new ProgramDto();
 
-            ResponseData response = this.PostAPI(URL_API.PROGRAM_GETBYPOST, new { Id = id });
+            ResponseData response = this.PostAPI(UrlApi.PROGRAM_GETBYPOST, new { Id = id });
 
             if (response.Status)
             {
@@ -114,7 +114,7 @@ public class ProgramController : BaseController<ProgramController>
         catch (Exception ex)
         {
             ViewBag.ErrorMessage = ex.Message;
-            return PartialView("~/Views/Shared/ErrorPartial.cshtml");
+            return View("~/Views/Shared/ErrorPartial.cshtml");
         }
     }
 
@@ -128,11 +128,11 @@ public class ProgramController : BaseController<ProgramController>
                 ResponseData response;
                 if (param.IsEdit)
                 {
-                    response = this.PostAPI(URL_API.PROGRAM_UPDATE, param);
+                    response = this.PostAPI(UrlApi.PROGRAM_UPDATE, param);
                 }
                 else
                 {
-                    response = this.PostAPI(URL_API.PROGRAM_INSERT, param);
+                    response = this.PostAPI(UrlApi.PROGRAM_INSERT, param);
                 }
                 if (!response.Status)
                 {
@@ -157,7 +157,7 @@ public class ProgramController : BaseController<ProgramController>
     {
         try
         {
-            ResponseData response = this.PostAPI(URL_API.PROGRAM_DELETELIST, new { ids = listSelectedId });
+            ResponseData response = this.PostAPI(UrlApi.PROGRAM_DELETELIST, new { ids = listSelectedId });
             return Json(new { IsSuccess = response.Status, Message = response.Message, Data = "" });
         }
         catch (Exception ex)
