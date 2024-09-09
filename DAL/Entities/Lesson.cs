@@ -8,9 +8,9 @@
         public string? CourseBookPage { get; set; }
         public string? LessonAim { get; set; }
         public string? AdditionalInformation { get; set; }
+        public User? User { get; set; }
+        public Guid? UserId { get; set; }
         public Course Course { get; set; }
-        public User User { get; set; }
-        public Guid? HomeworkId { get; set; }
-        public Homework? Homework { get; set; }
+        public Guid CourseId { get; set; }
     }
 }

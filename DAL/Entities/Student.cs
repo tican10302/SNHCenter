@@ -2,7 +2,8 @@
 {
     public class Student : EntitiesBase
     {
-        public Parent Parent { get; set; }
+        public Parent? Parent { get; set; }
+        public Guid? ParentId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string StudentCode { get; set; }
