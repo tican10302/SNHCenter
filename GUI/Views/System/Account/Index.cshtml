@@ -268,7 +268,7 @@
                             }, 1000);
                         } else {
                             hideLoading();
-                            toastr.error('Username or password is incorrect', 'Log in', {
+                            toastr.error(result.Message, 'Log in', {
                                 positionClass: 'toast-bottom-right'
                             });
                         }

@@ -87,14 +87,14 @@ public class AccountRepository(IUnitOfWork unitOfWork,
                 .Find(x => x.UserName.ToLower() == request.UserName.ToLower());
             if (account == null)
             {
-                throw new Exception("Username or password is not exist");
+                throw new Exception("Username or password is not correct");
             }
             else
             {
                 var checkPassword = BCrypt.Net.BCrypt.Verify(request.Password, account.PasswordHash);
                 if (!checkPassword)
                 {
-                    throw new Exception("Username or password is not exist");
+                    throw new Exception("Username or password is not correct");
                 }
 
                 var userInfo = context.Users.Include(x => x.Role).FirstOrDefault(x => x.Account.Id == account.Id);
