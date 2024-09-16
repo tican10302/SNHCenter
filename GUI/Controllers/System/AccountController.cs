@@ -75,7 +75,7 @@ public class AccountController : Controller
             }
             else
             {
-                throw new Exception(CommonFunc.GetModelState(this.ModelState));
+                throw new Exception("Error system:" + response.Message);
             }
         }
         catch (Exception ex)

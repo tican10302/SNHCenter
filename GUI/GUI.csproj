@@ -23,4 +23,21 @@
       <Folder Include="Controllers\Training\" />
     </ItemGroup>
 
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="wwwroot\lib\chart.js\chart.cjs.map" />
+      <_ContentIncludedByDefault Remove="wwwroot\lib\chart.js\chart.js" />
+      <_ContentIncludedByDefault Remove="wwwroot\lib\chart.js\chart.js.map" />
+      <_ContentIncludedByDefault Remove="wwwroot\lib\chart.js\chart.min.js" />
+      <_ContentIncludedByDefault Remove="wwwroot\lib\chart.js\chart.umd.js" />
+      <_ContentIncludedByDefault Remove="wwwroot\lib\chart.js\chart.umd.js.map" />
+      <_ContentIncludedByDefault Remove="wwwroot\lib\chart.js\chart.umd.min.js" />
+      <_ContentIncludedByDefault Remove="wwwroot\lib\chart.js\helpers.cjs.map" />
+      <_ContentIncludedByDefault Remove="wwwroot\lib\chart.js\helpers.js" />
+      <_ContentIncludedByDefault Remove="wwwroot\lib\chart.js\helpers.js.map" />
+      <_ContentIncludedByDefault Remove="wwwroot\lib\chart.js\helpers.min.js" />
+      <_ContentIncludedByDefault Remove="wwwroot\lib\chart.js\index.d.ts" />
+      <_ContentIncludedByDefault Remove="wwwroot\lib\chart.js\index.umd.d.ts" />
+      <_ContentIncludedByDefault Remove="wwwroot\lib\chart.js\types.d.ts" />
+    </ItemGroup>
+
 </Project>
