@@ -1,8 +1,101 @@
 ﻿@{
     ViewData["Title"] = "SNHCenter";
 }
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<style>
+    .pd-10 {
+        padding: 10px;
+    }
+    .chart-card .card {
+        background-color: white;
+        padding: 20px;
+        border-radius: 12px;
+        border: none;
+        box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.05);
+    }
+    .chart-card-img img {
+        float: right;
+    }
+    .chart-card .card-title {
+        font-size: 16px;
+    }
+
+    .chart-card .card-text {
+        font-size: 28px;
+        font-weight: bold;
+    }
+    
+    .chart-card .card-value {
+        margin-top: 24px;
+    }
+</style>
+
+<h2>Dashboard</h2>
+
+<div class="row chart-card">
+    <div class="col-md-3 pd-10">
+        <div class="card">
+            <div class="row">
+                <div class="col-md-6">
+                    <span class="card-title">Total User</span>
+                    <span class="card-text">40,689</span>
+                </div>
+                <div class="col-md-6 chart-card-img">
+                    <img src="~/img/icon/chart_people.png"/>
+                </div>
+            </div>
+            <div class="card-value">
+                <span style="color: #00B69B;"><i class="fa-solid fa-arrow-trend-up"></i> 8.5%</span> Up from yesterday
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 pd-10">
+        <div class="card">
+            <div class="row">
+                <div class="col-md-6">
+                    <span class="card-title">Total Order</span>
+                    <span class="card-text">10293</span>
+                </div>
+                <div class="col-md-6 chart-card-img">
+                    <img src="~/img/icon/chart_order.png"/>
+                </div>
+            </div>
+            <div class="card-value">
+                <span style="color: #00B69B;"><i class="fa-solid fa-arrow-trend-up"></i> 1.3%</span> Up from past week
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 pd-10">
+        <div class="card">
+            <div class="row">
+                <div class="col-md-6">
+                    <span class="card-title">Total Sales</span>
+                    <span class="card-text">$89,000</span>
+                </div>
+                <div class="col-md-6 chart-card-img">
+                    <img src="~/img/icon/chart_sale.png"/>
+                </div>
+            </div>
+            <div class="card-value">
+                <span style="color: #F93C65;"><i class="fa-solid fa-arrow-trend-down"></i> 4.3%</span> Down from yesterday
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 pd-10">
+        <div class="card">
+            <div class="row">
+                <div class="col-md-6">
+                    <span class="card-title">Total Pending</span>
+                    <span class="card-text">2040</span>
+                </div>
+                <div class="col-md-6 chart-card-img">
+                    <img src="~/img/icon/chart_pending.png"/>
+                </div>
+            </div>
+            <div class="card-value">
+                <span style="color: #00B69B;"><i class="fa-solid fa-arrow-trend-up"></i> 1.8%</span> Up from yesterday
+            </div>
+        </div>
+    </div>
 </div>
