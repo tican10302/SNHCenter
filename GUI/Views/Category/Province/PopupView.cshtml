@@ -1,0 +1,36 @@
+@model DTO.Category.Province.Models.ProvinceModel
+
+@* @{
+    List<string> selectedDays = Model.SelectDays ?? new List<string>();
+} *@
+
+<div class="modal-content modal-snhcenter" id="modalLoading">
+        <div class="modal-header">
+            <h4 class="modal-title">Shift Detail</h4>
+            <button type="button" class="btn-close" onclick="closePopup();" aria-label="Close" data-bs-dimiss="modal"></button>
+        </div>
+        
+        <div class="modal-body">
+            <div class="row form-group">
+                <label class="col-sm-2 form-label">Name <span class="text-danger">(*)</span></label>
+                <div class="col-sm-4">
+                    @(Html.TextBoxFor(model => model.Name, new { @placeholder = "Enter name", @readonly = true }))
+                </div>
+            </div>
+            
+        </div>
+        
+        <div class="modal-footer">
+            <button type="button" class="btn btn-danger btn-sm" onclick="closePopup();"><i class="fas fa-times-square"></i> Cancel</button>
+        </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $("#frmShift").find("span.field-validation-valid").hide();
+    })
+    
+    function closePopup() {
+        $('#modal-default').modal('hide');
+    }
+</script>

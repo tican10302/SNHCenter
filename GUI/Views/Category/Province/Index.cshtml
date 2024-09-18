@@ -1,0 +1,116 @@
+@{
+    ViewData["Title"] = "Province";
+}
+
+@model DTO.System.Account.Models.PermissionModel
+
+@if (Model.IsView == true)
+{
+    <div>
+        <div class="title">
+            <h2 class="title-content">
+                Province
+            </h2>
+        </div>
+        <div class="content">
+            @* --- TABLE --- *@
+            <div class="">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div id="toolbar">
+                            @{
+                                if (Model.IsView == true)
+                                {
+                                    <button class="btn btn-primary" onclick="showData()"><i class="fa-solid fa-eye"></i> View</button>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <table class="bootstrap-table"
+                       id="ProvinceTable"
+                       data-toggle="table"
+                       data-height="460"
+                       data-ajax="getDataTable"
+                       data-search="true"
+                       data-mobile-responsive="true"
+                       data-side-pagination="server"
+                       data-pagination="true"
+                       data-click-to-select="true"
+                       data-toolbar="#toolbar">
+                    <thead class="content-table-header">
+                    <tr>
+                        <th data-checkbox="true"></th>
+                        <th data-formatter="sortTable" data-align="center">No.</th>
+                        <th data-field="Id" data-visible="false">ID</th>
+                        <th data-field="Name">Name</th>
+                        <th data-field="NameEn">Name English</th>
+                        <th data-field="FullName">Full Name</th>
+                        <th data-field="FullNameEn">Full Name English</th>
+                        <th data-field="CodeName">Code Name</th>
+                        <th data-field="Note">Note</th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+}
+
+<div class="modal fade" id="modal-default" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-lg" id='modelContainer'>
+    </div>
+</div>
+
+<script>
+    function getIdSelections() {
+        return $.map($('#ProvinceTable').bootstrapTable('getSelections'), function (row) {
+            return row.Id
+        })
+    }
+
+    function showData() {
+        var selectedRows = getIdSelections();
+        if (selectedRows.length == 1) {
+            var url = '@Url.Action("ShowViewPopup", "Province")' + "?id=" + selectedRows[0];
+
+            $.get(url, function (data) {
+                $('#modelContainer').html(data);
+                $('#modal-default').modal('show');
+            });
+        } else {
+            notyf.error('Please select a row to view.');
+        }
+    }
+    
+    function getDataTable(params) {
+        var url = '@Url.Action("GetList", "Province")';
+        var data = params.data;
+
+        $.get(url, data, function (response) {
+            params.success({
+                total: response.total,
+                rows: response.data
+            });
+        });
+    }
+
+    function refreshGrid() {
+        $('#ProvinceTable').bootstrapTable('refresh');
+    }
+
+    function sortTable(value, row, index) {
+        var pageSize = $('#ProvinceTable').bootstrapTable('getOptions').pageSize;
+        var pageNumber = $('#ProvinceTable').bootstrapTable('getOptions').pageNumber;
+        return (pageNumber - 1) * pageSize + index + 1;
+    }
+
+    function timeFormatter(value, row, index) {
+        if (value) {
+            let time = value.split(":");
+            return time[0] + ":" + time[1];
+        }
+        return value;
+    }
+</script>

@@ -63,6 +63,11 @@ public static class UrlApi
     public const string PROGRAM_INSERT = "program/insert";
     public const string PROGRAM_UPDATE = "program/update";
     public const string PROGRAM_DELETELIST = "program/delete-list";
+
+    //Province
+    public const string PROVINCE_GETLIST = "province/get-list-paging";
+    public const string PROVINCE_GETBYPOST = "province/get-by-post";
+    public const string PROVINCE_GETBYID = "province/get-by-id";
     #endregion
 
     #region Management
