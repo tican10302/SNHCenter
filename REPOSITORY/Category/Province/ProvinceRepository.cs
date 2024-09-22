@@ -22,14 +22,14 @@ public class ProvinceRepository(IUnitOfWork unitOfWork, IMapper mapper, IHttpCon
         try
         {
             var result = unitOfWork.GetRepository<DAL.Entities.Provinces>()
-                .GetAll(x => !x.IsDeleted && x.IsActived)
+                .GetAll(x => !string.IsNullOrEmpty(x.Code))
                 .OrderBy(x => x.Name)
                 .ToList();
 
             response.Data = result.Select(x => new ComboboxModel
             {
                 Text = x.Name,
-                Value = x.Id.ToString()
+                Value = x.Code.ToString()
             }).OrderBy(x => x.Sort).ToList();
         }
         catch (Exception ex)

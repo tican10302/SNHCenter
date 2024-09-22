@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 namespace DAL.Entities;
 
 [Index(nameof(AdministrativeUnitId), nameof(AdministrativeRegionId))]
-public class Provinces : EntitiesBase
+public class Provinces
 {
     [Key]
     public required string Code { get; set; }
