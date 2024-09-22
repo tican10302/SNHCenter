@@ -8,10 +8,6 @@ using DTO.Category.Program.Models;
 using DTO.Category.Program.Dtos;
 using REPOSITORY.Common;
 using Microsoft.AspNetCore.Http;
-using DTO.Category.Shift.Dtos;
-using DTO.Category.Shift.Models;
-
-
 
 namespace REPOSITORY.Category;
 

@@ -4,10 +4,11 @@ using Microsoft.EntityFrameworkCore;
 namespace DAL.Entities;
 
 [Index(nameof(AdministrativeUnitId), nameof(AdministrativeRegionId))]
-public class Provinces
+public class Provinces : EntitiesBase
 {
     [Key]
     public required string Code { get; set; }
+
     public required string Name { get; set; }
     public string? NameEn { get; set; }
     public required string FullName { get; set; }

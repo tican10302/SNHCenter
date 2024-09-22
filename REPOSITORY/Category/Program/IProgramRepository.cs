@@ -1,6 +1,4 @@
 ﻿using DTO.Base;
-using DTO.Category.Shift.Dtos;
-using DTO.Category.Shift.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

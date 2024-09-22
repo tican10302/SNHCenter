@@ -68,6 +68,11 @@ public static class UrlApi
     public const string PROVINCE_GETLIST = "province/get-list-paging";
     public const string PROVINCE_GETBYPOST = "province/get-by-post";
     public const string PROVINCE_GETBYID = "province/get-by-id";
+
+    //District
+    public const string DISTRICT_GETLIST = "district/get-list-paging";
+    public const string DISTRICT_GETBYPOST = "district//get-by-post";
+    public const string DISTRICT_GETBYID = "district//get-by-id";
     #endregion
 
     #region Management
