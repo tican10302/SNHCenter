@@ -2,7 +2,6 @@
 using DTO.Base;
 using DTO.Category.District.Dtos;
 using DTO.Category.District.Models;
-using DTO.Category.District.Models;
 using DTO.Common;
 using GUI.Constants;
 using GUI.Models;
