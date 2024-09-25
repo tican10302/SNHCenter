@@ -6,13 +6,13 @@ namespace REPOSITORY.System.Account;
 
 public interface IAccountRepository
 {
-    Task<BaseResponse<AccountModel>> Register(RegisterDto request);
-    Task<BaseResponse<AccountPermissionModel>> Login(AccountDto request);
-    Task<BaseResponse<GetListPagingResponse>> GetListPaging(GetListPagingRequest request);
-    Task<BaseResponse<UserDto>> GetByPost(GetByIdRequest request);
-    Task<BaseResponse<UserModel>> GetById(GetByIdRequest request);
-    Task<BaseResponse<UserModel>> Insert(UserDto request);
-    Task<BaseResponse<UserModel>> Update(UserDto request);
-    Task<BaseResponse<string>> DeLeteList(DeleteListRequest request);
-    Task<BaseResponse<List<PermissionModel>>> GetPermission(GetByIdRequest request);
+    Task<AccountModel> Register(RegisterDto request);
+    Task<AccountPermissionModel> Login(AccountDto request);
+    Task<GetListPagingResponse> GetListPaging(GetListPagingRequest request);
+    Task<UserDto> GetByPost(GetByIdRequest request);
+    Task<UserModel> GetById(GetByIdRequest request);
+    Task<bool> Insert(UserDto request);
+    Task<bool> Update(UserDto request);
+    Task<bool> DeLeteList(DeleteListRequest request);
+    Task<List<PermissionModel>> GetPermission(GetByIdRequest request);
 }

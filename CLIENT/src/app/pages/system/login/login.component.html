@@ -1,0 +1,46 @@
+<body>
+  <div class="body">
+    <div class="login-card">
+    <div class="login-card-title">
+      <h4 class="login-card-title-head">
+        Login to Account
+      </h4>
+      <span class="login-card-title-des">
+                Please enter your username and password to continue
+            </span>
+    </div>
+    <form #loginForm="ngForm" (ngSubmit)="login()" autocomplete="off">
+      <div class="login-card-form">
+        <div class="login-card-form-row mb-40">
+          <label class="login-card-form-row-title">Username:</label>
+          <input id="UserName" [(ngModel)]="loginObj.UserName" name="UserName" placeholder="Username" type="text" required tabindex="1"/>
+        </div>
+        <div class="login-card-form-row mb-24">
+          <div class="login-card-form-column">
+            <label class="login-card-form-row-title">Password:</label>
+          </div>
+          <input id="Password" [(ngModel)]="loginObj.Password" name="Password" placeholder="••••••••" type="password" required tabindex="2"/>
+        </div>
+        <div class="login-card-form-check-password">
+          <div class="login-card-form-remember-password">
+            <input type="checkbox"/>
+            <span>&nbsp;Remember Password</span>
+          </div>
+          <div class="login-card-form-forget-password">
+            <a href="#">Forget Password?</a>
+          </div>
+        </div>
+      </div>
+      <div class="login-card-button">
+        <button type="submit">Sign in</button>
+      </div>
+    </form>
+  </div>
+  </div>
+
+  <div id="pageLoading" role="status">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+</body>

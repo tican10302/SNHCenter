@@ -4,27 +4,25 @@ using AutoDependencyRegistration;
 using AutoMapper;
 using DAL.Data;
 using FluentValidation.AspNetCore;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using REPOSITORY;
 using REPOSITORY.Common;
-using REPOSITORY.System.Account;
 
 namespace BLL.Extensions;
 
 public static class ApplicationServiceExtensions
 {
-    public static IServiceCollection AddApplicationServiceExtensions(this IServiceCollection services, IConfiguration config)
+    public static IServiceCollection AddApplicationServiceExtensions(this IServiceCollection services,
+        IConfiguration config)
     {
         services.AddDbContext<DataContext>(opt =>
         {
             opt.UseSqlServer(config.GetConnectionString("DefaultConnection"));
         });
-        
+
         // CORS
         services.AddCors(options =>
         {
@@ -34,16 +32,16 @@ public static class ApplicationServiceExtensions
                     builder
                         .AllowAnyHeader()
                         .AllowAnyMethod()
-                        .AllowCredentials().SetIsOriginAllowed((hosts) => true);
+                        .AllowCredentials().SetIsOriginAllowed(hosts => true);
                 });
         });
-        
+
         //SYSTEM
         services.AddSingleton(config);
         services.AddHttpContextAccessor();
         services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         services.Configure<ApiBehaviorOptions>(options => { options.SuppressModelStateInvalidFilter = true; });
-        
+
         //AUTHENTICATION
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
@@ -59,7 +57,7 @@ public static class ApplicationServiceExtensions
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]))
                 };
             });
-        
+
         //MAPPER
         var allREPONSITORY = Assembly.GetEntryAssembly()
             .GetReferencedAssemblies()
@@ -71,7 +69,7 @@ public static class ApplicationServiceExtensions
             mc.CreateMap<DateOnly?, DateTime?>().ConvertUsing(new DateTimeTypeConverter());
             mc.CreateMap<DateTime?, DateOnly?>().ConvertUsing(new DateOnlyTypeConverter());
         });
-        IMapper mapper = mappigConfig.CreateMapper();
+        var mapper = mappigConfig.CreateMapper();
         services.AddSingleton(mapper);
 
         //services.AddAutoMapper(typeof(Startup));
@@ -105,5 +103,4 @@ public static class ApplicationServiceExtensions
             return source.HasValue ? DateOnly.FromDateTime(source.Value) : null;
         }
     }
-    
 }

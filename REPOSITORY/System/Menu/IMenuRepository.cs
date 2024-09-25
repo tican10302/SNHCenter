@@ -6,10 +6,10 @@ namespace REPOSITORY.System.Menu;
 
 public interface IMenuRepository
 {
-    Task<BaseResponse<GetListPagingResponse>> GetList(MenuGetListDto request);
-    Task<BaseResponse<List<MenuModel>>> GetAll(GetAllRequest request);
-    Task<BaseResponse<MenuModel>> GetById(GetByIdRequest request);
-    Task<BaseResponse<MenuDto>> GetByPost(GetByIdRequest request);
-    Task<BaseResponse<MenuModel>> Insert(MenuDto request);
-    Task<BaseResponse<MenuModel>> Update(MenuDto request);
+    Task<GetListPagingResponse> GetListPaging(MenuGetListDto request);
+    List<MenuModel> GetAll();
+    Task<MenuModel> GetById(GetByIdRequest request);
+    Task<MenuDto> GetByPost(GetByIdRequest request);
+    Task<bool> Insert(MenuDto request);
+    Task<bool> Update(MenuDto request);
 }

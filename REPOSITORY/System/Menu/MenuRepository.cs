@@ -1,4 +1,5 @@
 using System.Data;
+using System.Net;
 using AutoDependencyRegistration.Attributes;
 using AutoMapper;
 using Dapper;
@@ -12,120 +13,72 @@ namespace REPOSITORY.System.Menu;
 [RegisterClassAsTransient]
 public class MenuRepository(IUnitOfWork unitOfWork, IMapper mapper) : IMenuRepository
 {
-    public async Task<BaseResponse<GetListPagingResponse>> GetList(MenuGetListDto request)
+    public async Task<GetListPagingResponse> GetListPaging(MenuGetListDto request)
     {
-        var response = new BaseResponse<GetListPagingResponse>();
+        var parameters = new DynamicParameters();
+        parameters.Add("@iTextSearch", request.Search, DbType.String);
+        parameters.Add("@iGroupPermission", request.GroupPermissionId, DbType.Guid);
+        parameters.Add("@iPageIndex", request.Offset / request.Limit, DbType.Int32);
+        parameters.Add("@iRowsPerPage", request.Limit, DbType.Int32);
+        parameters.Add("@oTotalRow", dbType: DbType.Int64, direction: ParameterDirection.Output);
+        var result = await unitOfWork.GetRepository<MenuModel>()
+            .ExecWithStoreProcedure("sp_Category_Menu_GetListPaging", parameters);
 
-        try
+        var totalRow = parameters.Get<long>("@oTotalRow");
+        var responseData = new GetListPagingResponse
         {
-            var parameters = new DynamicParameters();
-            parameters.Add("@iTextSearch", request.Search, DbType.String);
-            parameters.Add("@iGroupPermission", request.GroupPermissionId, DbType.Guid);
-            parameters.Add("@iPageIndex", request.Offset / request.Limit, DbType.Int32);
-            parameters.Add("@iRowsPerPage", request.Limit, DbType.Int32);
-            parameters.Add("@oTotalRow", dbType: DbType.Int64, direction: ParameterDirection.Output);
-            var result = await unitOfWork.GetRepository<MenuModel>()
-                .ExecWithStoreProcedure("sp_Category_Menu_GetListPaging", parameters);
+            PageIndex = request.Offset,
+            Data = result,
+            TotalRow = Convert.ToInt32(totalRow)
+        };
 
-            var totalRow = parameters.Get<long>("@oTotalRow");
-            var responseData = new GetListPagingResponse
-            {
-                PageIndex = request.Offset,
-                Data = result,
-                TotalRow = Convert.ToInt32(totalRow)
-            };
-
-            response.Data = responseData;
-        }
-        catch (Exception ex)
-        {
-            response.Error = true;
-            response.Message = ex.Message;
-        }
-
-        return response;
+        return responseData;
     }
     
-    public async Task<BaseResponse<List<MenuModel>>> GetAll(GetAllRequest request)
+    public List<MenuModel> GetAll()
     {
-        var response = new BaseResponse<List<MenuModel>>();
+        var result = unitOfWork.GetRepository<DAL.Entities.Menu>()
+            .GetAll(x => x.IsActived)
+            .OrderBy(x => x.Sort)
+            .ToList();
 
-        try
-        {
-            var result = unitOfWork.GetRepository<DAL.Entities.Menu>()
-                .GetAll(x => x.IsActived)
-                .OrderBy(x => x.Sort)
-                .ToList();
-
-            response.Data = mapper.Map<List<MenuModel>>(result);
-        }
-        catch (Exception ex)
-        {
-            response.Error = true;
-            response.Message = ex.Message;
-        }
+        var response = mapper.Map<List<MenuModel>>(result);
 
         return response;
     }
 
-    public async Task<BaseResponse<MenuModel>> GetById(GetByIdRequest request)
+    public async Task<MenuModel> GetById(GetByIdRequest request)
     {
-        var response = new BaseResponse<MenuModel>();
-
-        try
+        var data = await unitOfWork.GetRepository<DAL.Entities.Menu>().GetByIdAsync(request.Id);
+        if (data == null)
         {
-            var data = await unitOfWork.GetRepository<DAL.Entities.Menu>().GetByIdAsync(request.Id);
-            if (data == null)
-            {
-                throw new Exception("Not data found");
-            }
-
-            var result = mapper.Map<MenuModel>(data);
-            response.Data = result;
-        }
-        catch(Exception ex)
-        {
-            response.Error = true;
-            response.Message = ex.Message;
+            throw new ApiException((int)HttpStatusCode.NotFound, "Not data found");
         }
 
-        return response;
+        var result = mapper.Map<MenuModel>(data);
+        return result;
     }
 
-    public async Task<BaseResponse<MenuDto>> GetByPost(GetByIdRequest request)
+    public async Task<MenuDto> GetByPost(GetByIdRequest request)
     {
-        var response = new BaseResponse<MenuDto>();
-
-        try
+        var result = new MenuDto();
+        var data = await unitOfWork.GetRepository<DAL.Entities.Menu>().GetByIdAsync(request.Id);
+        if (data == null)
         {
-            var result = new MenuDto();
-            var data = await unitOfWork.GetRepository<DAL.Entities.Menu>().GetByIdAsync(request.Id);
-            if (result == null)
-            {
-                result.Id = Guid.NewGuid();
-                result.IsEdit = false;
-            }
-            else
-            {
-                result = mapper.Map<MenuDto>(data);
-                result.IsEdit = true;
-            }
-
-            response.Data = result;
-
+            result.Id = Guid.NewGuid();
+            result.IsEdit = false;
         }
-        catch (Exception ex)
+        else
         {
-            response.Error = true;
-            response.Message = ex.Message;
+            result = mapper.Map<MenuDto>(data);
+            result.IsEdit = true;
         }
 
-        return response;
+        return result;
     }
 
-    public async Task<BaseResponse<MenuModel>> Insert(MenuDto request)
+    public async Task<bool> Insert(MenuDto request)
     {
-        var response = new BaseResponse<MenuModel>();
         try
         {
             using var transaction = unitOfWork.BeginTransactionAsync();
@@ -136,30 +89,26 @@ public class MenuRepository(IUnitOfWork unitOfWork, IMapper mapper) : IMenuRepos
                 x.Name == request.Name);
             if (checkData != null)
             {
-                throw new Exception("Data already exists");
+                throw new ApiException((int)HttpStatusCode.BadRequest, "Data already exists");
             }
             
             var entity = mapper.Map<DAL.Entities.Menu>(request);
-            var result = await unitOfWork.GetRepository<DAL.Entities.Menu>().AddAsync(entity);
+            await unitOfWork.GetRepository<DAL.Entities.Menu>().AddAsync(entity);
 
             await unitOfWork.SaveChangesAsync();
             await unitOfWork.CommitAsync();
-            
-            response.Data = mapper.Map<MenuModel>(result);
+
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             await unitOfWork.RollbackAsync();
-            response.Error = true;
-            response.Message = ex.Message;
+            throw;
         }
-
-        return response;
+        return true;
     }
 
-    public async Task<BaseResponse<MenuModel>> Update(MenuDto request)
+    public async Task<bool> Update(MenuDto request)
     {
-        var response = new BaseResponse<MenuModel>();
         try
         {
             using var transaction = unitOfWork.BeginTransactionAsync();
@@ -171,30 +120,26 @@ public class MenuRepository(IUnitOfWork unitOfWork, IMapper mapper) : IMenuRepos
                 x.Name == request.Name);
             if (checkData != null)
             {
-                throw new Exception("Data already exists");
+                throw new ApiException((int)HttpStatusCode.BadRequest, "Data already exists");
             }
 
             var data = await unitOfWork.GetRepository<DAL.Entities.Menu>().GetByIdAsync(request.Id);
             if (data == null)
             {
-                throw new Exception("Not data found");
+                throw new ApiException((int)HttpStatusCode.NotFound, "Not data found");
             }
             var entity = mapper.Map(request, data);
             await unitOfWork.GetRepository<DAL.Entities.Menu>().UpdateAsync(entity);
 
             await unitOfWork.SaveChangesAsync();
             await unitOfWork.CommitAsync();
-
-            response.Data = mapper.Map<MenuModel>(entity);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             await unitOfWork.RollbackAsync();
-            response.Error = true;
-            response.Message = ex.Message;
+            throw;
         }
-
-        return response;
+        return true;
     }
 
     

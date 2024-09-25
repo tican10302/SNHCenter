@@ -1,0 +1,135 @@
+$color_1: #202224;
+$primary_color: #4880FF;
+$color_3: #FFF;
+$background-color_1: #fff;
+$background-color_2: #F1F4F9;
+$background-color_3: #4880FF;
+$background-color_4: #3773ff;
+$background-color_5: rgb(0 0 0 / 20%);
+
+/* LOADING */
+body {
+  height: 100% !important;
+  margin: 0;
+}
+html {
+  height: 100% !important;
+  margin: 0;
+}
+.body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100vh;
+  background-image: url("/img/common/background.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+.login-card {
+  background-color: $background-color_1;
+  padding: 60px 56px 72px 56px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+.login-card-title {
+  text-align: center;
+}
+.login-card-title-head {
+  font-size: 30px;
+  font-weight: bold;
+  margin: 0;
+}
+.login-card-title-des {
+  display: block;
+  font-size: 16px;
+  margin: 12px 0 36px 0;
+}
+.login-card-form-row {
+  display: flex;
+  flex-direction: column;
+  input {
+    border: 1px solid #D8D8D8;
+    border-radius: 8px;
+    background-color: $background-color_2;
+    height: 44px;
+    font-size: 16px;
+    padding: 0 16px;
+    &:focus {
+      outline: none;
+      box-shadow: none;
+    }
+  }
+}
+.login-card-form-column {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  a {
+    color: $color_1;
+    transition: all 0.1s ease-in-out;
+    &:hover {
+      color: $primary_color;
+    }
+  }
+}
+.login-card-form-row-title {
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 16px;
+}
+.login-card-form-check-password {
+  display: flex;
+  justify-content: space-between;
+}
+.login-card-form-remember-password {
+  display: flex;
+  align-items: center;
+  input[type=checkbox] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+  }
+}
+.login-card-button {
+  button {
+    margin-top: 40px;
+    width: 100%;
+    height: 56px;
+    cursor: pointer;
+    background-color: $background-color_3;
+    color: $color_3;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    transition: all 0.1s ease-in-out;
+    &:hover {
+      background-color: $background-color_4;
+    }
+  }
+}
+.mb-24 {
+  margin-bottom: 24px;
+}
+.mb-40 {
+  margin-bottom: 40px;
+}
+#pageLoading {
+  position: fixed;
+  display: none;
+  z-index: 10000;
+  top: 0;
+  left: 0;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  background-color: $background-color_5;
+  color: $primary_color;
+  transition: all 0.2s;
+  .spinner-border {
+    width: 3rem;
+    height: 3rem;
+  }
+}

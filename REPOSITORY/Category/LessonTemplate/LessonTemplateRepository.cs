@@ -1,7 +1,7 @@
 using System.Data;
+using System.Net;
 using AutoDependencyRegistration.Attributes;
 using AutoMapper;
-using DAL.Entities;
 using Dapper;
 using DTO.Base;
 using DTO.Category.LessonTemplate.Dtos;
@@ -14,72 +14,44 @@ namespace REPOSITORY.Category.LessonTemplate;
 [RegisterClassAsTransient]
 public class LessonTemplateRepository(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor) : ILessonTemplateRepository
 {
-    public async Task<BaseResponse<GetListPagingResponse>> GetListPaging(GetListPagingRequest request)
+    public async Task<GetListPagingResponse> GetListPaging(GetListPagingRequest request)
     {
-        var response = new BaseResponse<GetListPagingResponse>();
+        var parameters = new DynamicParameters();
+        parameters.Add("@iTextSearch", request.Search, DbType.String);
+        parameters.Add("@iPageIndex", request.Offset / request.Limit, DbType.Int32);
+        parameters.Add("@iRowsPerPage", request.Limit, DbType.Int32);
+        parameters.Add("@oTotalRow", dbType: DbType.Int64, direction: ParameterDirection.Output);
 
-        try
+        var result = await unitOfWork.GetRepository<LessonTemplateModel>().ExecWithStoreProcedure("sp_Category_LessonTemplate_GetListPaging", parameters);
+
+        var totalRow = parameters.Get<long>("@oTotalRow");
+        var responseData = new GetListPagingResponse
         {
-            var parameters = new DynamicParameters();
-            parameters.Add("@iTextSearch", request.Search, DbType.String);
-            parameters.Add("@iPageIndex", request.Offset / request.Limit, DbType.Int32);
-            parameters.Add("@iRowsPerPage", request.Limit, DbType.Int32);
-            parameters.Add("@oTotalRow", dbType: DbType.Int64, direction: ParameterDirection.Output);
+            PageIndex = request.Offset,
+            Data = result,
+            TotalRow = Convert.ToInt32(totalRow)
+        };
 
-            var result = await unitOfWork.GetRepository<LessonTemplateModel>().ExecWithStoreProcedure("sp_Category_LessonTemplate_GetListPaging", parameters);
-
-            var totalRow = parameters.Get<long>("@oTotalRow");
-            var responseData = new GetListPagingResponse
-            {
-                PageIndex = request.Offset,
-                Data = result,
-                TotalRow = Convert.ToInt32(totalRow)
-            };
-
-            response.Data = responseData;
-        }
-        catch (Exception ex)
-        {
-            response.Error = true;
-            response.Message = ex.Message;
-        }
-
-        return response;
+        return responseData;
     }
 
-    public async Task<BaseResponse<LessonTemplateModel>> GetById(GetByIdRequest request)
+    public async Task<LessonTemplateModel> GetById(GetByIdRequest request)
     {
-        var response = new BaseResponse<LessonTemplateModel>();
-
-        try
+        var data = await unitOfWork.GetRepository<DAL.Entities.LessonTemplate>().GetByIdAsync(request.Id);
+        if (data == null)
         {
-            var data = await unitOfWork.GetRepository<DAL.Entities.LessonTemplate>().GetByIdAsync(request.Id);
-            if (data == null)
-            {
-                throw new Exception("Not data found");
-            }
-
-            var result = mapper.Map<LessonTemplateModel>(data);
-            response.Data = result;
-        }
-        catch(Exception ex)
-        {
-            response.Error = true;
-            response.Message = ex.Message;
+            throw new ApiException((int)HttpStatusCode.NotFound, "Not data found");
         }
 
-        return response;
+        var result = mapper.Map<LessonTemplateModel>(data);
+        return result;
     }
 
-    public async Task<BaseResponse<LessonTemplateDto>> GetByPost(GetByIdRequest request)
+    public async Task<LessonTemplateDto> GetByPost(GetByIdRequest request)
     {
-        var response = new BaseResponse<LessonTemplateDto>();
-
-        try
-        {
             var result = new LessonTemplateDto();
             var data = await unitOfWork.GetRepository<DAL.Entities.LessonTemplate>().GetByIdAsync(request.Id);
-            if (result == null)
+            if (data == null)
             {
                 result.Id = Guid.NewGuid();
                 result.IsEdit = false;
@@ -90,21 +62,11 @@ public class LessonTemplateRepository(IUnitOfWork unitOfWork, IMapper mapper, IH
                 result.IsEdit = true;
             }
 
-            response.Data = result;
-
-        }
-        catch (Exception ex)
-        {
-            response.Error = true;
-            response.Message = ex.Message;
-        }
-
-        return response;
+            return result;
     }
 
-    public async Task<BaseResponse<LessonTemplateModel>> Insert(LessonTemplateDto request)
+    public async Task<bool> Insert(LessonTemplateDto request)
     {
-        var response = new BaseResponse<LessonTemplateModel>();
         try
         {
             using var transaction = unitOfWork.BeginTransactionAsync();
@@ -115,45 +77,31 @@ public class LessonTemplateRepository(IUnitOfWork unitOfWork, IMapper mapper, IH
                 && x.LessonNo == request.LessonNo));
             if (checkData != null)
             {
-                throw new Exception("Data already exists");
+                throw new ApiException((int)HttpStatusCode.BadRequest, "Data already exists");
             }
             
-            // if(request.CourseTemplateId == Guid.Empty)
-            // {
-            //     CourseTemplate courseTemplate = new CourseTemplate()
-            //     {
-            //         Id = Guid.NewGuid(),
-            //         LevelId = request.LevelId??Guid.Empty,
-            //     };
-            //     await unitOfWork
-            // }
-            
             var entity = mapper.Map<DAL.Entities.LessonTemplate>(request);
-            entity.CreatedBy = httpContextAccessor.HttpContext.User.Identity.Name;
-            entity.CreatedAt = DateTime.Now;;
-            entity.UpdatedBy = httpContextAccessor.HttpContext.User.Identity.Name;
+            entity.CreatedBy = httpContextAccessor.HttpContext?.User.Identity?.Name;
+            entity.CreatedAt = DateTime.Now;
+            entity.UpdatedBy = httpContextAccessor.HttpContext?.User.Identity?.Name;
             entity.UpdatedAt = DateTime.Now;
             
-            var result = await unitOfWork.GetRepository<DAL.Entities.LessonTemplate>().AddAsync(entity);
+            await unitOfWork.GetRepository<DAL.Entities.LessonTemplate>().AddAsync(entity);
 
             await unitOfWork.SaveChangesAsync();
             await unitOfWork.CommitAsync();
-            
-            response.Data = mapper.Map<LessonTemplateModel>(result);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             await unitOfWork.RollbackAsync();
-            response.Error = true;
-            response.Message = ex.Message;
+            throw;
         }
 
-        return response;
+        return true;
     }
 
-    public async Task<BaseResponse<LessonTemplateModel>> Update(LessonTemplateDto request)
+    public async Task<bool> Update(LessonTemplateDto request)
     {
-        var response = new BaseResponse<LessonTemplateModel>();
         try
         {
             using var transaction = unitOfWork.BeginTransactionAsync();
@@ -165,40 +113,36 @@ public class LessonTemplateRepository(IUnitOfWork unitOfWork, IMapper mapper, IH
                  && x.LessonNo == request.LessonNo));
             if (checkData != null)
             {
-                throw new Exception("Data already exists");
+                throw new ApiException((int)HttpStatusCode.BadRequest, "Data already exists");
             }
 
             var data = await unitOfWork.GetRepository<DAL.Entities.LessonTemplate>().GetByIdAsync(request.Id);
             if (data == null)
             {
-                throw new Exception("Not data found");
+                throw new ApiException((int)HttpStatusCode.BadRequest, "Not data found");
             }
             var entity = mapper.Map(request, data);
 
             entity.UpdatedAt = DateTime.Now;
-            entity.UpdatedBy = httpContextAccessor.HttpContext.User.Identity.Name;
+            entity.UpdatedBy = httpContextAccessor.HttpContext?.User.Identity?.Name;
             
             await unitOfWork.GetRepository<DAL.Entities.LessonTemplate>().UpdateAsync(entity);
 
             await unitOfWork.SaveChangesAsync();
             await unitOfWork.CommitAsync();
-
-            response.Data = mapper.Map<LessonTemplateModel>(entity);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             await unitOfWork.RollbackAsync();
-            response.Error = true;
-            response.Message = ex.Message;
+            throw;
         }
 
-        return response;
+        return true;
     }
 
 
-    public async Task<BaseResponse<string>> DeLeteList(DeleteListRequest request)
+    public async Task<bool> DeleteList(DeleteListRequest request)
     {
-        var response = new BaseResponse<string>();
         try
         {
             using var transaction = unitOfWork.BeginTransactionAsync();
@@ -208,23 +152,20 @@ public class LessonTemplateRepository(IUnitOfWork unitOfWork, IMapper mapper, IH
 
                 entity.IsDeleted = true;
                 entity.DeletedAt = DateTime.Now;
-                entity.DeletedBy = httpContextAccessor.HttpContext.User.Identity.Name;
+                entity.DeletedBy = httpContextAccessor.HttpContext?.User.Identity?.Name;
             
                 await unitOfWork.GetRepository<DAL.Entities.LessonTemplate>().UpdateAsync(entity);
 
                 await unitOfWork.SaveChangesAsync();
             }
             await unitOfWork.CommitAsync();
-
-            response.Data = "Success";
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             await unitOfWork.RollbackAsync();
-            response.Error = true;
-            response.Message = ex.Message;
+            throw;
         }
 
-        return response;
+        return true;
     }
 }

@@ -7,11 +7,11 @@ namespace REPOSITORY.System.GroupPermission;
 
 public interface IGroupPermissionRepository
 {
-    Task<BaseResponse<List<GroupPermissionModel>>> GetList(GetAllRequest request);
-    Task<BaseResponse<GroupPermissionModel>> GetById(GetByIdRequest request);
-    Task<BaseResponse<GroupPermissionDto>> GetByPost(GetByIdRequest request);
-    Task<BaseResponse<GroupPermissionModel>> Insert(GroupPermissionDto request);
-    Task<BaseResponse<GroupPermissionModel>> Update(GroupPermissionDto request);
-    Task<BaseResponse<List<GroupPermissionModel>>> GetAll(GetAllRequest request);
-    Task<BaseResponse<List<SelectListItem>>> GetAllForCombobox(GetAllRequest request);
+    Task<GetListPagingResponse> GetListPaging(GetListPagingRequest request);
+    List<GroupPermissionModel> GetAll();
+    Task<GroupPermissionModel> GetById(GetByIdRequest request);
+    Task<GroupPermissionDto> GetByPost(GetByIdRequest request);
+    Task<bool> Insert(GroupPermissionDto request);
+    Task<bool> Update(GroupPermissionDto request);
+    List<SelectListItem> GetAllForCombobox();
 }

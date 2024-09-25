@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using REPOSITORY.System.Account;
+using REPOSITORY.Common;
 
 namespace BLL.Controllers;
 
@@ -10,19 +10,28 @@ namespace BLL.Controllers;
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class BaseController<T> : ControllerBase
 {
-    private IAccountRepository _account { get; set; }
-    public BaseController(IAccountRepository account)
+    public string? GetUserName()
     {
-        _account = account;
+        return HttpContext.User.Claims.Where(x => x.Type == "name").FirstOrDefault()?.Value.ToString();
     }
 
-    public BaseController()
+    protected ActionResult HandleApiException(ApiException ex)
     {
-        
+        return StatusCode(ex.StatusCode, new
+        {
+            status = ex.StatusCode,
+            message = ex.Message,
+            details = ex.Details
+        });
     }
-    
-    public string GetUserName()
+
+    protected ActionResult HandleException(Exception ex)
     {
-        return HttpContext.User.Claims.Where(x => x.Type == "name").FirstOrDefault().Value.ToString();
+        return StatusCode(500, new
+        {
+            status = 500,
+            message = "An unexpected error occurred.",
+            details = ex.Message
+        });
     }
 }

@@ -6,14 +6,14 @@ namespace REPOSITORY.System.Role
 {
     public interface IRoleRepository
     {
-        Task<BaseResponse<GetListPagingResponse>> GetListPaging(GetListPagingRequest request);
-        Task<BaseResponse<RoleDto>> GetByPost(GetByIdRequest request);
-        Task<BaseResponse<RoleModel>> GetById(GetByIdRequest request);
-        Task<BaseResponse<RoleModel>> Insert(RoleDto request);
-        Task<BaseResponse<RoleModel>> Update(RoleDto request);
-        Task<BaseResponse<string>> DeLeteList(DeleteListRequest request);
-        Task<BaseResponse<List<ComboboxModel>>> GetAllForCombobox(GetAllRequest request);
-        Task<BaseResponse<List<Role_PermissionModel>>> GetListRolePermission(GetRole_PermissionDto request);
-        Task<BaseResponse<Role_PermissionModel>> PostRolePermission(Role_PermissionDto request);
+        Task<GetListPagingResponse> GetListPaging(GetListPagingRequest request);
+        Task<RoleModel> GetById(GetByIdRequest request);
+        Task<RoleDto> GetByPost(GetByIdRequest request);
+        Task<bool> Insert(RoleDto request);
+        Task<bool> Update(RoleDto request);
+        Task<bool> DeleteList(DeleteListRequest request);
+        List<ComboboxModel> GetAllForCombobox();
+        Task<List<Role_PermissionModel>> GetListRolePermission(GetRole_PermissionDto request);
+        Task<Role_PermissionModel> PostRolePermission(Role_PermissionDto request);
     }
 }
