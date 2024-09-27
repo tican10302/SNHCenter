@@ -73,6 +73,11 @@ public static class UrlApi
     public const string DISTRICT_GETLIST = "district/get-list-paging";
     public const string DISTRICT_GETBYPOST = "district//get-by-post";
     public const string DISTRICT_GETBYID = "district//get-by-id";
+
+    //Ward
+    public const string WARD_GETLIST = "ward/get-list-paging";
+    public const string WARD_GETBYPOST = "ward//get-by-post";
+    public const string WARD_GETBYID = "ward//get-by-id";
     #endregion
 
     #region Management
