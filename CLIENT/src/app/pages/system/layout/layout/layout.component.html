@@ -1,0 +1,20 @@
+<div class="container-scroller">
+  <div class="wrapper">
+    <div class="main">
+      <app-header />
+      <div class="body-full">
+        <!-- SideBar -->
+        <aside id="sidebar">
+          <app-sidebar />
+        </aside>
+        <!-- End SideBar -->
+        <div class="body">
+          <router-outlet />
+        </div>
+<!--          <app-footer />-->
+      </div>
+    </div>
+  </div>
+</div>
+
+<p-toast position="bottom-right" styleClass="styleClass" />

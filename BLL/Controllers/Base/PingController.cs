@@ -1,18 +1,18 @@
-﻿using BLL.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BLL.Controllers.Base;
-
-[Route("api/[controller]")]
-[ApiController]
-[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-public class PingController : ControllerBase
+namespace BLL.Controllers.Base
 {
-    [HttpPost]
-    public IActionResult Post()
+    [Route("api/[controller]")]
+    [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    public class PingController : ControllerBase
     {
-        return Ok(new ApiOkResponse("OK"));
+        [HttpPost]
+        public IActionResult Post()
+        {
+            return Ok("OK");
+        }
     }
 }

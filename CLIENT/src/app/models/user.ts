@@ -1,14 +1,13 @@
 import {Permission} from "./permission";
 import {Menu} from "./menu";
 import {Account} from "./account";
-import {groupPermission} from "./groupPermission";
+import {GroupPermission} from "./groupPermission";
 
 
 export interface User {
-  account: Account | null;
-  permission: Permission[] | null;
-  menu: Menu[] | null;
-  groupPermission: groupPermission[] | null;
-  userName: string;
+  account: Account;
+  permission: Permission[];
+  menu: Menu[];
+  groupPermission: GroupPermission[];
   token: string;
 }

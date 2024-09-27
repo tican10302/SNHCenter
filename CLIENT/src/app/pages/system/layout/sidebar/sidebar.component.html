@@ -1,0 +1,45 @@
+<div class="h-100">
+  <ul class="sidebar-nav">
+    <li class="sidebar-header">
+      Home
+    </li>
+    <li class="sidebar-sub-item" routerLinkActive="active">
+    <a routerLink="/" class="sidebar-link">
+      <fa-icon [icon]="faHouse" style="width: 20px;"></fa-icon>
+      Dashboard
+    </a>
+    </li>
+  </ul>
+  <ul class="sidebar-nav">
+      <li class="sidebar-item" *ngFor="let menu of (accountService.currentGroupPermission$ | async) ?? []">
+        <a href="#" class="sidebar-link collapsed" data-bs-toggle="collapse"
+           [attr.data-bs-target]="menu.name ? '#pages-' + createSlug(menu.name) : ''"
+           aria-expanded="false" aria-controls="pages">
+          <fa-icon [icon]="faListUl"></fa-icon>
+          {{menu.name}}
+        </a>
+        <ul id="pages-{{createSlug(menu.name)}}"
+            class="sidebar-dropdown list-unstyled collapse"
+            data-bs-parent="#sidebar">
+<!--            var isActive = subItem.Controller?.ToLower() == currentController;-->
+<!--              if(isActive)-->
+<!--            {-->
+<!--            <script>-->
+<!--                document.getElementById("pages-@slug").classList.add("show");-->
+<!--                document.getElementById("pages-@slug").closest("li").classList.add("active");-->
+<!--            </script>-->
+<!--              }-->
+          <ng-container *ngFor="let submenu of (accountService.currentMenu$ | async) ?? []">
+            <li class="sidebar-sub-item"
+                *ngIf="submenu.groupPermissionId === menu.id"
+                routerLinkActive="active">
+              <a routerLink="/{{submenu.action}}" class="sidebar-link">
+                <fa-icon [icon]="faListUl"  style="width: 20px;"></fa-icon>
+                {{submenu.name}}
+              </a>
+            </li>
+          </ng-container>
+        </ul>
+      </li>
+  </ul>
+</div>

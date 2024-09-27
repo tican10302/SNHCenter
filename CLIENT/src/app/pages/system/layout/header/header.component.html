@@ -1,0 +1,56 @@
+<nav class="header navbar-light navbar-expand px-3">
+  <div class="navbar-left">
+    <div class="navbar-logo">
+      <a routerLink="/">
+      <img src="/img/logo/logo.png" alt="SNHCenter logo" />
+      </a>
+    </div>
+    <button class="btn btn-toggler" type="button" data-bs-theme="light">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="navbar-search">
+      <fa-icon [icon]="faMagnifyingGlass"></fa-icon>
+      <input class="navbar-search-input" placeholder="Search"/>
+    </div>
+  </div>
+  <div class="navbar-right">
+    <div class="navbar-notification">
+      <div type="button" class="navbar-notification-card" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="fa-solid fa-bell"></i>
+      </div>
+      <ul class="dropdown-menu dropdown-menu-end">
+        <li><a class="dropdown-item" href="#">Action</a></li>
+        <li><a class="dropdown-item" href="#">Another action</a></li>
+        <li><a class="dropdown-item" href="#">Something else here</a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item" href="#">Separated link</a></li>
+      </ul>
+    </div>
+    <div class="btn-group navbar-profile">
+      <div type="button" class="navbar-profile-card" data-bs-toggle="dropdown" aria-expanded="false">
+        <img alt="Avatar" class="navbar-profile-avatar"
+             *ngIf="accountService.currentUser$ | async as user"
+             src="{{user.avatar}}"/>
+        <div class="navbar-profile-info">
+          <span class="navbar-profile-name"
+                *ngIf="accountService.currentUser$ | async as user">
+            {{user.firstName}} {{user.lastName}}
+          </span>
+          <span class="navbar-profile-role"
+                *ngIf="accountService.currentUser$ | async as user">
+            {{user.role}}</span>
+        </div>
+        <div class="navbar-profile-dropdown-icon">
+          <fa-icon [icon]="faCaretDown"></fa-icon>
+        </div>
+      </div>
+      <ul class="dropdown-menu dropdown-menu-end">
+        <li><a class="dropdown-item" href="#">Action</a></li>
+        <li><a class="dropdown-item" href="#">Another action</a></li>
+        <li><a class="dropdown-item" href="#">Something else here</a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item" (click)="logout()">Log Out</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
