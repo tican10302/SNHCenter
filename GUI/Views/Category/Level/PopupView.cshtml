@@ -1,4 +1,4 @@
-@model DTO.Category.Program.Models.ProgramModel
+@model DTO.Category.Level.Models.LevelModel
 
 @* @{
     List<string> selectedDays = Model.SelectDays ?? new List<string>();
@@ -6,7 +6,7 @@
 
 <div class="modal-content modal-snhcenter" id="modalLoading">
         <div class="modal-header">
-            <h4 class="modal-title">Program Detail</h4>
+            <h4 class="modal-title">Shift Detail</h4>
             <button type="button" class="btn-close" onclick="closePopup();" aria-label="Close" data-bs-dimiss="modal"></button>
         </div>
         
@@ -27,7 +27,7 @@
 
 <script>
     $(document).ready(function () {
-        $("#frmProgram").find("span.field-validation-valid").hide();
+        $("#frmShift").find("span.field-validation-valid").hide();
     })
     
     function closePopup() {

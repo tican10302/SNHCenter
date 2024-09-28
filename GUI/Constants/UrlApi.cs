@@ -64,6 +64,14 @@ public static class UrlApi
     public const string PROGRAM_UPDATE = "program/update";
     public const string PROGRAM_DELETELIST = "program/delete-list";
 
+    //Level
+    public const string LEVEL_GETLIST = "level/get-list-paging";
+    public const string LEVEL_GETBYPOST = "level/get-by-post";
+    public const string LEVEL_GETBYID = "level/get-by-id";
+    public const string LEVEL_INSERT = "level/insert";
+    public const string LEVEL_UPDATE = "level/update";
+    public const string LEVEL_DELETELIST = "level/delete-list";
+
     //Province
     public const string PROVINCE_GETLIST = "province/get-list-paging";
     public const string PROVINCE_GETBYPOST = "province/get-by-post";

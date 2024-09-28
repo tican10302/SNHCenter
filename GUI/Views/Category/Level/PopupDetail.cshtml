@@ -1,0 +1,90 @@
+@model DTO.Category.Level.Dtos.LevelDto
+@*
+@{
+    List<string> selectedDays = Model.SelectDays ?? new List<string>();
+}*@
+
+<div class="modal-content modal-snhcenter" id="modalLoading">
+    @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "frmLevel", @class = "form-detail" }))
+    {
+        @Html.AntiForgeryToken()
+        <div class="modal-header">
+            @if (!Model.IsEdit)
+            {
+                <h4 class="modal-title">Create Level</h4>
+            }
+            else
+            {
+                <h4 class="modal-title">Update Level</h4>
+            }
+            <button type="button" class="btn-close" onclick="closePopup();" aria-label="Close" data-bs-dimiss="modal"></button>
+        </div>
+        
+        <div class="modal-body">
+            @Html.HiddenFor(m => m.Id)
+            @Html.HiddenFor(m => m.IsEdit)
+            <div class="row form-group">
+                <label class="col-sm-2 form-label">Name <span class="text-danger">(*)</span></label>
+                <div class="col-sm-4">
+                    @(Html.TextBoxFor(model => model.Name, new { @placeholder = "Enter name" }))
+                    @(Html.ValidationMessageFor(model => model.Name, "Name field is required", new {@class = "text-danger" }))
+                </div>
+                <label class="col-sm-2 form-label">Fee <span class="text-danger">(*)</span></label>
+                <div class="col-sm-4">
+                    @(Html.TextBoxFor(model => model.Name, new { @placeholder = "Enter Fee" }))
+                    @(Html.ValidationMessageFor(model => model.Name, "Fee field is required", new { @class = "text-danger" }))
+                </div>
+            </div>
+        </div>
+        
+        <div class="modal-footer">
+            <button type="submit" id="btnSave" class="btn btn-success btn-sm"><i class="fas fa-check-square"></i> @(Model.IsEdit ? "Update" : "Create")</button>
+            <button type="button" class="btn btn-danger btn-sm" onclick="closePopup();"><i class="fas fa-times-square"></i> Cancel</button>
+        </div>
+    }
+</div>
+
+<script>
+    $(document).ready(function () {
+        $("#frmLevel").find("span.field-validation-valid").hide();
+        
+        //Save
+        $("#frmLevel").submit(async function (event) {
+            event.preventDefault();
+            
+            if ($("#frmLevel").valid()) {
+                showLoading();
+
+                $.ajax({
+                    url: '/Level/Post',
+                    type: "POST",
+                    data: $("#frmLevel").serialize(),
+                    success: function (data) {
+                        if (data.IsSuccess) {
+                            if (data.Data) {
+                                notyf.success(updateSuccess);
+                            }
+                            else {
+                                notyf.success(addSuccess);
+                            }
+                            refreshGrid();
+                            hideLoading();
+                            closePopup();
+                        }
+                        else {
+                            notyf.error(data.Message);
+                            hideLoading();
+                        }
+                    }
+                });
+                hideLoading();
+            } else {
+                $("#frmLevel").find("span.field-validation-valid").show();
+            }
+        });
+    })
+    
+    function closePopup() {
+        $('#modal-default').modal('hide');
+    }
+</script>

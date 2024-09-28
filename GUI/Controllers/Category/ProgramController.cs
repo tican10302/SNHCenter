@@ -13,9 +13,6 @@ namespace GUI.Controllers.Category;
 
 public class ProgramController : BaseController<ProgramController>
 {
-    public ProgramController()
-    {
-    }
     // GET
     public IActionResult Index()
     {

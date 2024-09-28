@@ -16,6 +16,7 @@ namespace REPOSITORY.Category
         public ProgramProfile()
         {
             CreateMap<Program, ProgramDto>();
+            CreateMap<Program, ProgramDto>();
             CreateMap<ProgramDto, Program>();
             CreateMap<ProgramModel, Program>();
             CreateMap<Program, ProgramModel>();
