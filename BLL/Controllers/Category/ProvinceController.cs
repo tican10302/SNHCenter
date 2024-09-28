@@ -4,6 +4,7 @@ using DTO.Base;
 using DTO.Common;
 using Microsoft.AspNetCore.Mvc;
 using REPOSITORY.Category;
+using REPOSITORY.Common;
 
 namespace BLL.Controllers.Category;
 
@@ -17,30 +18,34 @@ public class ProvinceController(IProvinceRepository repository) : BaseController
         {
             if (!ModelState.IsValid) throw new Exception(CommonFunc.GetModelStateAPI(ModelState));
             var result = await repository.GetListPaging(request);
-            if (result.Error)
-                throw new Exception(result.Message);
-            return Ok(new ApiOkResponse(result.Data));
+            return Ok(result);
+        }
+        catch (ApiException ex)
+        {
+            return HandleApiException(ex);
         }
         catch (Exception ex)
         {
-            return Ok(new ApiResponse(false, (int)HttpStatusCode.InternalServerError, ex.Message));
+            return HandleException(ex);
         }
     }
 
-    [HttpPost("get-by-id")]
-    public async Task<IActionResult> GetById(GetByIdRequest request)
+    [HttpGet("{id:guid}")]
+    public async Task<IActionResult> GetById(Guid id)
     {
         try
         {
             if (!ModelState.IsValid) throw new Exception(CommonFunc.GetModelStateAPI(ModelState));
-            var result = await repository.GetById(request);
-            if (result.Error)
-                throw new Exception(result.Message);
-            return Ok(new ApiOkResponse(result.Data));
+            var result = await repository.GetById(new GetByIdRequest { Id = id });
+            return Ok(result);
+        }
+        catch (ApiException ex)
+        {
+            return HandleApiException(ex);
         }
         catch (Exception ex)
         {
-            return Ok(new ApiResponse(false, (int)HttpStatusCode.InternalServerError, ex.Message));
+            return HandleException(ex);
         }
     }
 }

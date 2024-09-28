@@ -10,9 +10,8 @@ namespace REPOSITORY.Category
 {
     public interface IProvinceRepository
     {
-        Task<BaseResponse<GetListPagingResponse>> GetListPaging(GetListPagingRequest request);
-        Task<BaseResponse<ProvinceDto>> GetByPost(GetByIdRequest request);
-        Task<BaseResponse<ProvinceModel>> GetById(GetByIdRequest request);
-        Task<BaseResponse<List<ComboboxModel>>> GetAllForCombobox(GetAllRequest request);
+        Task<GetListPagingResponse> GetListPaging(GetListPagingRequest request);
+        Task<ProvinceModel> GetById(GetByIdRequest request);
+        List<ComboboxModel> GetAllForCombobox(GetAllRequest request);
     }
 }

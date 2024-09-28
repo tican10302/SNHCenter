@@ -33,7 +33,7 @@
             <li class="sidebar-sub-item"
                 *ngIf="submenu.groupPermissionId === menu.id"
                 routerLinkActive="active">
-              <a routerLink="/{{submenu.action}}" class="sidebar-link">
+              <a routerLink="/{{submenu.controller}}" class="sidebar-link">
                 <fa-icon [icon]="faListUl"  style="width: 20px;"></fa-icon>
                 {{submenu.name}}
               </a>

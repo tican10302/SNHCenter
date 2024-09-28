@@ -11,3 +11,42 @@ a {
   text-decoration: none;
   font-family: "Nunito Sans", sans-serif;
 }
+
+// table
+.p-dialog.p-dialog-modal {
+  align-self: flex-start;
+}
+
+.p-dialog.p-dialog-full {
+  width: 100%;
+}
+
+.p-dialog.p-dialog-lg {
+  width: 90%;
+}
+
+.p-dialog.p-dialog-md {
+  width: 75%;
+}
+
+.p-dialog.p-dialog-sm {
+  width: 50%;
+}
+
+.p-dialog.p-dialog-sm-s {
+  width: 40%;
+}
+
+// Table component
+
+.p-dialog-content > div.row {
+  display: block;
+  margin-right: 0;
+  margin-bottom: 1rem;
+}
+
+.p-dialog-content > div.row > label {
+  font-weight: bold;
+}
+
+

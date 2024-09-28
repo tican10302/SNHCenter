@@ -47,7 +47,7 @@ export class AccountService {
   }
 
   setCurrentUser(user: User) {
-    localStorage.setItem('token', JSON.stringify(user.token));
+    localStorage.setItem('token', user.token);
     localStorage.setItem('user', JSON.stringify(user.account));
     localStorage.setItem('menu', JSON.stringify(user.menu));
     localStorage.setItem('permission', JSON.stringify(user.permission));
@@ -68,6 +68,32 @@ export class AccountService {
     this.currentMenuSource.next(null);
     this.currentPermissionSource.next(null);
     this.currentGroupPermissionSource.next(null);
+  }
+
+  getPermission(route: string): Permission {
+    var controller = route.toLowerCase().trim() + 'controller';
+    var permissionCurrent: Permission = {
+      role: null,
+      roleId: null,
+      controllerName: controller,
+      isView: false,
+      isAdd: false,
+      isEdit: false,
+      isDelete: false,
+      isApprove: false,
+      isStatistic: false,
+    };
+    this.currentPermission$.pipe(
+      map(permissions => {
+        return permissions ? permissions.find(permission => permission.controllerName === controller) : null;
+      })
+    ).subscribe(foundPermission => {
+      if (foundPermission) {
+        permissionCurrent = foundPermission;
+      }
+    });
+
+    return permissionCurrent;
   }
 
 }
