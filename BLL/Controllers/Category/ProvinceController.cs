@@ -1,9 +1,7 @@
-﻿using System.Net;
-using BLL.Helpers;
-using DTO.Base;
+﻿using DTO.Base;
 using DTO.Common;
 using Microsoft.AspNetCore.Mvc;
-using REPOSITORY.Category;
+using REPOSITORY.Category.Province;
 using REPOSITORY.Common;
 
 namespace BLL.Controllers.Category;
@@ -30,13 +28,13 @@ public class ProvinceController(IProvinceRepository repository) : BaseController
         }
     }
 
-    [HttpGet("{id:guid}")]
-    public async Task<IActionResult> GetById(Guid id)
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById(string id)
     {
         try
         {
             if (!ModelState.IsValid) throw new Exception(CommonFunc.GetModelStateAPI(ModelState));
-            var result = await repository.GetById(new GetByIdRequest { Id = id });
+            var result = await repository.GetById(id);
             return Ok(result);
         }
         catch (ApiException ex)

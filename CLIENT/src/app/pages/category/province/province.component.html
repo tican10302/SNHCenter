@@ -14,17 +14,18 @@
         </div>
         <p-table
           #dataTable
-          dataKey="code"
+          dataKey="id"
           [columns]="cols"
           [value]="tableData"
-          [(selection)]="selectedDatas"
+          [(selection)]="selectedListData"
           [paginator]="true"
           [tableStyle]="{ 'min-width': '50rem' }"
+          [resizableColumns]="true"
           [rows]="10"
           [rowsPerPageOptions]="[10, 15, 20]"
           [totalRecords]="totalRecords"
           [lazy]="true"
-          [(first)]="model.offset"
+          [(first)]="getListPagingRequest.offset"
           showGridlines
           stripedRows
           (onPage)="loadData($event)"
@@ -32,7 +33,7 @@
           <ng-template pTemplate="caption">
             <div class="d-flex justify-content-between align-items-center">
               <div>
-                <p-button *ngIf="permission?.isView" (onClick)="showItems()" icon="pi pi-eye" label="View" severity="info" class="me-md-2" />
+                <p-button *ngIf="permission?.isView" (onClick)="showViewDialog()" icon="pi pi-eye" label="View" severity="info" class="me-md-2" />
                 <p-button *ngIf="permission?.isAdd" icon="pi pi-plus" label="Add" severity="success" class="me-md-2" />
                 <p-button *ngIf="permission?.isEdit" icon="pi pi-pencil" label="Edit" severity="warn" class="me-md-2" />
                 <p-button *ngIf="permission?.isDelete" icon="pi pi-trash" label="Delete" severity="danger" class="me-md-2" />
@@ -51,16 +52,16 @@
           </ng-template>
           <ng-template pTemplate="header" let-columns>
             <tr>
-              <th style="width: 4rem"><p-tableHeaderCheckbox /></th>
-              <th *ngFor="let col of columns">
+              <th class="text-center" style="width: 4rem;" pResizableColumn><p-tableHeaderCheckbox /></th>
+              <th *ngFor="let col of columns" pResizableColumn>
                 {{ col.header }}
               </th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-rowData let-columns="columns">
             <tr>
-              <td>
-                <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
+              <td class="text-center">
+                <p-tableCheckbox [value]="rowData" ></p-tableCheckbox>
               </td>
               <td *ngFor="let col of columns">
                 {{ rowData[col.field] }}
@@ -69,7 +70,7 @@
           </ng-template>
           <ng-template pTemplate="emptymessage">
             <tr>
-              <td colspan="3">No data found.</td>
+              <td [colSpan]="cols.length + 1" class="text-center">No data found.</td>
             </tr>
           </ng-template>
         </p-table>
@@ -78,79 +79,31 @@
   </div>
 </ng-container>
 
+<!--Dialog-->
 <p-dialog header="{{isEdit ? 'Update' : ''}} Province {{!isEdit ? 'Detail' : ''}}" styleClass="p-dialog-md p-dialog-modal" [modal]="true" [(visible)]="visible">
-  <div class="row">
+  <form #provinceForm="ngForm" (ngSubmit)="saveData()" autocomplete="off">
+    <div class="row">
       <label for="code" class="col-md-2">Code</label>
-      <input pInputText id="code" class="col-md-4" [readOnly]="!isEdit"  />
-      <label for="nameCode" class="col-md-2">Code name</label>
-      <input pInputText id="nameCode" class="col-md-4" [readOnly]="!isEdit" />
-  </div>
-  <div class="row">
-    <label for="name" class="col-md-2">Name</label>
-    <input pInputText id="name" class="col-md-4" [readOnly]="!isEdit" />
-    <label for="nameEn" class="col-md-2">English name</label>
-    <input pInputText id="nameEn" class="col-md-4" [readOnly]="!isEdit" />
-  </div>
-  <div class="row">
-    <label for="fullName" class="col-md-2">Full name</label>
-    <input pInputText id="fullName" class="col-md-4" [readOnly]="!isEdit" />
-    <label for="fullNameEn" class="col-md-2">Full english name</label>
-    <input pInputText id="fullNameEn" class="col-md-4" [readOnly]="!isEdit" />
-  </div>
+      <input pInputText id="code" [(ngModel)]="model.code" name="code" class="col-md-4" [readOnly]="!isEdit"  />
+      <label for="codeName" class="col-md-2">Code name</label>
+      <input pInputText id="codeName" [(ngModel)]="model.codeName" name="codeName" class="col-md-4" [readOnly]="!isEdit" />
+    </div>
+    <div class="row">
+      <label for="name" class="col-md-2">Name</label>
+      <input pInputText id="name" [(ngModel)]="model.name" name="name" class="col-md-4" [readOnly]="!isEdit" />
+      <label for="nameEn" class="col-md-2">English name</label>
+      <input pInputText id="nameEn" [(ngModel)]="model.nameEn" name="nameEn" class="col-md-4" [readOnly]="!isEdit" />
+    </div>
+    <div class="row">
+      <label for="fullName" class="col-md-2">Full name</label>
+      <input pInputText id="fullName" [(ngModel)]="model.fullName" name="fullName" class="col-md-4" [readOnly]="!isEdit" />
+      <label for="fullNameEn" class="col-md-2">Full english name</label>
+      <input pInputText id="fullNameEn" [(ngModel)]="model.fullNameEn" name="fullNameEn" class="col-md-4" [readOnly]="!isEdit" />
+    </div>
 
-  <div class="d-flex justify-content-end gap-2">
-    <p-button label="Cancel" severity="secondary" (click)="visible = false" />
-    <p-button label="Save" *ngIf="isEdit" />
-  </div>
+    <div class="d-flex justify-content-end gap-2">
+      <p-button label="Cancel" severity="secondary" (click)="visible = false" />
+      <p-button label="Save" *ngIf="isEdit" />
+    </div>
+  </form>
 </p-dialog>
-<script>
-  function getIdSelections() {
-    return $.map($('#ProvinceTable').bootstrapTable('getSelections'), function (row) {
-      return row.Id
-    })
-  }
-
-  function showData() {
-    var selectedRows = getIdSelections();
-    if (selectedRows.length == 1) {
-      var url = '@Url.Action("ShowViewPopup", "Province")' + "?id=" + selectedRows[0];
-
-      $.get(url, function (data) {
-        $('#modelContainer').html(data);
-        $('#modal-default').modal('show');
-      });
-    } else {
-      notyf.error('Please select a row to view.');
-    }
-  }
-
-  function getDataTable(params) {
-    var url = '@Url.Action("GetList", "Province")';
-    var data = params.data;
-
-    $.get(url, data, function (response) {
-      params.success({
-        total: response.total,
-        rows: response.data
-      });
-    });
-  }
-
-  function refreshGrid() {
-    $('#ProvinceTable').bootstrapTable('refresh');
-  }
-
-  function sortTable(value, row, index) {
-    var pageSize = $('#ProvinceTable').bootstrapTable('getOptions').pageSize;
-    var pageNumber = $('#ProvinceTable').bootstrapTable('getOptions').pageNumber;
-    return (pageNumber - 1) * pageSize + index + 1;
-  }
-
-  function timeFormatter(value, row, index) {
-    if (value) {
-      let time = value.split(":");
-      return time[0] + ":" + time[1];
-    }
-    return value;
-  }
-</script>

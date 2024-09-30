@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import {RouterLink, RouterLinkActive} from "@angular/router";
 import {FaIconComponent} from "@fortawesome/angular-fontawesome";
 import {faHouse, faListUl} from "@fortawesome/free-solid-svg-icons";
-import {AccountService} from "../../../../services/account.service";
+import {AccountService} from "../../../../services/system/account.service";
 import {AsyncPipe, NgFor, NgIf} from "@angular/common";
 
 @Component({

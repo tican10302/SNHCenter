@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
-import {environment} from "../../environments/environment";
+import {environment} from "../../../environments/environment";
 import {BehaviorSubject, map} from "rxjs";
-import {User} from "../models/user";
+import {User} from "../../models/system/models/user";
 import {HttpClient} from "@angular/common/http";
-import {Account} from "../models/account";
-import {Menu} from "../models/menu";
-import {GroupPermission} from "../models/groupPermission";
-import {Permission} from "../models/permission";
+import {Account} from "../../models/system/models/account";
+import {Menu} from "../../models/system/models/menu";
+import {GroupPermission} from "../../models/system/models/groupPermission";
+import {Permission} from "../../models/system/models/permission";
 
 @Injectable({
   providedIn: 'root'
@@ -25,6 +25,7 @@ export class AccountService {
   constructor(private http: HttpClient) { }
 
   login(model: any) {
+    console.log(model)
     return this.http.post<User>(this.baseUrl + "account/login", model).pipe(
       map((response: User) => {
         const user = response;

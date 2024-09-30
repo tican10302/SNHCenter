@@ -30,8 +30,7 @@ public class BaseController<T> : ControllerBase
         return StatusCode(500, new
         {
             status = 500,
-            message = "An unexpected error occurred.",
-            details = ex.Message
+            message = ex.Message,
         });
     }
 }

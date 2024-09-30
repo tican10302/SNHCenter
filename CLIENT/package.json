@@ -33,6 +33,7 @@
     "primeng": "^18.0.0-beta.2",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
+    "uuidv4": "^6.2.13",
     "zone.js": "~0.14.10"
   },
   "devDependencies": {

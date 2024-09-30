@@ -8,8 +8,8 @@ public class ProgramDto : DtoBase
 {
     [Required(AllowEmptyStrings = false, ErrorMessage = "Name is required")]
     public string? Name { get; set; }
+    public string? Note { get; set; }
 }
-
 public class ProgramDtoValidator : AbstractValidator<ProgramDto>
 {
     public ProgramDtoValidator()

@@ -9,17 +9,19 @@
                 Please enter your username and password to continue
             </span>
     </div>
-    <form #loginForm="ngForm" (ngSubmit)="login()" autocomplete="off">
+    <form [formGroup]="formGroup" #loginForm="ngForm" (ngSubmit)="login()" autocomplete="off">
       <div class="login-card-form">
         <div class="login-card-form-row mb-40">
           <label class="login-card-form-row-title">Username:</label>
-          <input id="UserName" [(ngModel)]="loginObj.UserName" name="UserName" placeholder="Username" type="text" required tabindex="1"/>
+          <input pInputText [formControl]="formGroup.controls.userName" formControlName="userName" placeholder="Username"/>
+          <small *ngIf="formGroup.get('userName')?.invalid && formGroup.get('userName')?.touched" class="mt-2">Username is required.</small>
         </div>
-        <div class="login-card-form-row mb-24">
+        <div class="login-card-form-row mb-40">
           <div class="login-card-form-column">
             <label class="login-card-form-row-title">Password:</label>
           </div>
-          <input id="Password" [(ngModel)]="loginObj.Password" name="Password" placeholder="••••••••" type="password" required tabindex="2"/>
+          <input pInputText [formControl]="formGroup.controls.password" formControlName="password" type="password" placeholder="Password"/>
+          <small *ngIf="formGroup.get('password')?.invalid && formGroup.get('password')?.touched" class="mt-2">Password is required.</small>
         </div>
         <div class="login-card-form-check-password">
           <div class="login-card-form-remember-password">

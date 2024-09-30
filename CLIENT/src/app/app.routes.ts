@@ -7,6 +7,7 @@ import {ProvinceComponent} from "./pages/category/province/province.component";
 import {loginGuard} from "./guards/login.guard";
 import {AppComponent} from "./app.component";
 import {NotfoundComponent} from "./pages/system/notfound/notfound.component";
+import {ProgramComponent} from "./pages/category/program/program.component";
 
 export const routes: Routes = [
   {
@@ -16,6 +17,7 @@ export const routes: Routes = [
   },
   {
     path: 'login',
+    title: 'Sign in',
     component: LoginComponent,
     data: { componentName: 'Login' }
   },
@@ -27,18 +29,27 @@ export const routes: Routes = [
     children: [
       {
         path: 'dashboard',
+        title: 'Dashboard',
         component: DashboardComponent,
         data: { componentName: 'Dashboard' }
       },
       {
         path: 'province',
+        title: 'Province',
         component: ProvinceComponent,
         data: { componentName: 'Province' }
+      },
+      {
+        path: 'program',
+        title: 'Program',
+        component: ProgramComponent,
+        data: { componentName: 'Program' }
       }
     ]
   },
   {
     path: 'notfound',
+    title: 'Not found',
     component: NotfoundComponent
   },
   {

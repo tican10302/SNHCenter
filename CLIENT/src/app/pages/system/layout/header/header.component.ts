@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import {Router, RouterLink} from "@angular/router";
-import {AccountService} from "../../../../services/account.service";
+import {AccountService} from "../../../../services/system/account.service";
 import {AsyncPipe, NgIf} from "@angular/common";
 import {FaIconComponent} from "@fortawesome/angular-fontawesome";
 import {faCaretDown, faMagnifyingGlass, faToggleOn} from "@fortawesome/free-solid-svg-icons";

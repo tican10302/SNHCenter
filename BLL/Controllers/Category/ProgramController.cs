@@ -1,10 +1,9 @@
-﻿using System.Net;
-using BLL.Helpers;
-using DTO.Base;
+﻿using DTO.Base;
 using DTO.Category.Program.Dtos;
 using DTO.Common;
 using Microsoft.AspNetCore.Mvc;
-using REPOSITORY.Category;
+using REPOSITORY.Category.Program;
+using REPOSITORY.Common;
 
 namespace BLL.Controllers.Category;
 
@@ -18,98 +17,110 @@ public class ProgramController(IProgramRepository repository) : BaseController<P
         {
             if (!ModelState.IsValid) throw new Exception(CommonFunc.GetModelStateAPI(ModelState));
             var result = await repository.GetListPaging(request);
-            if (result.Error)
-                throw new Exception(result.Message);
-            return Ok(new ApiOkResponse(result.Data));
+            return Ok(result);
+        }
+        catch (ApiException ex)
+        {
+            return HandleApiException(ex);
         }
         catch (Exception ex)
         {
-            return Ok(new ApiResponse(false, (int)HttpStatusCode.InternalServerError, ex.Message));
+            return HandleException(ex);
         }
     }
 
-    [HttpPost("get-by-id")]
-    public async Task<IActionResult> GetById(GetByIdRequest request)
+    [HttpGet("{id:guid}")]
+    public async Task<IActionResult> GetById(Guid id)
     {
         try
         {
             if (!ModelState.IsValid) throw new Exception(CommonFunc.GetModelStateAPI(ModelState));
-            var result = await repository.GetById(request);
-            if (result.Error)
-                throw new Exception(result.Message);
-            return Ok(new ApiOkResponse(result.Data));
+            var result = await repository.GetById(new GetByIdRequest { Id = id });
+            return Ok(result);
+        }
+        catch (ApiException ex)
+        {
+            return HandleApiException(ex);
         }
         catch (Exception ex)
         {
-            return Ok(new ApiResponse(false, (int)HttpStatusCode.InternalServerError, ex.Message));
+            return HandleException(ex);
         }
     }
 
-    [HttpPost("get-by-post")]
-    public async Task<IActionResult> GetByPost(GetByIdRequest request)
+    [HttpGet("get-by-post/{id:guid}")]
+    public async Task<IActionResult> GetByPost(Guid id)
     {
         try
         {
             if (!ModelState.IsValid) throw new Exception(CommonFunc.GetModelStateAPI(ModelState));
-            var result = await repository.GetByPost(request);
-            if (result.Error)
-                throw new Exception(result.Message);
-            return Ok(new ApiOkResponse(result.Data));
+            var result = await repository.GetByPost(new GetByIdRequest { Id = id });
+            return Ok(result);
+        }
+        catch (ApiException ex)
+        {
+            return HandleApiException(ex);
         }
         catch (Exception ex)
         {
-            return Ok(new ApiResponse(false, (int)HttpStatusCode.InternalServerError, ex.Message));
+            return HandleException(ex);
         }
     }
 
-    [HttpPost("insert")]
-    public async Task<IActionResult> Post(ProgramDto request)
+    [HttpPost]
+    public async Task<IActionResult> Create(ProgramDto request)
     {
         try
         {
             if (!ModelState.IsValid) throw new Exception(CommonFunc.GetModelStateAPI(ModelState));
-            var result = await repository.Insert(request);
-            if (result.Error)
-                throw new Exception(result.Message);
-            return Ok(new ApiOkResponse(result.Data));
+            await repository.Insert(request);
+            return Created();
+        }
+        catch (ApiException ex)
+        {
+            return HandleApiException(ex);
         }
         catch (Exception ex)
         {
-            return Ok(new ApiResponse(false, (int)HttpStatusCode.InternalServerError, ex.Message));
+            return HandleException(ex);
         }
     }
 
-    [HttpPost("update")]
+    [HttpPut]
     public async Task<IActionResult> Update(ProgramDto request)
     {
         try
         {
             if (!ModelState.IsValid) throw new Exception(CommonFunc.GetModelStateAPI(ModelState));
-            var result = await repository.Update(request);
-            if (result.Error)
-                throw new Exception(result.Message);
-            return Ok(new ApiOkResponse(result.Data));
+            await repository.Update(request);
+            return Ok();
+        }
+        catch (ApiException ex)
+        {
+            return HandleApiException(ex);
         }
         catch (Exception ex)
         {
-            return Ok(new ApiResponse(false, (int)HttpStatusCode.InternalServerError, ex.Message));
+            return HandleException(ex);
         }
     }
 
     [HttpPost("delete-list")]
-    public async Task<IActionResult> Detele(DeleteListRequest request)
+    public async Task<IActionResult> Delete(DeleteListRequest request)
     {
         try
         {
             if (!ModelState.IsValid) throw new Exception(CommonFunc.GetModelStateAPI(ModelState));
-            var result = await repository.DeLeteList(request);
-            if (result.Error)
-                throw new Exception(result.Message);
-            return Ok(new ApiOkResponse(result.Data));
+            await repository.DeLeteList(request);
+            return NoContent();
+        }
+        catch (ApiException ex)
+        {
+            return HandleApiException(ex);
         }
         catch (Exception ex)
         {
-            return Ok(new ApiResponse(false, (int)HttpStatusCode.InternalServerError, ex.Message));
+            return HandleException(ex);
         }
     }
 }

@@ -9,149 +9,87 @@
       <div class="">
         <div class="row">
           <div class="col-md-6">
-            <div id="toolbar">
-              <button class="btn btn-primary" *ngIf="permission.isView" onclick="showData()"><i class="fa-solid fa-eye"></i> View</button>
-              <button class="btn btn-success"  *ngIf="permission.isAdd" onclick="addData()"><i class="fa-solid fa-plus"></i> Add</button>
-              <button class="btn btn-warning"  *ngIf="permission.isEdit" onclick="updateData()"><i class="fa-solid fa-pen"></i> Update</button>
-              <button class="btn btn-danger"  *ngIf="permission.isDelete" onclick="deleteData()"><i class="fa-solid fa-trash"></i> Delete</button>
-            </div>
+
           </div>
         </div>
-
-        <table class="bootstrap-table"
-               id="ProgramTable"
-               data-toggle="table"
-               data-height="460"
-               data-ajax="getDataTable"
-               data-search="true"
-               data-mobile-responsive="true"
-               data-side-pagination="server"
-               data-pagination="true"
-               data-click-to-select="true"
-               data-toolbar="#toolbar">
-          <thead class="content-table-header">
-          <tr>
-            <th data-checkbox="true"></th>
-            <th data-formatter="sortTable" data-align="center">No.</th>
-            <th data-field="Id" data-visible="false">ID</th>
-            <th data-field="Name">Name</th>
-            <th data-field="Note">Note</th>
-          </tr>
-          </thead>
-        </table>
+        <p-table
+          #dataTable
+          dataKey="id"
+          [columns]="cols"
+          [value]="tableData"
+          [(selection)]="selectedListData"
+          [paginator]="true"
+          [tableStyle]="{ 'min-width': '50rem' }"
+          [resizableColumns]="true"
+          [rows]="10"
+          [rowsPerPageOptions]="[10, 15, 20]"
+          [totalRecords]="totalRecords"
+          [lazy]="true"
+          [(first)]="getListPagingRequest.offset"
+          showGridlines
+          stripedRows
+          (onPage)="loadData($event)"
+        >
+          <ng-template pTemplate="caption">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <p-button *ngIf="permission?.isView" (onClick)="showViewDialog()" icon="pi pi-eye" label="View" severity="info" class="me-md-2" />
+                <p-button *ngIf="permission?.isAdd" (onClick)="showAddDialog()" icon="pi pi-plus" label="Add" severity="success" class="me-md-2" />
+                <p-button *ngIf="permission?.isEdit" (onClick)="showEditDialog()" icon="pi pi-pencil" label="Edit" severity="warn" class="me-md-2" />
+                <p-button *ngIf="permission?.isDelete" (onClick)="confirmDelete($event)" icon="pi pi-trash" label="Delete" severity="danger" class="me-md-2" />
+              </div>
+              <p-iconfield iconPosition="right">
+                <p-inputicon>
+                  <i class="pi pi-search"></i>
+                </p-inputicon>
+                <input
+                  pInputText
+                  type="text"
+                  (keyup.enter)="onSearch($event)"
+                  placeholder="Search keyword" />
+              </p-iconfield>
+            </div>
+          </ng-template>
+          <ng-template pTemplate="header" let-columns>
+            <tr>
+              <th class="text-center" style="width: 4rem;" pResizableColumn><p-tableHeaderCheckbox /></th>
+              <th *ngFor="let col of columns" pResizableColumn>
+                {{ col.header }}
+              </th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-rowData let-columns="columns">
+            <tr>
+              <td class="text-center">
+                <p-tableCheckbox [value]="rowData" ></p-tableCheckbox>
+              </td>
+              <td *ngFor="let col of columns">
+                {{ rowData[col.field] }}
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td [colSpan]="cols.length + 1" class="text-center">No data found.</td>
+            </tr>
+          </ng-template>
+        </p-table>
       </div>
     </div>
   </div>
-
-  <div class="modal fade" id="modal-default" aria-hidden="true" data-backdrop="static">
-    <div class="modal-dialog modal-lg" id='modelContainer'>
-    </div>
-  </div>
 </ng-container>
-<script>
-  function getIdSelections() {
-    return $.map($('#ProgramTable').bootstrapTable('getSelections'), function (row) {
-      return row.Id
-    })
-  }
 
-  function showData() {
-    var selectedRows = getIdSelections();
-    if (selectedRows.length == 1) {
-      var url = '@Url.Action("ShowViewPopup", "Program")' + "?id=" + selectedRows[0];
+<!--Dialog-->
+<p-dialog header="{{isView ? '' : isEdit ? 'Update' : 'Create'}} Province {{isView ? 'Detail' : ''}}" styleClass="p-dialog-sm p-dialog-modal" [modal]="true" [(visible)]="visible">
+  <form #tableForm="ngForm" (ngSubmit)="saveData()" autocomplete="off">
+    <div class="row">
+      <label for="name" class="col-md-4">Name</label>
+      <input pInputText id="name" [(ngModel)]="model.name" name="name" class="col-md-8" [readOnly]="isView"  />
+    </div>
 
-      $.get(url, function (data) {
-        $('#modelContainer').html(data);
-        $('#modal-default').modal('show');
-      });
-    } else {
-      notyf.error('Please select a row to view.');
-    }
-  }
-
-  function addData() {
-    var url = '@Url.Action("ShowInsertPopup", "Program")';
-
-    $.get(url, function (data) {
-      $('#modelContainer').html(data);
-      $('#modal-default').modal('show');
-    })
-  }
-
-  function updateData() {
-    var selectedRows = getIdSelections();
-    if (selectedRows.length == 1) {
-      var url = '@Url.Action("ShowUpdatePopup", "Program")' + "?id=" + selectedRows[0];
-
-      $.get(url, function (data) {
-        $('#modelContainer').html(data);
-        $('#modal-default').modal('show');
-      });
-    } else {
-      notyf.error('Please select a row to update.');
-    }
-  }
-
-  function deleteData() {
-    var selectedRows = getIdSelections();
-    if (selectedRows.length > 0) {
-      var deleteData = function () {
-        showLoading();
-        $.ajax({
-          url: '@Url.Action("Delete", "Program")',
-          type: 'POST',
-          dataType: 'json',
-          data: {
-            listSelectedId: selectedRows
-          },
-          success: function (data) {
-            if (data.IsSuccess) {
-              notyf.success(deleteSuccess);
-              refreshGrid();
-            }
-            else {
-              notyf.error(data.Message);
-            }
-          },
-          error: function (request, status, err) {
-            notyf.error(errorMessage);
-          }
-        });
-        hideLoading();
-      }
-      return confirmDialogYesNo(titleConfirm, deleteConfirmText, deleteData);
-    } else {
-      notyf.error('Please select a row to delete.');
-    }
-  }
-
-  function getDataTable(params) {
-    var url = '@Url.Action("GetList", "Program")';
-    var data = params.data;
-
-    $.get(url, data, function (response) {
-      params.success({
-        total: response.total,
-        rows: response.data
-      });
-    });
-  }
-
-  function refreshGrid() {
-    $('#ProgramTable').bootstrapTable('refresh');
-  }
-
-  function sortTable(value, row, index) {
-    var pageSize = $('#ProgramTable').bootstrapTable('getOptions').pageSize;
-    var pageNumber = $('#ProgramTable').bootstrapTable('getOptions').pageNumber;
-    return (pageNumber - 1) * pageSize + index + 1;
-  }
-
-  function timeFormatter(value, row, index) {
-    if (value) {
-      let time = value.split(":");
-      return time[0] + ":" + time[1];
-    }
-    return value;
-  }
-</script>
+    <div class="d-flex justify-content-end gap-2">
+      <p-button label="Cancel" severity="secondary" (click)="visible = false" />
+      <p-button [label]="isView ? '' : isEdit ? 'Update' : 'Create'" *ngIf="!isView" type="submit" />
+    </div>
+  </form>
+</p-dialog>

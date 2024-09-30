@@ -4,15 +4,16 @@ import {HeaderComponent} from "../header/header.component";
 import {FooterComponent} from "../footer/footer.component";
 import {setTheme} from "ngx-bootstrap/utils";
 import {SidebarComponent} from "../sidebar/sidebar.component";
-import {AccountService} from "../../../../services/account.service";
-import {User} from "../../../../models/user";
-import {Account} from "../../../../models/account";
-import {Menu} from "../../../../models/menu";
-import {GroupPermission} from "../../../../models/groupPermission";
-import {Permission} from "../../../../models/permission";
+import {AccountService} from "../../../../services/system/account.service";
+import {User} from "../../../../models/system/models/user";
+import {Account} from "../../../../models/system/models/account";
+import {Menu} from "../../../../models/system/models/menu";
+import {GroupPermission} from "../../../../models/system/models/groupPermission";
+import {Permission} from "../../../../models/system/models/permission";
 import { PrimeNGConfig } from 'primeng/api';
 import { Aura } from 'primeng/themes/aura';
 import {ToastModule} from "primeng/toast";
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 @Component({
   selector: 'app-layout',
@@ -22,7 +23,8 @@ import {ToastModule} from "primeng/toast";
     HeaderComponent,
     FooterComponent,
     SidebarComponent,
-    ToastModule
+    ToastModule,
+    ConfirmDialogModule
   ],
   templateUrl: './layout.component.html',
   styleUrl: './layout.component.scss'

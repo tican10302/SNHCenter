@@ -1,29 +1,35 @@
 import {Component, OnInit} from '@angular/core';
-import {FormsModule} from "@angular/forms";
-import {AccountService} from "../../../services/account.service";
+import {FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
+import {AccountService} from "../../../services/system/account.service";
 import {Router} from "@angular/router";
 import {NgxSpinnerService} from "ngx-spinner";
 import {MessageService, PrimeNGConfig} from "primeng/api";
 import {ToastModule} from "primeng/toast";
 import {Aura} from "primeng/themes/aura";
-import { Title } from '@angular/platform-browser';
+import {Enum} from "../../../enums/enum";
+import {PasswordModule} from "primeng/password";
+import {InputTextModule} from "primeng/inputtext";
+import {NgIf} from "@angular/common";
+import {ModelFormGroup} from "../../../models/base/ModelFormGroup";
+import {createDefaultLoginForm, LoginModel} from "../../../models/system/loginModel";
 
 @Component({
   selector: 'app-login',
   standalone: true,
   imports: [
     FormsModule,
-    ToastModule
+    ToastModule,
+    PasswordModule,
+    ReactiveFormsModule,
+    InputTextModule,
+    NgIf
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
 export class LoginComponent implements OnInit{
-  loginObj = {
-    "UserName": "",
-    "Password": "",
-  }
-  model: any = {};
+  formGroup!: ModelFormGroup<LoginModel>;
+  form : any;
 
   constructor(
     private accountService: AccountService,
@@ -31,20 +37,21 @@ export class LoginComponent implements OnInit{
     private messageService: MessageService,
     private spinner: NgxSpinnerService,
     private config: PrimeNGConfig,
-    private titleService: Title) {
+    private fb: FormBuilder,) {
     this.config.theme.set({ preset: Aura });
   }
 
   ngOnInit() {
-    this.titleService.setTitle('SNHCenter | Sign in');
+    this.formGroup = createDefaultLoginForm();
   }
 
   login() {
+    if(this.formGroup.invalid) return;
     this.spinner.show();
-    this.accountService.login(this.loginObj).subscribe({
+    this.accountService.login(this.formGroup.value).subscribe({
       next: (_) => {
         this.spinner.hide();
-        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Log in successfully!', life: 5000 });
+        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Log in successfully!', life: Enum.messageLife });
         window.setTimeout(() => {
           this.router.navigateByUrl('dashboard');
         }, 1000);
@@ -55,14 +62,14 @@ export class LoginComponent implements OnInit{
         if(err.error) {
           if(err.error.status === 500)
           {
-            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Internal server error', life: 5000 });
+            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Internal server error', life: Enum.messageLife });
           }
           else {
-            this.messageService.add({severity: 'error', summary: 'Error', detail: err.error.message, life: 5000});
+            this.messageService.add({severity: 'error', summary: 'Error', detail: err.error.message, life: Enum.messageLife});
           }
         }
         else
-          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Cannot connect to the server', life: 5000 });
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Cannot connect to the server', life: Enum.messageLife });
       },
     });
   }

@@ -50,7 +50,6 @@ html {
   display: flex;
   flex-direction: column;
   input {
-    border: 1px solid #D8D8D8;
     border-radius: 8px;
     background-color: $background-color_2;
     height: 44px;
@@ -92,6 +91,7 @@ html {
     cursor: pointer;
   }
 }
+
 .login-card-button {
   button {
     margin-top: 40px;
@@ -132,4 +132,12 @@ html {
     width: 3rem;
     height: 3rem;
   }
+}
+
+.p-inputtext.ng-invalid.ng-touched {
+  border-color: var(--p-inputtext-invalid-border-color);
+}
+
+small {
+  color: var(--p-inputtext-invalid-border-color);
 }

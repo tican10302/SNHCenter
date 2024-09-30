@@ -10,5 +10,4 @@ import {NgxSpinnerComponent} from "ngx-spinner";
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
-  title = 'SNHCenter';
 }

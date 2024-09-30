@@ -244,14 +244,14 @@ public class AccountRepository(IUnitOfWork unitOfWork,
 
             await unitOfWork.SaveChangesAsync();
             await unitOfWork.CommitAsync();
-            
-            return true;
         }
         catch (Exception)
         {
             await unitOfWork.RollbackAsync();
             throw;
         }
+        
+        return true;
     }
 
 
@@ -264,22 +264,26 @@ public class AccountRepository(IUnitOfWork unitOfWork,
             {
                 var entity = await unitOfWork.GetRepository<User>().GetByIdAsync(id);
 
-                entity.IsDeleted = true;
-                entity.DeletedAt = DateTime.Now;
-                entity.DeletedBy = contextAccessor.HttpContext?.User.Identity?.Name;
+                if (entity != null)
+                {
+                    entity.IsDeleted = true;
+                    entity.DeletedAt = DateTime.Now;
+                    entity.DeletedBy = contextAccessor.HttpContext?.User.Identity?.Name;
 
-                await unitOfWork.GetRepository<User>().UpdateAsync(entity);
+                    await unitOfWork.GetRepository<User>().UpdateAsync(entity);
+                }
 
                 await unitOfWork.SaveChangesAsync();
             }
             await unitOfWork.CommitAsync();
-            return true;
         }
         catch (Exception)
         {
             await unitOfWork.RollbackAsync();
             throw;
         }
+        
+        return true;
     }
 
     //GET PERMISSION

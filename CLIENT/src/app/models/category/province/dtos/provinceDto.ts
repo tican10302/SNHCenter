@@ -1,8 +1,5 @@
-import {ModelBase} from "../../modelBase";
-import {GetListPagingResponse} from "../../base/getListPagingResponse";
-
-export interface Province extends ModelBase {
-  code: string | null;
+export interface ProvinceDto {
+  code: string;
   name: string | null;
   nameEn: string | null;
   fullName: string | null;

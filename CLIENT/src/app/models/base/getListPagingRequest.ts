@@ -7,3 +7,15 @@ export interface GetListPagingRequest {
   order: string | null;
   sort: string | null;
 }
+
+export function CreateDefaultGetListPagingRequest(): GetListPagingRequest {
+  return {
+    search: '',
+    fromDate: null,
+    toDate: null,
+    offset: 0,
+    limit: 10,
+    order: null,
+    sort: null,
+  }
+}

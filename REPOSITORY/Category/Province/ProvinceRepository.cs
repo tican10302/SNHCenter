@@ -2,19 +2,17 @@
 using System.Net;
 using AutoDependencyRegistration.Attributes;
 using AutoMapper;
-using DAL.Entities;
+using DAL.Data;
 using Dapper;
 using DTO.Base;
 using DTO.Category.Province.Models;
-using DTO.Category.Province.Dtos;
 using REPOSITORY.Common;
-using Microsoft.AspNetCore.Http;
 
 
-namespace REPOSITORY.Category;
+namespace REPOSITORY.Category.Province;
 
 [RegisterClassAsTransient]
-public class ProvinceRepository(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor) : IProvinceRepository
+public class ProvinceRepository(IUnitOfWork unitOfWork, IMapper mapper, DataContext context) : IProvinceRepository
 {
     public List<ComboboxModel> GetAllForCombobox(GetAllRequest request)
     {
@@ -32,9 +30,9 @@ public class ProvinceRepository(IUnitOfWork unitOfWork, IMapper mapper, IHttpCon
         return response;
     }
 
-    public async Task<ProvinceModel> GetById(GetByIdRequest request)
+    public async Task<ProvinceModel> GetById(string request)
     {
-        var data = await unitOfWork.GetRepository<Provinces>().GetByIdAsync(request.Id);
+        var data = await context.Provinces.FindAsync(request);
         if (data == null)
         {
             throw new ApiException((int)HttpStatusCode.NotFound, "Not data found");
