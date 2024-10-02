@@ -1,7 +1,5 @@
-﻿using BLL.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BLL.Controllers.Base
@@ -14,7 +12,7 @@ namespace BLL.Controllers.Base
         [HttpPost]
         public IActionResult Post()
         {
-            return Ok(new ApiOkResponse("OK"));
+            return Ok("OK");
         }
     }
 }

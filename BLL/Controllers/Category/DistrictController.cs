@@ -1,62 +1,49 @@
-﻿using BLL.Helpers;
-using DTO.Base;
+﻿using DTO.Base;
+using DTO.Common;
 using Microsoft.AspNetCore.Mvc;
-using REPOSITORY.Category;
-using System.Net;
-using DTO.Category.District.Dtos;
+using REPOSITORY.Category.District;
+using REPOSITORY.Common;
 
-namespace BLL.Controllers.Category
+namespace BLL.Controllers.Category;
+
+public class DistrictController(IDistrictRepository repository) : BaseController<DistrictController>
 {
-    public class DistrictController(IDistrictRepository repository) : BaseController<DistrictController>
+    [HttpPost]
+    [Route("get-list-paging")]
+    public async Task<IActionResult> GetListPagingAsync(GetListPagingRequest request)
     {
-        [HttpPost, Route("get-list-paging")]
-        public async Task<IActionResult> GetListPagingAsync(GetListPagingRequest request)
+        try
         {
-            try
-            {
-                if (!ModelState.IsValid)
-                {
-                    throw new Exception(DTO.Common.CommonFunc.GetModelStateAPI(ModelState));
-                }
-                var result = await repository.GetListPaging(request);
-                if (result.Error)
-                {
-                    throw new Exception(result.Message);
-                }
-                else
-                {
-                    return Ok(new ApiOkResponse(result.Data));
-                }
-            }
-            catch (Exception ex)
-            {
-                return Ok(new ApiResponse(false, (int)HttpStatusCode.InternalServerError, ex.Message));
-            }
+            if (!ModelState.IsValid) throw new Exception(CommonFunc.GetModelStateAPI(ModelState));
+            var result = await repository.GetListPaging(request);
+            return Ok(result);
         }
-
-        [HttpPost("get-by-id")]
-        public async Task<IActionResult> GetById(GetByIdRequest request)
+        catch (ApiException ex)
         {
-            try
-            {
-                if (!ModelState.IsValid)
-                {
-                    throw new Exception(DTO.Common.CommonFunc.GetModelStateAPI(ModelState));
-                }
-                var result = await repository.GetById(request);
-                if (result.Error)
-                {
-                    throw new Exception(result.Message);
-                }
-                else
-                {
-                    return Ok(new ApiOkResponse(result.Data));
-                }
-            }
-            catch (Exception ex)
-            {
-                return Ok(new ApiResponse(false, (int)HttpStatusCode.InternalServerError, ex.Message));
-            }
+            return HandleApiException(ex);
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
+    }
+
+    [HttpGet("{id:guid}")]
+    public async Task<IActionResult> GetById(Guid id)
+    {
+        try
+        {
+            if (!ModelState.IsValid) throw new Exception(CommonFunc.GetModelStateAPI(ModelState));
+            var result = await repository.GetById(new GetByIdRequest { Id = id });
+            return Ok(result);
+        }
+        catch (ApiException ex)
+        {
+            return HandleApiException(ex);
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
         }
     }
 }

@@ -14,5 +14,9 @@ public class AccountProfile : Profile
         CreateMap<DAL.Entities.Account, AccountDto>();
         CreateMap<RegisterDto, DAL.Entities.Account>();
         CreateMap<DAL.Entities.Account, RegisterDto>();
+        CreateMap<UserDto, DAL.Entities.User>();
+        CreateMap<DAL.Entities.User, UserDto>();
+        CreateMap<UserModel, DAL.Entities.User>();
+        CreateMap<DAL.Entities.User, UserModel>();
     }
 }

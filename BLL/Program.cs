@@ -14,6 +14,7 @@ builder.Services.AddSession();
 var app = builder.Build();
 
 app.UseCors("AllowSpecificOrigin");
+app.UseCors(builder => builder.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:4200"));
 app.UseStaticFiles();
 app.UseSession();
 app.UseHttpsRedirection();

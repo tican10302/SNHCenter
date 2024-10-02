@@ -1,3 +1,5 @@
+using System.Data;
+using System.Net;
 using AutoDependencyRegistration.Attributes;
 using AutoMapper;
 using Dapper;
@@ -12,86 +14,58 @@ namespace REPOSITORY.System.GroupPermission;
 [RegisterClassAsTransient]
 public class GroupPermissionRepository(IUnitOfWork unitOfWork, IMapper mapper) : IGroupPermissionRepository
 {
-    public async Task<BaseResponse<List<GroupPermissionModel>>> GetList(GetAllRequest request)
+    public async Task<GetListPagingResponse> GetListPaging(GetListPagingRequest request)
     {
-        var response = new BaseResponse<List<GroupPermissionModel>>();
+        var parameters = new DynamicParameters();
+        parameters.Add("@iTextSearch", request.Search, DbType.String);
+        parameters.Add("@iPageIndex", request.Offset, DbType.Int32);
+        parameters.Add("@iRowsPerPage", request.Limit, DbType.Int32);
+        parameters.Add("@oTotalRow", dbType: DbType.Int64, direction: ParameterDirection.Output);
 
-        try
+        var result = await unitOfWork.GetRepository<GroupPermissionModel>().ExecWithStoreProcedure("sp_Sys_GroupPermission_GetListPaging", parameters);
+
+
+        var totalRow = parameters.Get<long>("@oTotalRow");
+        var responseData = new GetListPagingResponse
         {
-            var result = unitOfWork.GetRepository<DAL.Entities.GroupPermission>()
-                .GetAll(x => x.IsActived || !x.IsActived)
-                .OrderBy(x => x.Sort)
-                .ToList();
-
-            response.Data = mapper.Map<List<GroupPermissionModel>>(result);
-        }
-        catch (Exception ex)
-        {
-            response.Error = true;
-            response.Message = ex.Message;
-        }
-
-        return response;
+            PageIndex = request.Offset,
+            Data = result,
+            TotalRow = Convert.ToInt32(totalRow)
+        };
+        return responseData;
     }
 
-    public async Task<BaseResponse<GroupPermissionModel>> GetById(GetByIdRequest request)
+    public async Task<GroupPermissionModel> GetById(GetByIdRequest request)
     {
-        var response = new BaseResponse<GroupPermissionModel>();
-
-        try
+        var data = await unitOfWork.GetRepository<DAL.Entities.GroupPermission>().GetByIdAsync(request.Id);
+        if (data == null)
         {
-            var data = await unitOfWork.GetRepository<DAL.Entities.GroupPermission>().GetByIdAsync(request.Id);
-            if (data == null)
-            {
-                throw new Exception("Not data found");
-            }
-
-            var result = mapper.Map<GroupPermissionModel>(data);
-            response.Data = result;
-        }
-        catch(Exception ex)
-        {
-            response.Error = true;
-            response.Message = ex.Message;
+            throw new ApiException((int)HttpStatusCode.NotFound, "Not data found");
         }
 
-        return response;
+        var result = mapper.Map<GroupPermissionModel>(data);
+        return result;
     }
 
-    public async Task<BaseResponse<GroupPermissionDto>> GetByPost(GetByIdRequest request)
+    public async Task<GroupPermissionDto> GetByPost(GetByIdRequest request)
     {
-        var response = new BaseResponse<GroupPermissionDto>();
-
-        try
+        var result = new GroupPermissionDto();
+        var data = await unitOfWork.GetRepository<DAL.Entities.GroupPermission>().GetByIdAsync(request.Id);
+        if (data == null)
         {
-            var result = new GroupPermissionDto();
-            var data = await unitOfWork.GetRepository<DAL.Entities.GroupPermission>().GetByIdAsync(request.Id);
-            if (result == null)
-            {
-                result.Id = Guid.NewGuid();
-                result.IsEdit = false;
-            }
-            else
-            {
-                result = mapper.Map<GroupPermissionDto>(data);
-                result.IsEdit = true;
-            }
-
-            response.Data = result;
-
+            result.Id = Guid.NewGuid();
+            result.IsEdit = false;
         }
-        catch (Exception ex)
+        else
         {
-            response.Error = true;
-            response.Message = ex.Message;
+            result = mapper.Map<GroupPermissionDto>(data);
+            result.IsEdit = true;
         }
-
-        return response;
+        return result;
     }
 
-    public async Task<BaseResponse<GroupPermissionModel>> Insert(GroupPermissionDto request)
+    public async Task<bool> Insert(GroupPermissionDto request)
     {
-        var response = new BaseResponse<GroupPermissionModel>();
         try
         {
             using var transaction = unitOfWork.BeginTransactionAsync();
@@ -100,30 +74,26 @@ public class GroupPermissionRepository(IUnitOfWork unitOfWork, IMapper mapper) :
                 x.Name == request.Name);
             if (checkData != null)
             {
-                throw new Exception("Data already exists");
+                throw new ApiException((int)HttpStatusCode.BadRequest, "Data already exists");
             }
             
             var entity = mapper.Map<DAL.Entities.GroupPermission>(request);
-            var result = await unitOfWork.GetRepository<DAL.Entities.GroupPermission>().AddAsync(entity);
-
+            
+            await unitOfWork.GetRepository<DAL.Entities.GroupPermission>().AddAsync(entity);
+            
             await unitOfWork.SaveChangesAsync();
             await unitOfWork.CommitAsync();
-            
-            response.Data = mapper.Map<GroupPermissionModel>(result);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             await unitOfWork.RollbackAsync();
-            response.Error = true;
-            response.Message = ex.Message;
+            throw;
         }
-
-        return response;
+        return true;
     }
 
-    public async Task<BaseResponse<GroupPermissionModel>> Update(GroupPermissionDto request)
+    public async Task<bool> Update(GroupPermissionDto request)
     {
-        var response = new BaseResponse<GroupPermissionModel>();
         try
         {
             using var transaction = unitOfWork.BeginTransactionAsync();
@@ -133,77 +103,50 @@ public class GroupPermissionRepository(IUnitOfWork unitOfWork, IMapper mapper) :
                 x.Name == request.Name);
             if (checkData != null)
             {
-                throw new Exception("Data already exists");
+                throw new ApiException((int)HttpStatusCode.BadRequest, "Data already exists");
             }
 
             var data = await unitOfWork.GetRepository<DAL.Entities.GroupPermission>().GetByIdAsync(request.Id);
             if (data == null)
             {
-                throw new Exception("Not data found");
+                throw new ApiException((int)HttpStatusCode.NotFound, "Not data found");
             }
             var entity = mapper.Map(request, data);
             await unitOfWork.GetRepository<DAL.Entities.GroupPermission>().UpdateAsync(entity);
-
             await unitOfWork.SaveChangesAsync();
             await unitOfWork.CommitAsync();
-
-            response.Data = mapper.Map<GroupPermissionModel>(entity);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             await unitOfWork.RollbackAsync();
-            response.Error = true;
-            response.Message = ex.Message;
+            throw;
         }
+        return true;
+    }
 
+    public List<GroupPermissionModel> GetAll()
+    {
+        var result = unitOfWork.GetRepository<DAL.Entities.GroupPermission>()
+            .GetAll(x => x.IsActived)
+            .OrderBy(x => x.Sort)
+            .ToList();
+
+        var response = mapper.Map<List<GroupPermissionModel>>(result);
         return response;
     }
 
-    public async Task<BaseResponse<List<GroupPermissionModel>>> GetAll(GetAllRequest request)
+    public List<SelectListItem> GetAllForCombobox()
     {
-        var response = new BaseResponse<List<GroupPermissionModel>>();
+        var result = unitOfWork.GetRepository<DAL.Entities.GroupPermission>()
+            .GetAll(x => x.IsActived)
+            .OrderBy(x => x.Sort)
+            .ToList();
 
-        try
+        var response = result.Select(x => new SelectListItem
         {
-            var result = unitOfWork.GetRepository<DAL.Entities.GroupPermission>()
-                .GetAll(x => x.IsActived)
-                .OrderBy(x => x.Sort)
-                .ToList();
-
-            response.Data = mapper.Map<List<GroupPermissionModel>>(result);
-        }
-        catch (Exception ex)
-        {
-            response.Error = true;
-            response.Message = ex.Message;
-        }
-
-        return response;
-    }
-
-    public async Task<BaseResponse<List<SelectListItem>>> GetAllForCombobox(GetAllRequest request)
-    {
-        var response = new BaseResponse<List<SelectListItem>>();
-
-        try
-        {
-            var result = unitOfWork.GetRepository<DAL.Entities.GroupPermission>()
-                .GetAll(x => x.IsActived)
-                .OrderBy(x => x.Sort)
-                .ToList();
-
-            response.Data = result.Select(x => new SelectListItem
-            {
-                Text = x.Name,
-                Value = x.Id.ToString()
-            }).ToList();
-        }
-        catch (Exception ex)
-        {
-            response.Error = true;
-            response.Message = ex.Message;
-        }
-
+            Text = x.Name,
+            Value = x.Id.ToString()
+        }).ToList();
         return response;
     }
 }

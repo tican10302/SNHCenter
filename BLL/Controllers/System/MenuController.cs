@@ -1,168 +1,102 @@
-using System.Net;
-using BLL.Helpers;
 using DTO.Base;
+using DTO.Common;
 using DTO.System.Menu.Dtos;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using REPOSITORY.System.Menu;
 
-namespace BLL.Controllers.System
+namespace BLL.Controllers.System;
+
+public class MenuController(IMenuRepository repository) : BaseController<MenuController>
 {
-    public class MenuController : BaseController<MenuController>
+    [HttpPost]
+    [Route("get-list")]
+    public async Task<IActionResult> GetListAsync(MenuGetListDto request)
     {
-        private readonly IMenuRepository repository;
-        public MenuController(IMenuRepository repository)
+        try
         {
-            this.repository = repository;
+            if (!ModelState.IsValid) throw new Exception(CommonFunc.GetModelStateAPI(ModelState));
+            var result = await repository.GetListPaging(request);
+            return Ok(result);
         }
-        [HttpPost, Route("get-list")]
-        public async Task<IActionResult> GetListAsync(MenuGetListDto request)
+        catch (Exception ex)
         {
-            try
-            {
-                if (!ModelState.IsValid)
-                {
-                    throw new Exception(DTO.Common.CommonFunc.GetModelStateAPI(ModelState));
-                }
-                var result = await repository.GetList(request);
-                if (result.Error)
-                {
-                    throw new Exception(result.Message);
-                }
-                else
-                {
-                    return Ok(new ApiOkResponse(result.Data));
-                }
-            }
-            catch (Exception ex)
-            {
-                return Ok(new ApiResponse(false, (int)HttpStatusCode.InternalServerError, ex.Message));
-            }
+            return BadRequest(ex.Message);
         }
-        
-        [HttpPost, Route("get-all")]
-        public async Task<IActionResult> GetAllAsync(GetAllRequest request)
-        {
-            try
-            {
-                if (!ModelState.IsValid)
-                {
-                    throw new Exception(DTO.Common.CommonFunc.GetModelStateAPI(ModelState));
-                }
-                var result = await repository.GetAll(request);
-                if (result.Error)
-                {
-                    throw new Exception(result.Message);
-                }
-                else
-                {
-                    return Ok(new ApiOkResponse(result.Data));
-                }
-            }
-            catch (Exception ex)
-            {
-                return Ok(new ApiResponse(false, (int)HttpStatusCode.InternalServerError, ex.Message));
-            }
-        }
+    }
 
-        [HttpPost("get-by-id")]
-        public async Task<IActionResult> GetById(GetByIdRequest request)
+    [HttpGet]
+    [Route("get-all")]
+    public IActionResult GetAllAsync(GetAllRequest request)
+    {
+        try
         {
-            try
-            {
-                if (!ModelState.IsValid)
-                {
-                    throw new Exception(DTO.Common.CommonFunc.GetModelStateAPI(ModelState));
-                }
-                var result = await repository.GetById(request);
-                if (result.Error)
-                {
-                    throw new Exception(result.Message);
-                }
-                else
-                {
-                    return Ok(new ApiOkResponse(result.Data));
-                }
-            }
-            catch (Exception ex)
-            {
-                return Ok(new ApiResponse(false, (int)HttpStatusCode.InternalServerError, ex.Message));
-            }
+            if (!ModelState.IsValid) throw new Exception(CommonFunc.GetModelStateAPI(ModelState));
+            var result = repository.GetAll();
+            return Ok(result);
         }
-
-        [HttpPost("get-by-post")]
-        public async Task<IActionResult> GetByPost(GetByIdRequest request)
+        catch (Exception ex)
         {
-            try
-            {
-                if (!ModelState.IsValid)
-                {
-                    throw new Exception(DTO.Common.CommonFunc.GetModelStateAPI(ModelState));
-                }
-                var result = await repository.GetByPost(request);
-                if (result.Error)
-                {
-                    throw new Exception(result.Message);
-                }
-                else
-                {
-                    return Ok(new ApiOkResponse(result.Data));
-                }
-            }
-            catch (Exception ex)
-            {
-                return Ok(new ApiResponse(false, (int)HttpStatusCode.InternalServerError, ex.Message));
-            }
+            return BadRequest(ex.Message);
         }
+    }
 
-        [HttpPost("insert")]
-        public async Task<IActionResult> Post(MenuDto request)
+    [HttpGet("{id:guid}")]
+    public async Task<IActionResult> GetById(Guid id)
+    {
+        try
         {
-            try
-            {
-                if (!ModelState.IsValid)
-                {
-                    throw new Exception(DTO.Common.CommonFunc.GetModelStateAPI(ModelState));
-                }
-                var result = await repository.Insert(request);
-                if (result.Error)
-                {
-                    throw new Exception(result.Message);
-                }
-                else
-                {
-                    return Ok(new ApiOkResponse(result.Data));
-                }
-            }
-            catch (Exception ex)
-            {
-                return Ok(new ApiResponse(false, (int)HttpStatusCode.InternalServerError, ex.Message));
-            }
+            if (!ModelState.IsValid) throw new Exception(CommonFunc.GetModelStateAPI(ModelState));
+            var result = await repository.GetById(new GetByIdRequest { Id = id });
+            return Ok(result);
         }
-
-        [HttpPost("update")]
-        public async Task<IActionResult> Update(MenuDto request)
+        catch (Exception ex)
         {
-            try
-            {
-                if (!ModelState.IsValid)
-                {
-                    throw new Exception(DTO.Common.CommonFunc.GetModelStateAPI(ModelState));
-                }
-                var result = await repository.Update(request);
-                if (result.Error)
-                {
-                    throw new Exception(result.Message);
-                }
-                else
-                {
-                    return Ok(new ApiOkResponse(result.Data));
-                }
-            }
-            catch (Exception ex)
-            {
-                return Ok(new ApiResponse(false, (int)HttpStatusCode.InternalServerError, ex.Message));
-            }
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpGet("get-by-post/{id:guid}")]
+    public async Task<IActionResult> GetByPost(Guid id)
+    {
+        try
+        {
+            if (!ModelState.IsValid) throw new Exception(CommonFunc.GetModelStateAPI(ModelState));
+            var result = await repository.GetByPost(new GetByIdRequest { Id = id });
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Create(MenuDto request)
+    {
+        try
+        {
+            if (!ModelState.IsValid) throw new Exception(CommonFunc.GetModelStateAPI(ModelState));
+            await repository.Insert(request);
+            return Created();
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpPut]
+    public async Task<IActionResult> Update(MenuDto request)
+    {
+        try
+        {
+            if (!ModelState.IsValid) throw new Exception(CommonFunc.GetModelStateAPI(ModelState));
+            await repository.Update(request);
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
         }
     }
 }

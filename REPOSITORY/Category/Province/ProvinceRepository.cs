@@ -1,105 +1,64 @@
 ﻿using System.Data;
+using System.Net;
 using AutoDependencyRegistration.Attributes;
 using AutoMapper;
-using DAL.Entities;
+using DAL.Data;
 using Dapper;
 using DTO.Base;
 using DTO.Category.Province.Models;
-using DTO.Category.Province.Dtos;
 using REPOSITORY.Common;
-using Microsoft.AspNetCore.Http;
 
 
-namespace REPOSITORY.Category;
+namespace REPOSITORY.Category.Province;
 
 [RegisterClassAsTransient]
-public class ProvinceRepository(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor) : IProvinceRepository
+public class ProvinceRepository(IUnitOfWork unitOfWork, IMapper mapper, DataContext context) : IProvinceRepository
 {
-    public async Task<BaseResponse<List<ComboboxModel>>> GetAllForCombobox(GetAllRequest request)
+    public List<ComboboxModel> GetAllForCombobox(GetAllRequest request)
     {
-        var response = new BaseResponse<List<ComboboxModel>>();
+        var result = unitOfWork.GetRepository<DAL.Entities.Provinces>()
+            .GetAll(x => !string.IsNullOrEmpty(x.Code))
+            .OrderBy(x => x.Name)
+            .ToList();
 
-        try
+        List<ComboboxModel> response = result.Select(x => new ComboboxModel
         {
-            var result = unitOfWork.GetRepository<DAL.Entities.Provinces>()
-                .GetAll(x => !string.IsNullOrEmpty(x.Code))
-                .OrderBy(x => x.Name)
-                .ToList();
-
-            response.Data = result.Select(x => new ComboboxModel
-            {
-                Text = x.Name,
-                Value = x.Code.ToString()
-            }).OrderBy(x => x.Sort).ToList();
-        }
-        catch (Exception ex)
-        {
-            response.Error = true;
-            response.Message = ex.Message;
-        }
+            Text = x.Name,
+            Value = x.Code.ToString()
+        }).OrderBy(x => x.Sort).ToList();
 
         return response;
     }
 
-    public async Task<BaseResponse<ProvinceModel>> GetById(GetByIdRequest request)
+    public async Task<ProvinceModel> GetById(string request)
     {
-        var response = new BaseResponse<ProvinceModel>();
-
-        try
+        var data = await context.Provinces.FindAsync(request);
+        if (data == null)
         {
-            var data = await unitOfWork.GetRepository<Provinces>().GetByIdAsync(request.Id);
-            if (data == null)
-            {
-                throw new Exception("Not data found");
-            }
-
-            var result = mapper.Map<ProvinceModel>(data);
-            //result.SelectDays = result.Days.Split(", ").ToList();
-            response.Data = result;
-        }
-        catch (Exception ex)
-        {
-            response.Error = true;
-            response.Message = ex.Message;
+            throw new ApiException((int)HttpStatusCode.NotFound, "Not data found");
         }
 
-        return response;
+        var result = mapper.Map<ProvinceModel>(data);
+        return result;
     }
 
-    public Task<BaseResponse<ProvinceDto>> GetByPost(GetByIdRequest request)
+    public async Task<GetListPagingResponse> GetListPaging(GetListPagingRequest request)
     {
-        throw new NotImplementedException();
-    }
+        var parameters = new DynamicParameters();
+        parameters.Add("@iTextSearch", request.Search, DbType.String);
+        parameters.Add("@iPageIndex", request.Offset / request.Limit, DbType.Int32);
+        parameters.Add("@iRowsPerPage", request.Limit, DbType.Int32);
+        parameters.Add("@oTotalRow", dbType: DbType.Int64, direction: ParameterDirection.Output);
 
-    public async Task<BaseResponse<GetListPagingResponse>> GetListPaging(GetListPagingRequest request)
-    {
-        var response = new BaseResponse<GetListPagingResponse>();
+        var result = await unitOfWork.GetRepository<ProvinceModel>().ExecWithStoreProcedure("sp_Category_Province_GetListPaging", parameters);
 
-        try
+        var totalRow = parameters.Get<long>("@oTotalRow");
+        var response = new GetListPagingResponse()
         {
-            var parameters = new DynamicParameters();
-            parameters.Add("@iTextSearch", request.Search, DbType.String);
-            parameters.Add("@iPageIndex", request.Offset / request.Limit, DbType.Int32);
-            parameters.Add("@iRowsPerPage", request.Limit, DbType.Int32);
-            parameters.Add("@oTotalRow", dbType: DbType.Int64, direction: ParameterDirection.Output);
-
-            var result = await unitOfWork.GetRepository<ProvinceModel>().ExecWithStoreProcedure("sp_Category_Province_GetListPaging", parameters);
-
-            var totalRow = parameters.Get<long>("@oTotalRow");
-            var responseData = new GetListPagingResponse
-            {
-                PageIndex = request.Offset,
-                Data = result,
-                TotalRow = Convert.ToInt32(totalRow)
-            };
-
-            response.Data = responseData;
-        }
-        catch (Exception ex)
-        {
-            response.Error = true;
-            response.Message = ex.Message;
-        }
+            PageIndex = request.Offset,
+            Data = result,
+            TotalRow = Convert.ToInt32(totalRow)
+        };
 
         return response;
     }

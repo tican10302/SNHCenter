@@ -1,13 +1,12 @@
 ﻿using AutoMapper;
-using DAL.Entities;
 using Dapper;
 using DTO.Base;
 using DTO.System.Role.Dtos;
 using DTO.System.Role.Models;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Data.SqlClient;
 using REPOSITORY.Common;
 using System.Data;
+using System.Net;
 using AutoDependencyRegistration.Attributes;
 
 namespace REPOSITORY.System.Role
@@ -15,96 +14,59 @@ namespace REPOSITORY.System.Role
     [RegisterClassAsTransient]
     public class RoleRepository(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor) : IRoleRepository
     {
-        public async Task<BaseResponse<GetListPagingResponse>> GetListPaging(GetListPagingRequest request)
+        public async Task<GetListPagingResponse> GetListPaging(GetListPagingRequest request)
         {
-            var response = new BaseResponse<GetListPagingResponse>();
+            var parameters = new DynamicParameters();
+            parameters.Add("@iTextSearch", request.Search, DbType.String);
+            parameters.Add("@iPageIndex", request.Offset, DbType.Int32);
+            parameters.Add("@iRowsPerPage", request.Limit, DbType.Int32);
+            parameters.Add("@oTotalRow", dbType: DbType.Int64, direction: ParameterDirection.Output);
 
-            try
+            var result = await unitOfWork.GetRepository<RoleModel>().ExecWithStoreProcedure("sp_Sys_Role_GetListPaging", parameters);
+
+            var totalRow = parameters.Get<long>("@oTotalRow");
+            var responseData = new GetListPagingResponse
             {
-                var parameters = new DynamicParameters();
-                parameters.Add("@iTextSearch", request.Search, DbType.String);
-                parameters.Add("@iPageIndex", request.Offset, DbType.Int32);
-                parameters.Add("@iRowsPerPage", request.Limit, DbType.Int32);
-                parameters.Add("@oTotalRow", dbType: DbType.Int64, direction: ParameterDirection.Output);
+                PageIndex = request.Offset,
+                Data = result,
+                TotalRow = Convert.ToInt32(totalRow)
+            };
 
-                var result = await unitOfWork.GetRepository<RoleModel>().ExecWithStoreProcedure("sp_Sys_Role_GetListPaging", parameters);
-
-                var totalRow = parameters.Get<long>("@oTotalRow");
-                var responseData = new GetListPagingResponse
-                {
-                    PageIndex = request.Offset,
-                    Data = result,
-                    TotalRow = Convert.ToInt32(totalRow)
-                };
-
-                response.Data = responseData;
-            }
-            catch (Exception ex)
-            {
-                response.Error = true;
-                response.Message = ex.Message;
-            }
-
-            return response;
+            return responseData;
         }
 
-        public async Task<BaseResponse<RoleModel>> GetById(GetByIdRequest request)
+        public async Task<RoleModel> GetById(GetByIdRequest request)
         {
-            var response = new BaseResponse<RoleModel>();
-
-            try
+            var data = await unitOfWork.GetRepository<DAL.Entities.Role>().GetByIdAsync(request.Id);
+            if (data == null)
             {
-                var data = await unitOfWork.GetRepository<DAL.Entities.Role>().GetByIdAsync(request.Id);
-                if (data == null)
-                {
-                    throw new Exception("Not data found");
-                }
-
-                var result = mapper.Map<RoleModel>(data);
-                response.Data = result;
-            }
-            catch (Exception ex)
-            {
-                response.Error = true;
-                response.Message = ex.Message;
+                throw new ApiException((int)HttpStatusCode.NotFound, "Not data found");
             }
 
-            return response;
+            var result = mapper.Map<RoleModel>(data);
+            return result;
         }
 
-        public async Task<BaseResponse<RoleDto>> GetByPost(GetByIdRequest request)
+        public async Task<RoleDto> GetByPost(GetByIdRequest request)
         {
-            var response = new BaseResponse<RoleDto>();
-
-            try
+            var result = new RoleDto();
+            var data = await unitOfWork.GetRepository<DAL.Entities.Role>().GetByIdAsync(request.Id);
+            if (data == null)
             {
-                var result = new RoleDto();
-                var data = await unitOfWork.GetRepository<DAL.Entities.Role>().GetByIdAsync(request.Id);
-                if (result == null)
-                {
-                    result.Id = Guid.NewGuid();
-                    result.IsEdit = false;
-                }
-                else
-                {
-                    result = mapper.Map<RoleDto>(data);
-                    result.IsEdit = true;
-                }
-
-                response.Data = result;
-
+                result.Id = Guid.NewGuid();
+                result.IsEdit = false;
             }
-            catch (Exception ex)
+            else
             {
-                response.Error = true;
-                response.Message = ex.Message;
+                result = mapper.Map<RoleDto>(data);
+                result.IsEdit = true;
             }
-            return response;
+
+            return result;
         }
 
-        public async Task<BaseResponse<RoleModel>> Insert(RoleDto request)
+        public async Task<bool> Insert(RoleDto request)
         {
-            var response = new BaseResponse<RoleModel>();
             try
             {
                 using var transaction = unitOfWork.BeginTransactionAsync();
@@ -114,34 +76,30 @@ namespace REPOSITORY.System.Role
                     x.Name == request.Name);
                 if (checkData != null)
                 {
-                    throw new Exception("Data already exists");
+                    throw new ApiException((int)HttpStatusCode.BadRequest, "Data already exists");
                 }
 
                 var entity = mapper.Map<DAL.Entities.Role>(request);
-                entity.CreatedBy = httpContextAccessor.HttpContext.User.Identity.Name;
-                entity.CreatedAt = DateTime.Now; ;
-                entity.UpdatedBy = httpContextAccessor.HttpContext.User.Identity.Name;
+                entity.CreatedBy = httpContextAccessor.HttpContext?.User.Identity?.Name;
+                entity.CreatedAt = DateTime.Now;
+                entity.UpdatedBy = httpContextAccessor.HttpContext?.User.Identity?.Name;
                 entity.UpdatedAt = DateTime.Now;
 
-                var result = await unitOfWork.GetRepository<DAL.Entities.Role>().AddAsync(entity);
+                await unitOfWork.GetRepository<DAL.Entities.Role>().AddAsync(entity);
 
                 await unitOfWork.SaveChangesAsync();
                 await unitOfWork.CommitAsync();
-
-                response.Data = mapper.Map<RoleModel>(result);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 await unitOfWork.RollbackAsync();
-                response.Error = true;
-                response.Message = ex.Message;
+                throw;
             }
-            return response;
+            return true;
         }
 
-        public async Task<BaseResponse<RoleModel>> Update(RoleDto request)
+        public async Task<bool> Update(RoleDto request)
         {
-            var response = new BaseResponse<RoleModel>();
             try
             {
                 using var transaction = unitOfWork.BeginTransactionAsync();
@@ -152,122 +110,85 @@ namespace REPOSITORY.System.Role
                     x.Name == request.Name);
                 if (checkData != null)
                 {
-                    throw new Exception("Data already exists");
+                    throw new ApiException((int)HttpStatusCode.BadRequest, "Data already exists");
                 }
 
                 var data = await unitOfWork.GetRepository<DAL.Entities.Role>().GetByIdAsync(request.Id);
                 if (data == null)
                 {
-                    throw new Exception("Not data found");
+                    throw new ApiException((int)HttpStatusCode.NotFound, "Not data found");
                 }
                 var entity = mapper.Map(request, data);
 
                 entity.UpdatedAt = DateTime.Now;
-                entity.UpdatedBy = httpContextAccessor.HttpContext.User.Identity.Name;
+                entity.UpdatedBy = httpContextAccessor.HttpContext?.User.Identity?.Name;
 
                 await unitOfWork.GetRepository<DAL.Entities.Role>().UpdateAsync(entity);
 
                 await unitOfWork.SaveChangesAsync();
                 await unitOfWork.CommitAsync();
-
-                response.Data = mapper.Map<RoleModel>(entity);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 await unitOfWork.RollbackAsync();
-                response.Error = true;
-                response.Message = ex.Message;
+                throw;
             }
 
-            return response;
+            return true;
         }
 
 
-        public async Task<BaseResponse<string>> DeLeteList(DeleteListRequest request)
+        public async Task<bool> DeleteList(DeleteListRequest request)
         {
-            var response = new BaseResponse<string>();
-            try
+            using var transaction = unitOfWork.BeginTransactionAsync();
+            foreach (var id in request.Ids)
             {
-                using var transaction = unitOfWork.BeginTransactionAsync();
-                foreach (var id in request.Ids)
-                {
-                    var entity = await unitOfWork.GetRepository<DAL.Entities.Role>().GetByIdAsync(id);
+                var entity = await unitOfWork.GetRepository<DAL.Entities.Role>().GetByIdAsync(id);
 
-                    entity.IsDeleted = true;
-                    entity.DeletedAt = DateTime.Now;
-                    entity.DeletedBy = httpContextAccessor.HttpContext.User.Identity.Name;
+                entity.IsDeleted = true;
+                entity.DeletedAt = DateTime.Now;
+                entity.DeletedBy = httpContextAccessor.HttpContext?.User.Identity?.Name;
 
-                    await unitOfWork.GetRepository<DAL.Entities.Role>().UpdateAsync(entity);
+                await unitOfWork.GetRepository<DAL.Entities.Role>().UpdateAsync(entity);
 
-                    await unitOfWork.SaveChangesAsync();
-                }
-                await unitOfWork.CommitAsync();
-
-                response.Data = "Success";
+                await unitOfWork.SaveChangesAsync();
             }
-            catch (Exception ex)
-            {
-                await unitOfWork.RollbackAsync();
-                response.Error = true;
-                response.Message = ex.Message;
-            }
-
-            return response;
+            await unitOfWork.CommitAsync();
+            return true;
         }
 
-        public async Task<BaseResponse<List<ComboboxModel>>> GetAllForCombobox(GetAllRequest request)
+        public List<ComboboxModel> GetAllForCombobox()
         {
-            var response = new BaseResponse<List<ComboboxModel>>();
+            var result = unitOfWork.GetRepository<DAL.Entities.Role>()
+                .GetAll(x => !x.IsDeleted && x.IsActived)
+                .OrderBy(x => x.Name)
+                .ToList();
 
-            try
+            var response = result.Select(x => new ComboboxModel
             {
-                var result = unitOfWork.GetRepository<DAL.Entities.Role>()
-                    .GetAll(x => !x.IsDeleted && x.IsActived)
-                    .OrderBy(x => x.Name)
-                    .ToList();
-
-                response.Data = result.Select(x => new ComboboxModel
-                {
-                    Text = x.Name,
-                    Value = x.Id.ToString()
-                }).OrderBy(x => x.Sort).ToList();
-            }
-            catch (Exception ex)
-            {
-                response.Error = true;
-                response.Message = ex.Message;
-            }
-
+                Text = x.Name,
+                Value = x.Id.ToString()
+            }).OrderBy(x => x.Sort).ToList();
+            
             return response;
         }
 
         //GET LIST ROLE PERMISSION
-        public async Task<BaseResponse<List<Role_PermissionModel>>> GetListRolePermission(GetRole_PermissionDto request)
+        public async Task<List<Role_PermissionModel>> GetListRolePermission(GetRole_PermissionDto request)
         {
-            var response = new BaseResponse<List<Role_PermissionModel>>();
-            try
-            {
-                var parameters = new DynamicParameters();
-                parameters.Add("@iGroupId", request.GroupId);
-                parameters.Add("@iRoleId", request.RoleId);
+            var parameters = new DynamicParameters();
+            parameters.Add("@iGroupId", request.GroupId);
+            parameters.Add("@iRoleId", request.RoleId);
 
-                var data = await unitOfWork.GetRepository<Role_PermissionModel>().ExecWithStoreProcedure("sp_Sys_Account_GetPermission", parameters);
+            var data = await unitOfWork.GetRepository<Role_PermissionModel>().ExecWithStoreProcedure("sp_Sys_Account_GetPermission", parameters);
 
-                response.Data = data;
-            }
-            catch (Exception ex)
-            {
-                response.Error = true;
-                response.Message = ex.Message;
-            }
-
-            return response;
+            return data;
         }
 
         //POST ROLE PERMISSION
-        public async Task<BaseResponse<Role_PermissionModel>> PostRolePermission(Role_PermissionDto request)
+        public async Task<Role_PermissionModel> PostRolePermission(Role_PermissionDto request)
         {
-            var response = new BaseResponse<Role_PermissionModel>();
+            Role_PermissionModel response;
             try
             {
                 using var transaction = unitOfWork.BeginTransactionAsync();
@@ -277,7 +198,7 @@ namespace REPOSITORY.System.Role
                     request.Id = Guid.NewGuid();
                     var add = mapper.Map<DAL.Entities.Permission>(request);
                     await unitOfWork.GetRepository<DAL.Entities.Permission>().AddAsync(add);
-                    response.Data = mapper.Map<Role_PermissionModel>(add);
+                    response = mapper.Map<Role_PermissionModel>(add);
                 }
                 else
                 {
@@ -288,16 +209,15 @@ namespace REPOSITORY.System.Role
                     resultUpdate.IsView = request.IsView;
                     resultUpdate.IsDelete = request.IsDelete;
                     await unitOfWork.GetRepository<DAL.Entities.Permission>().UpdateAsync(resultUpdate);
-                    response.Data = mapper.Map<Role_PermissionModel>(resultUpdate);
+                    response = mapper.Map<Role_PermissionModel>(resultUpdate);
                 }
                 await unitOfWork.CommitAsync();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                response.Error = true;
-                response.Message = ex.Message;
+                await unitOfWork.RollbackAsync();
+                throw;
             }
-
             return response;
         }
     }

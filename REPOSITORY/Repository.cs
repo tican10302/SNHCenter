@@ -2,6 +2,7 @@ using System.Data;
 using System.Linq.Expressions;
 using DAL.Data;
 using Dapper;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,9 +17,10 @@ public class Repository<T>(DbContext dbContext, DataContext dataContext) : IRepo
         return await _dbSet.ToListAsync();
     }
 
-    public async Task<T> GetByIdAsync(Guid id)
+    public async Task<T?> GetByIdAsync(Guid id)
     {
-        return await _dbSet.FindAsync(id);
+        var data = await _dbSet.FindAsync(id);
+        return data ?? null;
     }
 
     public async Task<T> AddAsync(T entity)
@@ -41,12 +43,13 @@ public class Repository<T>(DbContext dbContext, DataContext dataContext) : IRepo
         await dbContext.SaveChangesAsync();
     }
     
-    public async Task<T> Find(Expression<Func<T, bool>> match)
+    public async Task<T?> Find(Expression<Func<T, bool>> match)
     {
-        return await _dbSet.FirstOrDefaultAsync(match);
+        var data = await _dbSet.FirstOrDefaultAsync(match);
+        return data ?? null;
     }
     
-    public IQueryable<T> GetAll(Expression<Func<T, bool>> predicate, string[] includes = null)
+    public IQueryable<T> GetAll(Expression<Func<T, bool>> predicate, string[]? includes = null)
     {
         IQueryable<T> query = _dbSet;
 
