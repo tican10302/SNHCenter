@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import {environment} from "../../../environments/environment";
 import {BehaviorSubject, map} from "rxjs";
-import {User} from "../../models/system/models/user";
+import {User} from "../../models/system/user";
 import {HttpClient} from "@angular/common/http";
-import {Account} from "../../models/system/models/account";
-import {Menu} from "../../models/system/models/menu";
-import {GroupPermission} from "../../models/system/models/groupPermission";
-import {Permission} from "../../models/system/models/permission";
+import {Account} from "../../models/system/account";
+import {Menu} from "../../models/system/menu";
+import {GroupPermission} from "../../models/system/groupPermission";
+import {Permission} from "../../models/system/permission";
 
 @Injectable({
   providedIn: 'root'

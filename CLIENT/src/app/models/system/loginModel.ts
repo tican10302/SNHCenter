@@ -1,12 +1,9 @@
 import {FormControl, FormGroup, Validators} from "@angular/forms";
+import {ToFormControls} from "../base/ModelFormGroup";
 
-type ToFormControls<T> = {
-  [K in keyof T]: FormControl<T[K]>;
-};
-
-export interface LoginModel {
-  userName: string;
-  password: string;
+export class LoginModel {
+  userName: string | null = null;
+  password: string| null = null;
 }
 
 export type LoginForm = ToFormControls<LoginModel>;

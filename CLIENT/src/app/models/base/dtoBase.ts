@@ -1,20 +1,24 @@
-import {uuid} from "uuidv4";
+import {FormControl, Validators} from "@angular/forms";
 
-export interface DtoBase
+type ToFormControls<T> = {
+  [K in keyof T]: FormControl<T[K]>;
+};
+
+type DtoBaseForm = ToFormControls<DtoBase>;
+
+export class DtoBase
 {
-  id: string,
-  folderUpload: string,
-  isActived: boolean | true,
-  isEdit: boolean | false,
-  sort: number | 0,
+  id: string | null = null;
+  folderUpload: string| null = null;
+  isActived: boolean = true;
+  isEdit: boolean = false;
+  sort: number = 0;
 }
 
-export function createDefaultDtoBase(): DtoBase {
-  return {
-    id: uuid(),
-    folderUpload: uuid(),
-    isActived: true,
-    isEdit: false,
-    sort: 0,
-  }
-}
+export const baseFormControls = <DtoBaseForm>{
+  id: new FormControl('', { validators: [Validators.required] }),
+  folderUpload: new FormControl(''),
+  isActived: new FormControl(true),
+  isEdit: new FormControl(false),
+  sort: new FormControl(0),
+};

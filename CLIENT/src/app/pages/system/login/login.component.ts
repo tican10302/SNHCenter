@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {AccountService} from "../../../services/system/account.service";
 import {Router} from "@angular/router";
 import {NgxSpinnerService} from "ngx-spinner";
@@ -28,27 +28,25 @@ import {createDefaultLoginForm, LoginModel} from "../../../models/system/loginMo
   styleUrl: './login.component.scss'
 })
 export class LoginComponent implements OnInit{
-  formGroup!: ModelFormGroup<LoginModel>;
-  form : any;
+  formView!: ModelFormGroup<LoginModel>;
 
   constructor(
     private accountService: AccountService,
     private router: Router,
     private messageService: MessageService,
     private spinner: NgxSpinnerService,
-    private config: PrimeNGConfig,
-    private fb: FormBuilder,) {
+    private config: PrimeNGConfig,) {
     this.config.theme.set({ preset: Aura });
   }
 
   ngOnInit() {
-    this.formGroup = createDefaultLoginForm();
+    this.formView = createDefaultLoginForm();
   }
 
   login() {
-    if(this.formGroup.invalid) return;
+    if(this.formView.invalid) return;
     this.spinner.show();
-    this.accountService.login(this.formGroup.value).subscribe({
+    this.accountService.login(this.formView.value).subscribe({
       next: (_) => {
         this.spinner.hide();
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Log in successfully!', life: Enum.messageLife });

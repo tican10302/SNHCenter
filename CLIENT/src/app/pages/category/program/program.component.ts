@@ -1,11 +1,11 @@
 import {Component, inject, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
 import {AccountService} from "../../../services/system/account.service";
-import {Permission} from "../../../models/system/models/permission";
+import {Permission} from "../../../models/system/permission";
 import {NgFor, NgIf} from "@angular/common";
 import {ButtonModule} from "primeng/button";
 import {DialogModule} from "primeng/dialog";
-import {FormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {IconFieldModule} from "primeng/iconfield";
 import {InputIconModule} from "primeng/inputicon";
 import {InputTextModule} from "primeng/inputtext";
@@ -15,7 +15,9 @@ import {CreateDefaultGetListPagingRequest, GetListPagingRequest} from "../../../
 import {ConfirmationService, MessageService} from "primeng/api";
 import {Enum} from "../../../enums/enum";
 import {ProgramService} from "../../../services/category/program.service";
-import {createDefaultProgram, Program} from "../../../models/category/program/models/program";
+import {createDefaultProgramForm, ProgramModel} from "../../../models/category/program/programModel";
+import {ProgramViewComponent} from "./program-view/program-view.component";
+import {createFormGroup} from "../../../models/base/ModelFormGroup";
 
 @Component({
   selector: 'app-program',
@@ -30,6 +32,8 @@ import {createDefaultProgram, Program} from "../../../models/category/program/mo
     DialogModule,
     InputTextModule,
     FormsModule,
+    ProgramViewComponent,
+    ReactiveFormsModule,
   ],
   templateUrl: './program.component.html',
   styleUrl: './program.component.scss'
@@ -37,21 +41,20 @@ import {createDefaultProgram, Program} from "../../../models/category/program/mo
 export class ProgramComponent implements OnInit{
   @ViewChild('dataTable') dataTable!: Table;
   permission: Permission | null = null;
+  formGroup = createDefaultProgramForm();
   visible: boolean = false;
   isView: boolean = false;
   isEdit: boolean = false;
   currentRoute = inject(ActivatedRoute).routeConfig?.component?.name.replace(/_?([a-zA-Z]+)Component$/, '$1').toLowerCase() || '';
 
   // Table
-  tableData!: Program[];
-  selectedListData!: Program;
+  tableData!: ProgramModel[];
+  selectedListData!: ProgramModel;
   cols!: TableColumn[];
   totalRecords: number = 0;
 
   getListPagingRequest: GetListPagingRequest = CreateDefaultGetListPagingRequest();
 
-  // Data
-  model: Program = createDefaultProgram();
 
   constructor(protected accountService: AccountService,
               private programService: ProgramService,
@@ -98,7 +101,7 @@ export class ProgramComponent implements OnInit{
       return;
     this.programService.getData(id).subscribe({
       next: (data) => {
-        this.model = data;
+        this.formGroup = createFormGroup(data);
       },
       error: (err) => {
         console.log(err)
@@ -112,7 +115,6 @@ export class ProgramComponent implements OnInit{
   }
 
   showAddDialog() {
-    this.model = createDefaultProgram();
     this.isView = false;
     this.isEdit = false;
     this.visible = true;
@@ -124,7 +126,7 @@ export class ProgramComponent implements OnInit{
       return;
     this.programService.getData(id).subscribe({
       next: (data) => {
-        this.model = data;
+        this.formGroup = createFormGroup(data);
       },
       error: (err) => {
         console.log(err)
@@ -138,10 +140,11 @@ export class ProgramComponent implements OnInit{
   }
 
   saveData() {
+    if(this.formGroup.invalid) return;
     if(this.isEdit)
-      this.programService.updateData(this.model);
+      this.programService.updateData(this.formGroup.value);
     else
-      this.programService.addData(this.model).subscribe({
+      this.programService.addData(this.formGroup.value).subscribe({
         next: (data) => {
           if(data)
           {

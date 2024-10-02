@@ -1,11 +1,11 @@
 import {Component, inject, OnInit, ViewChild} from '@angular/core';
 import {NgFor, NgIf} from "@angular/common"
 import {AccountService} from "../../../services/system/account.service";
-import {Permission} from "../../../models/system/models/permission";
+import {Permission} from "../../../models/system/permission";
 import {ActivatedRoute} from "@angular/router";
 import {Table, TableModule} from "primeng/table";
 import {ProvinceService} from "../../../services/category/province.service";
-import {createDefaultProvince, Province} from "../../../models/category/province/models/province";
+import {Province} from "../../../models/category/province/models/province";
 import {TableColumn} from "../../../models/base/tableColumn";
 import {CreateDefaultGetListPagingRequest, GetListPagingRequest} from "../../../models/base/getListPagingRequest";
 import {MessageService} from "primeng/api";
@@ -50,7 +50,7 @@ export class ProvinceComponent implements OnInit{
   getListPagingRequest: GetListPagingRequest = CreateDefaultGetListPagingRequest();
 
   // Data
-  model: Province = createDefaultProvince();
+  model!: Province;
 
   constructor(protected accountService: AccountService,
               private provinceService: ProvinceService,

@@ -9,19 +9,19 @@
                 Please enter your username and password to continue
             </span>
     </div>
-    <form [formGroup]="formGroup" #loginForm="ngForm" (ngSubmit)="login()" autocomplete="off">
+    <form [formGroup]="formView" #loginForm="ngForm" (ngSubmit)="login()" autocomplete="off">
       <div class="login-card-form">
         <div class="login-card-form-row mb-40">
           <label class="login-card-form-row-title">Username:</label>
-          <input pInputText [formControl]="formGroup.controls.userName" formControlName="userName" placeholder="Username"/>
-          <small *ngIf="formGroup.get('userName')?.invalid && formGroup.get('userName')?.touched" class="mt-2">Username is required.</small>
+          <input pInputText [formControl]="formView.controls.userName" formControlName="userName" placeholder="Username"/>
+          <small *ngIf="formView.get('userName')?.invalid && formView.get('userName')?.touched" class="mt-2 form-group-validator">Username is required.</small>
         </div>
         <div class="login-card-form-row mb-40">
           <div class="login-card-form-column">
             <label class="login-card-form-row-title">Password:</label>
           </div>
-          <input pInputText [formControl]="formGroup.controls.password" formControlName="password" type="password" placeholder="Password"/>
-          <small *ngIf="formGroup.get('password')?.invalid && formGroup.get('password')?.touched" class="mt-2">Password is required.</small>
+          <input pInputText [formControl]="formView.controls.password" formControlName="password" type="password" placeholder="Password"/>
+          <small *ngIf="formView.get('password')?.invalid && formView.get('password')?.touched" class="mt-2 form-group-validator">Password is required.</small>
         </div>
         <div class="login-card-form-check-password">
           <div class="login-card-form-remember-password">
