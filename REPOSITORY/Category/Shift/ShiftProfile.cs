@@ -10,10 +10,10 @@ namespace REPOSITORY.Category
     {
         public ShiftProfile()
         {
-            CreateMap<Shift, ShiftDto>();
-            CreateMap<ShiftDto, Shift>();
-            CreateMap<ShiftModel, Shift>();
-            CreateMap<Shift, ShiftModel>();
+            CreateMap<DAL.Entities.Program, ShiftDto>();
+            CreateMap<ShiftDto, DAL.Entities.Program>();
+            CreateMap<ShiftModel, DAL.Entities.Program>();
+            CreateMap<DAL.Entities.Program, ShiftModel>();
             CreateMap<DataRow, ShiftModel>()
             .ForMember(dest => dest.Days, opt => opt.MapFrom(src =>
                 src["Days"] != DBNull.Value
