@@ -1,0 +1,133 @@
+$color_1: #202224;
+$color_2: #fff;
+$background-color_1: #4880FF;
+$background-color_2: #e6e6e6;
+$background-color_3: #F5F6FA;
+
+/* Layout skeleton */
+/* Sidebar collapse*/
+li {
+  list-style: none;
+}
+.wrapper {
+  align-items: stretch;
+  display: flex;
+  width: 100%;
+}
+.sidebar-nav {
+  padding: 0;
+}
+.sidebar-header {
+  color: $color_1;
+  padding: 16px 0 16px 40px;
+  font-size: 16px;
+}
+a.sidebar-link {
+  margin: 0 24px;
+  padding: 16px;
+  color: $color_1;
+  border-radius: 6px;
+  position: relative;
+  display: block;
+  font-size: 1rem;
+}
+.sidebar-sub-item {
+  position: relative;
+  &:hover {
+    a.sidebar-link {
+      margin: 0 24px;
+      color: $color_2;
+      background-color: $background-color_1;
+      border-radius: 6px;
+      position: relative;
+      display: block;
+      font-size: 1rem;
+      background-color: $background-color_2;
+      color: $color_1;
+    }
+  }
+}
+.sidebar-sub-item.active {
+  &::before {
+    border-left: 4px solid #4880FF;
+    border-radius: 4px 0 0 4px;
+    height: 100%;
+    content: "";
+    display: inline-block;
+    position: absolute;
+    left: 0;
+    top: 0;
+    transform: rotate(180deg);
+  }
+  a.sidebar-link {
+    margin: 0 24px;
+    color: $color_2;
+    background-color: $background-color_1;
+    border-radius: 6px;
+    position: relative;
+    display: block;
+    font-size: 1rem;
+  }
+  &:hover {
+    a.sidebar-link {
+      background-color: $background-color_1;
+      color: $color_2;
+    }
+  }
+}
+.sidebar-link[data-bs-toggle="collapse"] {
+  &::after {
+    border: solid;
+    border-width: 0 0.075rem 0.075rem 0;
+    content: "";
+    display: inline-block;
+    padding: 2px;
+    position: absolute;
+    right: 1.5rem;
+    top: 1.4rem;
+    transform: rotate(-135deg);
+    transition: all 0.2s ease-out;
+  }
+}
+.sidebar-link[data-bs-toggle="collapse"].collapsed {
+  &::after {
+    transform: rotate(45deg);
+    transition: all 0.2s ease-out;
+  }
+}
+.sidebar-item.active {
+  a.sidebar-link {
+    background-color: $background-color_3;
+    border-radius: inherit;
+  }
+  a {
+    &:first-child {
+      border-top-left-radius: 6px;
+      border-top-right-radius: 6px;
+    }
+    &:last-child {
+      border-bottom-left-radius: 6px;
+      border-bottom-right-radius: 6px;
+    }
+  }
+  .sidebar-sub-item {
+    &:hover {
+      a.sidebar-link {
+        background-color: $background-color_2;
+        border-radius: 6px;
+      }
+    }
+  }
+  .sidebar-sub-item.active {
+    &:hover {
+      a.sidebar-link {
+        background-color: $background-color_1;
+        border-radius: 6px;
+      }
+    }
+    a {
+      background-color: $background-color_1;
+      border-radius: 6px;
+    }
+  }
+}
