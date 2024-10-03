@@ -16,7 +16,6 @@ import {ConfirmationService, MessageService} from "primeng/api";
 import {Enum} from "../../../enums/enum";
 import {ProgramService} from "../../../services/category/program.service";
 import {createDefaultProgramForm, ProgramModel} from "../../../models/category/program/programModel";
-import {ProgramViewComponent} from "./program-view/program-view.component";
 import {createFormGroup} from "../../../models/base/ModelFormGroup";
 import {NgxSpinnerService} from "ngx-spinner";
 import {TextareaModule} from "primeng/textarea";
@@ -34,7 +33,6 @@ import {TextareaModule} from "primeng/textarea";
     DialogModule,
     InputTextModule,
     FormsModule,
-    ProgramViewComponent,
     ReactiveFormsModule,
     TextareaModule,
   ],

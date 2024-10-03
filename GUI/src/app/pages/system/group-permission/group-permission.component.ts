@@ -7,7 +7,6 @@ import {ButtonModule} from "primeng/button";
 import {DialogModule} from "primeng/dialog";
 import {InputTextModule} from "primeng/inputtext";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {ProgramViewComponent} from "../../category/program/program-view/program-view.component";
 import {Permission} from "../../../models/system/permission";
 import {createDefaultProgramForm, ProgramModel} from "../../../models/category/program/programModel";
 import {ActivatedRoute} from "@angular/router";
@@ -32,7 +31,6 @@ import {createFormGroup} from "../../../models/base/ModelFormGroup";
     DialogModule,
     InputTextModule,
     FormsModule,
-    ProgramViewComponent,
     ReactiveFormsModule,
   ],
   templateUrl: './group-permission.component.html',
