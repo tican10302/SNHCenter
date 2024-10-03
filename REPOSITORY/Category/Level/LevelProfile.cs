@@ -2,7 +2,7 @@
 using DTO.Category.Level.Dtos;
 using DTO.Category.Level.Models;
 
-namespace REPOSITORY.Category
+namespace REPOSITORY.Category.Level
 {
     public class LevelProfile : Profile
     {
