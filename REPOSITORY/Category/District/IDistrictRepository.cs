@@ -6,7 +6,7 @@ namespace REPOSITORY.Category.District
     public interface IDistrictRepository
     {
         Task<GetListPagingResponse> GetListPaging(GetListPagingRequest request);
-        Task<DistrictModel> GetById(GetByIdRequest request);
+        Task<DistrictModel> GetById(string request);
         List<ComboboxModel> GetAllForCombobox(GetAllRequest request);
     }
 }
