@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using DAL.Entities;
 using DTO.Category.Shift.Dtos;
 using DTO.Category.Shift.Models;
 using System.Data;
@@ -10,10 +9,10 @@ namespace REPOSITORY.Category
     {
         public ShiftProfile()
         {
-            CreateMap<Shift, ShiftDto>();
-            CreateMap<ShiftDto, Shift>();
-            CreateMap<ShiftModel, Shift>();
-            CreateMap<Shift, ShiftModel>();
+            CreateMap<DAL.Entities.Shift, ShiftDto>();
+            CreateMap<ShiftDto, DAL.Entities.Shift>();
+            CreateMap<ShiftModel, DAL.Entities.Shift>();
+            CreateMap<DAL.Entities.Shift, ShiftModel>();
             CreateMap<DataRow, ShiftModel>()
             .ForMember(dest => dest.Days, opt => opt.MapFrom(src =>
                 src["Days"] != DBNull.Value

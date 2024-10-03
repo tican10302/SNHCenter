@@ -1,13 +1,6 @@
 ﻿using AutoMapper;
-using DAL.Entities;
 using DTO.Category.Level.Dtos;
 using DTO.Category.Level.Models;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace REPOSITORY.Category
 {
@@ -15,11 +8,11 @@ namespace REPOSITORY.Category
     {
         public LevelProfile()
         {
-            CreateMap<Level, LevelDto>();
-            CreateMap<Level, LevelDto>();
-            CreateMap<LevelDto, Level>();
-            CreateMap<LevelModel, Level>();
-            CreateMap<Level, LevelModel>();
+            CreateMap<DAL.Entities.Level, LevelDto>();
+            CreateMap<DAL.Entities.Level, LevelDto>();
+            CreateMap<LevelDto, DAL.Entities.Level>();
+            CreateMap<LevelModel, DAL.Entities.Level>();
+            CreateMap<DAL.Entities.Level, LevelModel>();
 
         }
     }
