@@ -111,7 +111,6 @@ export class ProgramComponent implements OnInit{
         this.formGroup = createFormGroup(data);
       },
       error: (err) => {
-        console.log(err)
         this.messageService.add({severity: 'error', summary: 'Error', detail: err.error.message, life: Enum.messageLife})
       }
     });
@@ -136,7 +135,6 @@ export class ProgramComponent implements OnInit{
         this.formGroup = createFormGroup(data);
       },
       error: (err) => {
-        console.log(err)
         this.messageService.add({severity: 'error', summary: 'Error', detail: err.error.message, life: Enum.messageLife})
       }
     });

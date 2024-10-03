@@ -5,7 +5,6 @@ import {Permission} from "../../../models/system/permission";
 import {ActivatedRoute} from "@angular/router";
 import {Table, TableModule} from "primeng/table";
 import {ProvinceService} from "../../../services/category/province.service";
-import {Province} from "../../../models/category/province/models/province";
 import {TableColumn} from "../../../models/base/tableColumn";
 import {CreateDefaultGetListPagingRequest, GetListPagingRequest} from "../../../models/base/getListPagingRequest";
 import {MessageService} from "primeng/api";
@@ -15,7 +14,10 @@ import {ButtonModule} from "primeng/button";
 import {DialogModule} from "primeng/dialog";
 import {InputTextModule} from "primeng/inputtext";
 import {Enum} from "../../../enums/enum";
-import {FormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import { createDefaultProvinceForm, ProvinceModel } from '../../../models/category/province/provinceModel';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { createFormGroup } from '../../../models/base/ModelFormGroup';
 
 @Component({
   selector: 'app-province',
@@ -30,6 +32,7 @@ import {FormsModule} from "@angular/forms";
     DialogModule,
     InputTextModule,
     FormsModule,
+    ReactiveFormsModule,
   ],
   templateUrl: './province.component.html',
   styleUrl: './province.component.scss'
@@ -37,24 +40,24 @@ import {FormsModule} from "@angular/forms";
 export class ProvinceComponent implements OnInit{
   @ViewChild('dataTable') dataTable!: Table;
   permission: Permission | null = null;
+  formGroup = createDefaultProvinceForm();
   visible: boolean = false;
   isEdit: boolean = false;
+  isView: boolean = false;
   currentRoute = inject(ActivatedRoute).routeConfig?.component?.name.replace(/_?([a-zA-Z]+)Component$/, '$1').toLowerCase() || '';
 
   // Table
-  tableData!: Province[];
-  selectedListData!: Province;
+  tableData!: ProvinceModel[];
+  selectedListData!: ProvinceModel;
   cols!: TableColumn[];
   totalRecords: number = 0;
 
   getListPagingRequest: GetListPagingRequest = CreateDefaultGetListPagingRequest();
 
-  // Data
-  model!: Province;
-
   constructor(protected accountService: AccountService,
               private provinceService: ProvinceService,
-              private messageService: MessageService,) {
+              private messageService: MessageService,
+              private spinner: NgxSpinnerService,) {
   }
 
   ngOnInit() {
@@ -89,6 +92,9 @@ export class ProvinceComponent implements OnInit{
       },
       error: (err) => this.messageService.add({severity: 'error', summary: 'Error', detail: err.error.message, life: Enum.messageLife})
     });
+
+    // Delete data on Form
+    this.formGroup = createDefaultProvinceForm();
   }
 
   showViewDialog() {
@@ -97,20 +103,29 @@ export class ProvinceComponent implements OnInit{
       return;
     this.provinceService.getData(id).subscribe({
       next: (data) => {
-        this.model = data;
+        this.formGroup = createFormGroup(data);
       },
       error: (err) => {
         this.messageService.add({severity: 'error', summary: 'Error', detail: err.error.message, life: Enum.messageLife})
       }
     });
 
+    this.isView = true;
     this.isEdit = false;
     this.visible = true;
   }
 
   saveData() {
+    this.isView = false;
+    this.isEdit = false;
+    this.visible = true;
+  }
+
+  closeDialog() {
+    this.isView = false;
     this.isEdit = false;
     this.visible = false;
+    this.formGroup = createDefaultProvinceForm();
   }
 
   getIdSelections(action: string, multi: boolean = false) {

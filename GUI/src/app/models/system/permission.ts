@@ -1,7 +1,7 @@
 export interface Permission {
   role: string | null;
   roleId: string | null;
-  controllerName: string | null;
+  controllerName: string;
   isView: boolean;
   isAdd: boolean;
   isEdit: boolean;
