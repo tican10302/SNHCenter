@@ -21,14 +21,18 @@ export class ProgramService {
   }
 
   addData(model: any) {
-    const header = new HttpHeaders()
-      .set('Content-type', 'application/json');
-    const body = JSON.stringify(model);
-    console.log(body);
-    return this.http.post<boolean>(this.baseUrl + `program`, body, {headers: header});
+    return this.http.post<boolean>(this.baseUrl + `program`, JSON.stringify(model));
   }
 
   updateData(model: any) {
-    return this.http.put<boolean>(this.baseUrl + `program/${model.id}`, model);
+    console.log(model)
+    return this.http.put<boolean>(this.baseUrl + `program`, JSON.stringify(model));
+  }
+
+  deleteData(model: string[]) {
+    let deleteListRequest = {
+      ids: model
+    };
+    return this.http.post<boolean>(this.baseUrl + `program/delete-list`, JSON.stringify(deleteListRequest));
   }
 }

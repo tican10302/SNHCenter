@@ -1,28 +1,26 @@
 import {Component, inject, OnInit, ViewChild} from '@angular/core';
-import {ActivatedRoute} from "@angular/router";
-import {AccountService} from "../../../services/system/account.service";
-import {Permission} from "../../../models/system/permission";
 import {NgFor, NgIf} from "@angular/common";
-import {ButtonModule} from "primeng/button";
-import {DialogModule} from "primeng/dialog";
-import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {Table, TableModule} from "primeng/table";
 import {IconFieldModule} from "primeng/iconfield";
 import {InputIconModule} from "primeng/inputicon";
+import {ButtonModule} from "primeng/button";
+import {DialogModule} from "primeng/dialog";
 import {InputTextModule} from "primeng/inputtext";
-import {Table, TableModule} from "primeng/table";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {ProgramViewComponent} from "../../category/program/program-view/program-view.component";
+import {Permission} from "../../../models/system/permission";
+import {createDefaultProgramForm, ProgramModel} from "../../../models/category/program/programModel";
+import {ActivatedRoute} from "@angular/router";
 import {TableColumn} from "../../../models/base/tableColumn";
 import {CreateDefaultGetListPagingRequest, GetListPagingRequest} from "../../../models/base/getListPagingRequest";
+import {AccountService} from "../../../services/system/account.service";
+import {ProgramService} from "../../../services/category/program.service";
 import {ConfirmationService, MessageService} from "primeng/api";
 import {Enum} from "../../../enums/enum";
-import {ProgramService} from "../../../services/category/program.service";
-import {createDefaultProgramForm, ProgramModel} from "../../../models/category/program/programModel";
-import {ProgramViewComponent} from "./program-view/program-view.component";
 import {createFormGroup} from "../../../models/base/ModelFormGroup";
-import {NgxSpinnerService} from "ngx-spinner";
-import {TextareaModule} from "primeng/textarea";
 
 @Component({
-  selector: 'app-program',
+  selector: 'app-group-permission',
   standalone: true,
   imports: [
     NgIf,
@@ -36,12 +34,11 @@ import {TextareaModule} from "primeng/textarea";
     FormsModule,
     ProgramViewComponent,
     ReactiveFormsModule,
-    TextareaModule,
   ],
-  templateUrl: './program.component.html',
-  styleUrl: './program.component.scss'
+  templateUrl: './group-permission.component.html',
+  styleUrl: './group-permission.component.scss'
 })
-export class ProgramComponent implements OnInit{
+export class GroupPermissionComponent implements OnInit{
   @ViewChild('dataTable') dataTable!: Table;
   permission: Permission | null = null;
   formGroup = createDefaultProgramForm();
@@ -62,8 +59,7 @@ export class ProgramComponent implements OnInit{
   constructor(protected accountService: AccountService,
               private programService: ProgramService,
               private messageService: MessageService,
-              private confirmationService: ConfirmationService,
-              private spinner: NgxSpinnerService,) {
+              private confirmationService: ConfirmationService,) {
   }
 
   ngOnInit() {
@@ -97,9 +93,6 @@ export class ProgramComponent implements OnInit{
       },
       error: (err) => this.messageService.add({severity: 'error', summary: 'Error', detail: err.error.message, life: Enum.messageLife})
     });
-
-    // Delete data on Form
-    this.formGroup = createDefaultProgramForm();
   }
 
   showViewDialog() {
@@ -146,59 +139,23 @@ export class ProgramComponent implements OnInit{
     this.visible = true;
   }
 
-  closeDialog() {
-    this.isView = false;
-    this.isEdit = false;
-    this.visible = false;
-    this.formGroup = createDefaultProgramForm();
-  }
-
   saveData() {
     if(this.formGroup.invalid) return;
-    this.spinner.show();
     if(this.isEdit)
-      this.programService.updateData(this.formGroup.value).subscribe({
-        next: _ => {
-          this.messageService.add({severity: 'success', summary: 'Success', detail: `Update data successfully`, life: Enum.messageLife});
-          this.loadData(null);
-          this.spinner.hide();
-        },
-        error: (err) =>  {
-          this.messageService.add({severity: 'error', summary: 'Error', detail: err.error.message, life: Enum.messageLife})
-          this.spinner.hide();
-        }
-      });
+      this.programService.updateData(this.formGroup.value);
     else
       this.programService.addData(this.formGroup.value).subscribe({
-        next: _ => {
-          this.messageService.add({severity: 'success', summary: 'Success', detail: `Create data successfully`, life: Enum.messageLife});
-          this.loadData(null);
-          this.spinner.hide();
+        next: (data) => {
+          if(data)
+          {
+            this.messageService.add({severity: 'success', summary: 'Success', detail: `Create data successfully`, life: Enum.messageLife});
+          }
         },
-        error: (err) =>  {
-          this.messageService.add({severity: 'error', summary: 'Error', detail: err.error.message, life: Enum.messageLife})
-          this.spinner.hide();
-        }
+        error: (err) =>  this.messageService.add({severity: 'error', summary: 'Error', detail: err.error.message, life: Enum.messageLife})
       });
     this.isView = false;
     this.isEdit = false;
     this.visible = false;
-
-  }
-
-  deleteData(ids: string[]) {
-    this.spinner.show();
-      this.programService.deleteData(ids).subscribe({
-        next: _ => {
-          this.messageService.add({severity: 'success', summary: 'Success', detail: `Delete data successfully`, life: Enum.messageLife});
-          this.loadData(null);
-          this.spinner.hide();
-        },
-        error: (err) =>  {
-          this.messageService.add({severity: 'error', summary: 'Error', detail: err.error.message, life: Enum.messageLife})
-          this.spinner.hide();
-        }
-      });
   }
 
   getIdSelections(action: string, multi: boolean = false) {
@@ -223,9 +180,6 @@ export class ProgramComponent implements OnInit{
   }
 
   confirmDelete(event: Event) {
-    let ids = this.getIdSelections('delete', true);
-    if(!ids || ids.length === 0)
-      return;
     this.confirmationService.confirm({
       target: event.target as EventTarget,
       message: 'Do you want to delete this record?',
@@ -243,9 +197,11 @@ export class ProgramComponent implements OnInit{
       },
 
       accept: () => {
-        this.deleteData(ids);
+        this.messageService.add({ severity: 'info', summary: 'Confirmed', detail: 'Record deleted' });
+      },
+      reject: () => {
+        this.messageService.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected' });
       },
     });
   }
-
 }

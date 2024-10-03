@@ -1,5 +1,6 @@
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {ToFormControls} from "../../base/ModelFormGroup";
+import * as uuid from 'uuid';
 
 export type ProgramForm = ToFormControls<ProgramModel>;
 
@@ -11,8 +12,8 @@ export class ProgramModel {
 
 export function createDefaultProgramForm() {
   return new FormGroup<ProgramForm>(<ProgramForm>{
-    id: new FormControl('', {validators: [Validators.required]}),
+    id: new FormControl(uuid.v4(), {validators: [Validators.required]}),
     name: new FormControl('', {validators: [Validators.required]}),
-    note: new FormControl('', {validators: [Validators.required]}),
+    note: new FormControl(''),
   });
 }

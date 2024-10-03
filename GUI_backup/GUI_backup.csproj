@@ -40,4 +40,12 @@
       <_ContentIncludedByDefault Remove="wwwroot\lib\chart.js\types.d.ts" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Include="Views\Category\Level\Index.cshtml" />
+      <None Include="Views\Category\Level\PopupDetail.cshtml" />
+      <None Include="Views\Category\Level\PopupView.cshtml" />
+      <None Include="Views\Category\Ward\Index.cshtml" />
+      <None Include="Views\Category\Ward\PopupView.cshtml" />
+    </ItemGroup>
+
 </Project>

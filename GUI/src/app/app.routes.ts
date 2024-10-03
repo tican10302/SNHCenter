@@ -8,6 +8,9 @@ import {loginGuard} from "./guards/login.guard";
 import {AppComponent} from "./app.component";
 import {NotfoundComponent} from "./pages/system/notfound/notfound.component";
 import {ProgramComponent} from "./pages/category/program/program.component";
+import {GroupPermissionComponent} from "./pages/system/group-permission/group-permission.component";
+import {MenuComponent} from "./pages/system/menu/menu.component";
+import {RoleComponent} from "./pages/system/role/role.component";
 
 export const routes: Routes = [
   {
@@ -44,7 +47,25 @@ export const routes: Routes = [
         title: 'Program',
         component: ProgramComponent,
         data: { componentName: 'Program' }
-      }
+      },
+      {
+        path: 'group-permission',
+        title: 'Group Permission',
+        component: GroupPermissionComponent,
+        data: { componentName: 'GroupPermission' }
+      },
+      {
+        path: 'menu',
+        title: 'Menu',
+        component: MenuComponent,
+        data: { componentName: 'Menu' }
+      },
+      {
+        path: 'role',
+        title: 'Role',
+        component: RoleComponent,
+        data: { componentName: 'Role' }
+      },
     ]
   },
   {
