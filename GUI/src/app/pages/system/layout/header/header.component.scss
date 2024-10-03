@@ -1,0 +1,138 @@
+$color_1: #000;
+$color_2: #7A7B7D;
+$color_3: #595959;
+$background-color_1: #F5F6FA;
+$background-color_2: rgba(0, 0, 0, 0);
+
+/* NAVBAR LEFT */
+/* NAVBAR RIGHT */
+.header {
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.navbar-logo {
+  width: 230px;
+  display: flex;
+  align-items: center;
+  padding-left: 20px;
+  a {
+    color: $color_1;
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+  img {
+    max-width: 100px;
+    min-width: 60px;
+  }
+}
+.navbar-left {
+  .btn-toggler {
+    height: 100%;
+    &:focus {
+      outline: none;
+      box-shadow: none;
+    }
+    &:active {
+      outline: none;
+      box-shadow: none;
+    }
+  }
+  .navbar-toggler-icon {
+    &:focus {
+      outline: none;
+      box-shadow: none;
+    }
+  }
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  height: 100%;
+  .navbar-search {
+    display: flex;
+    align-items: center;
+    width: 388px;
+    height: 38px;
+    padding: 0 16px;
+    margin-left: 16px;
+    border: 1px solid #D5D5D5;
+    border-radius: 15px;
+    background-color: $background-color_1;
+  }
+  .navbar-search-icon {
+    color: $color_2;
+  }
+  .navbar-search-input {
+    height: 100%;
+    width: 100%;
+    margin-left: 12px;
+    background-color: $background-color_2;
+    border: none;
+    &:focus {
+      outline: none;
+    }
+  }
+}
+.navbar-right {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  height: 100%;
+  .navbar-notification {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    margin-right: 13px;
+  }
+  .navbar-notification-card {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    margin-right: 13px;
+    svg {
+      font-size: 20px;
+      color: $color_3;
+    }
+  }
+  .navbar-profile {
+    display: flex;
+    height: 100%;
+    .navbar-profile-card {
+      display: flex;
+      flex-direction: row;
+      height: 100%;
+      align-items: center;
+      margin-right: 32px;
+    }
+    .navbar-profile-avatar {
+      width: 44px;
+      height: 44px;
+    }
+    .navbar-profile-info {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      margin: 0 26px 0 20px;
+    }
+    .navbar-profile-name {
+      font-weight: bold;
+      font-size: 16px;
+    }
+    .navbar-profile-role {
+      font-size: 12px;
+    }
+    .navbar-profile-dropdown-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      border: 0.5px solid #B3B3B3;
+      border-radius: 10px;
+      svg {
+        color: $color_3;
+      }
+    }
+  }
+}

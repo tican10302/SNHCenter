@@ -1,0 +1,48 @@
+.body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100vh;
+  background-image: url("/img/common/background.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+
+.error-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #fff;
+  padding: 90px 86px 102px 86px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+.error-img {
+  max-width: 340px;
+  position: unset !important;
+}
+
+.error-title {
+  font-weight: bold;
+  font-size: 28px;
+  margin:  48px 0 26px 0;
+}
+
+.error-button {
+  display: block;
+  font-size: 16px;
+  color: #fff;
+  width: 100%;
+  text-align: center;
+  padding: 12px 0;
+  border-radius: 8px;
+  background-color: #4880FF;
+  transition: all 0.1s ease-in-out;
+}
+
+.error-button:hover {
+  background-color: #3773ff;
+}
