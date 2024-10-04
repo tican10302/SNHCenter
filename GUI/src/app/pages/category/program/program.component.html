@@ -88,7 +88,7 @@
       <small *ngIf="formGroup.get('name')?.invalid && formGroup.get('name')?.touched" class="mt-2 form-group-validator">Name is required.</small>
     </div>
     <div class="row">
-      <label for="name" class="col-md-4">Note</label>
+      <label for="note" class="col-md-4">Note</label>
       <textarea id="note" [formControl]="formGroup.controls.note" name="note" class="col-md-8" [readOnly]="isView" rows="5" cols="30" pTextarea>
 </textarea>
     </div>

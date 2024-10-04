@@ -11,6 +11,10 @@ import {ProgramComponent} from "./pages/category/program/program.component";
 import {GroupPermissionComponent} from "./pages/system/group-permission/group-permission.component";
 import {MenuComponent} from "./pages/system/menu/menu.component";
 import {RoleComponent} from "./pages/system/role/role.component";
+import { DistrictComponent } from './pages/category/district/district.component';
+import { WardComponent } from './pages/category/ward/ward.component';
+import { LevelComponent } from './pages/category/level/level.component';
+import { ShiftComponent } from './pages/category/shift/shift.component';
 
 export const routes: Routes = [
   {
@@ -43,14 +47,38 @@ export const routes: Routes = [
         data: { componentName: 'Province' }
       },
       {
+        path: 'district',
+        title: 'District',
+        component: DistrictComponent,
+        data: { componentName: 'District' }
+      },
+      {
+        path: 'ward',
+        title: 'Ward',
+        component: WardComponent,
+        data: { componentName: 'Ward' }
+      },
+      {
         path: 'program',
         title: 'Program',
         component: ProgramComponent,
         data: { componentName: 'Program' }
       },
       {
-        path: 'grouppermission',
-        title: 'Group PermissionModel',
+        path: 'level',
+        title: 'Level',
+        component: LevelComponent,
+        data: { componentName: 'Level' }
+      },
+      {
+        path: 'shift',
+        title: 'Shift',
+        component: ShiftComponent,
+        data: { componentName: 'Shift' }
+      },
+      {
+        path: 'group-permission',
+        title: 'Group Permission',
         component: GroupPermissionComponent,
         data: { componentName: 'GroupPermission' }
       },
