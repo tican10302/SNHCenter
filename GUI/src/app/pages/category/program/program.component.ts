@@ -11,7 +11,7 @@ import {InputIconModule} from "primeng/inputicon";
 import {InputTextModule} from "primeng/inputtext";
 import {Table, TableModule} from "primeng/table";
 import {TableColumnModel} from "../../../models/base/table-column.model";
-import {CreateDefaultGetListPagingRequest, GetListRequestModel} from "../../../models/base/get-list-request.model";
+import {GetListRequestModel} from "../../../models/base/get-list-request.model";
 import {ConfirmationService, MessageService} from "primeng/api";
 import {Enum} from "../../../enums/enum";
 import {ProgramService} from "../../../services/category/program.service";
@@ -54,7 +54,7 @@ export class ProgramComponent implements OnInit{
   cols!: TableColumnModel[];
   totalRecords: number = 0;
 
-  getListPagingRequest: GetListRequestModel = CreateDefaultGetListPagingRequest();
+  getListPagingRequest = new GetListRequestModel();
 
 
   constructor(protected accountService: AccountService,
@@ -101,6 +101,7 @@ export class ProgramComponent implements OnInit{
   }
 
   showViewDialog() {
+    this.formGroup = createDefaultProgramForm();
     let id = this.getIdSelections('view')[0];
     if(!id)
       return;

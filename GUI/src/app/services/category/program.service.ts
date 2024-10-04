@@ -25,7 +25,6 @@ export class ProgramService {
   }
 
   updateData(model: any) {
-    console.log(model)
     return this.http.put<boolean>(this.baseUrl + `program`, JSON.stringify(model));
   }
 

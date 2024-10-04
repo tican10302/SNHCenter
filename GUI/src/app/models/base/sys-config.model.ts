@@ -1,8 +1,5 @@
-export interface SelectListItem {
-  text: string;
-  value: any;
-  selected?: boolean; // optional
-}
+import {SelectListItem} from "./select-list-item.model";
+
 
 export class SysConfig {
   static IsActive: SelectListItem[] = [

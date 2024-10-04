@@ -6,7 +6,7 @@ import {ActivatedRoute} from "@angular/router";
 import {Table, TableModule} from "primeng/table";
 import {ProvinceService} from "../../../services/category/province.service";
 import {TableColumnModel} from "../../../models/base/table-column.model";
-import {CreateDefaultGetListPagingRequest, GetListRequestModel} from "../../../models/base/get-list-request.model";
+import {GetListRequestModel} from "../../../models/base/get-list-request.model";
 import {MessageService} from "primeng/api";
 import {IconFieldModule} from "primeng/iconfield";
 import {InputIconModule} from "primeng/inputicon";
@@ -51,7 +51,7 @@ export class ProvinceComponent implements OnInit{
   cols!: TableColumnModel[];
   totalRecords: number = 0;
 
-  getListPagingRequest: GetListRequestModel = CreateDefaultGetListPagingRequest();
+  getListPagingRequest = new GetListRequestModel();
 
   constructor(protected accountService: AccountService,
               private provinceService: ProvinceService,
@@ -96,6 +96,7 @@ export class ProvinceComponent implements OnInit{
   }
 
   showViewDialog() {
+    this.formGroup = createDefaultProvinceForm();
     let id = this.getIdSelections('view')[0];
     if(!id)
       return;

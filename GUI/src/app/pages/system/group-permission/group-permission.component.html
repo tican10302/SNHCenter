@@ -51,7 +51,7 @@
           <ng-template pTemplate="header" let-columns>
             <tr>
               <th class="text-center" style="width: 4rem;" pResizableColumn><p-tableHeaderCheckbox /></th>
-              <th *ngFor="let col of columns" pResizableColumn>
+              <th class="text-center" *ngFor="let col of columns" pResizableColumn>
                 {{ col.header }}
               </th>
             </tr>
@@ -61,7 +61,7 @@
               <td class="text-center">
                 <p-tableCheckbox [value]="rowData" ></p-tableCheckbox>
               </td>
-              <td *ngFor="let col of columns">
+              <td *ngFor="let col of columns"  [ngClass]="col.class">
                 <ng-container *ngIf="col.field === 'isActive'; else defaultColumn">
                   <span [ngClass]="{'text-success': rowData[col.field], 'text-danger': !rowData[col.field]}">
                     {{ rowData[col.field] ? 'Online' : 'Offline' }}
@@ -104,10 +104,10 @@
         name="sort"
         class="col-md-4" />
       <label for="isActive" class="col-md-2">Active</label>
-      <p-dropdown
+      <p-select
         name="isActive"
         class="col-md-4"
-        [options]="isActiveSelectList"
+        [options]="activeCombobox"
         id="isActive"
         [formControl]="formGroup.controls.isActive"
         [appendTo]="'body'"

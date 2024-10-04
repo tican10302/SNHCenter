@@ -10,7 +10,7 @@ import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {PermissionModel} from "../../../models/system/permission.model";
 import {ActivatedRoute} from "@angular/router";
 import {TableColumnModel} from "../../../models/base/table-column.model";
-import {CreateDefaultGetListPagingRequest, GetListRequestModel} from "../../../models/base/get-list-request.model";
+import {GetListRequestModel} from "../../../models/base/get-list-request.model";
 import {AccountService} from "../../../services/system/account.service";
 import {MessageService} from "primeng/api";
 import {Enum} from "../../../enums/enum";
@@ -22,6 +22,7 @@ import {InputSwitchModule} from "primeng/inputswitch";
 import {DropdownModule} from "primeng/dropdown";
 import {SysConfig} from "../../../models/base/sys-config.model";
 import {NgxSpinnerService} from "ngx-spinner";
+import {Select} from "primeng/select";
 
 @Component({
   selector: 'app-group-permission',
@@ -41,6 +42,7 @@ import {NgxSpinnerService} from "ngx-spinner";
     InputSwitchModule,
     DropdownModule,
     NgClass,
+    Select,
   ],
   templateUrl: './group-permission.component.html',
   styleUrl: './group-permission.component.scss'
@@ -51,7 +53,7 @@ export class GroupPermissionComponent implements OnInit{
   formGroup = createDefaultGroupPermissionForm();
   visible: boolean = false;
   isEdit: boolean = false;
-  isActiveSelectList = SysConfig.IsActive;
+  activeCombobox = SysConfig.IsActive;
   currentRoute = inject(ActivatedRoute).routeConfig?.component?.name.replace(/_?([a-zA-Z]+)Component$/, '$1').toLowerCase() || '';
 
   // Table
@@ -60,7 +62,7 @@ export class GroupPermissionComponent implements OnInit{
   cols!: TableColumnModel[];
   totalRecords: number = 0;
 
-  getListPagingRequest: GetListRequestModel = CreateDefaultGetListPagingRequest();
+  getListPagingRequest = new GetListRequestModel();
 
 
   constructor(protected accountService: AccountService,
@@ -77,7 +79,7 @@ export class GroupPermissionComponent implements OnInit{
       { field: 'name', header: 'Name' },
       { field: 'icon', header: 'Icon' },
       { field: 'sort', header: 'Sort' },
-      { field: 'isActive', header: 'Status' },
+      { field: 'isActive', header: 'Status', class: 'text-center' },
     ];
   }
 
@@ -105,6 +107,7 @@ export class GroupPermissionComponent implements OnInit{
   }
 
   showAddDialog() {
+    this.formGroup = createDefaultGroupPermissionForm();
     this.isEdit = false;
     this.visible = true;
   }
