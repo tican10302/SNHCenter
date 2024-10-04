@@ -1,5 +1,5 @@
 import {Component, inject, OnInit, ViewChild} from '@angular/core';
-import {NgFor, NgIf} from "@angular/common";
+import {NgClass, NgFor, NgIf} from "@angular/common";
 import {Table, TableModule} from "primeng/table";
 import {IconFieldModule} from "primeng/iconfield";
 import {InputIconModule} from "primeng/inputicon";
@@ -7,16 +7,21 @@ import {ButtonModule} from "primeng/button";
 import {DialogModule} from "primeng/dialog";
 import {InputTextModule} from "primeng/inputtext";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {Permission} from "../../../models/system/permission";
-import {createDefaultProgramForm, ProgramModel} from "../../../models/category/program/programModel";
+import {PermissionModel} from "../../../models/system/permission.model";
 import {ActivatedRoute} from "@angular/router";
-import {TableColumn} from "../../../models/base/tableColumn";
-import {CreateDefaultGetListPagingRequest, GetListPagingRequest} from "../../../models/base/getListPagingRequest";
+import {TableColumnModel} from "../../../models/base/table-column.model";
+import {CreateDefaultGetListPagingRequest, GetListRequestModel} from "../../../models/base/get-list-request.model";
 import {AccountService} from "../../../services/system/account.service";
-import {ProgramService} from "../../../services/category/program.service";
-import {ConfirmationService, MessageService} from "primeng/api";
+import {MessageService} from "primeng/api";
 import {Enum} from "../../../enums/enum";
-import {createFormGroup} from "../../../models/base/ModelFormGroup";
+import {createFormGroup} from "../../../models/base/form-group.model";
+import {createDefaultGroupPermissionForm, GroupPermissionModel} from "../../../models/system/group-permission.model";
+import {GroupPermissionService} from "../../../services/system/group-permission.service";
+import {InputNumberModule} from "primeng/inputnumber";
+import {InputSwitchModule} from "primeng/inputswitch";
+import {DropdownModule} from "primeng/dropdown";
+import {SysConfig} from "../../../models/base/sys-config.model";
+import {NgxSpinnerService} from "ngx-spinner";
 
 @Component({
   selector: 'app-group-permission',
@@ -32,32 +37,36 @@ import {createFormGroup} from "../../../models/base/ModelFormGroup";
     InputTextModule,
     FormsModule,
     ReactiveFormsModule,
+    InputNumberModule,
+    InputSwitchModule,
+    DropdownModule,
+    NgClass,
   ],
   templateUrl: './group-permission.component.html',
   styleUrl: './group-permission.component.scss'
 })
 export class GroupPermissionComponent implements OnInit{
   @ViewChild('dataTable') dataTable!: Table;
-  permission: Permission | null = null;
-  formGroup = createDefaultProgramForm();
+  permission: PermissionModel | null = null;
+  formGroup = createDefaultGroupPermissionForm();
   visible: boolean = false;
-  isView: boolean = false;
   isEdit: boolean = false;
+  isActiveSelectList = SysConfig.IsActive;
   currentRoute = inject(ActivatedRoute).routeConfig?.component?.name.replace(/_?([a-zA-Z]+)Component$/, '$1').toLowerCase() || '';
 
   // Table
-  tableData!: ProgramModel[];
-  selectedListData!: ProgramModel;
-  cols!: TableColumn[];
+  tableData!: GroupPermissionModel[];
+  selectedListData!: GroupPermissionModel;
+  cols!: TableColumnModel[];
   totalRecords: number = 0;
 
-  getListPagingRequest: GetListPagingRequest = CreateDefaultGetListPagingRequest();
+  getListPagingRequest: GetListRequestModel = CreateDefaultGetListPagingRequest();
 
 
   constructor(protected accountService: AccountService,
-              private programService: ProgramService,
+              private groupPermissionService: GroupPermissionService,
               private messageService: MessageService,
-              private confirmationService: ConfirmationService,) {
+              private spinner: NgxSpinnerService,) {
   }
 
   ngOnInit() {
@@ -66,7 +75,9 @@ export class GroupPermissionComponent implements OnInit{
 
     this.cols = [
       { field: 'name', header: 'Name' },
-      { field: 'note', header: 'Note' },
+      { field: 'icon', header: 'Icon' },
+      { field: 'sort', header: 'Sort' },
+      { field: 'isActive', header: 'Status' },
     ];
   }
 
@@ -84,7 +95,7 @@ export class GroupPermissionComponent implements OnInit{
       this.getListPagingRequest.limit = event.rows;
     }
 
-    this.programService.getListData(this.getListPagingRequest).subscribe({
+    this.groupPermissionService.getListData(this.getListPagingRequest).subscribe({
       next: (data) => {
         this.tableData = data.data;
         this.totalRecords = data.totalRow;
@@ -93,27 +104,7 @@ export class GroupPermissionComponent implements OnInit{
     });
   }
 
-  showViewDialog() {
-    let id = this.getIdSelections('view')[0];
-    if(!id)
-      return;
-    this.programService.getData(id).subscribe({
-      next: (data) => {
-        this.formGroup = createFormGroup(data);
-      },
-      error: (err) => {
-        console.log(err)
-        this.messageService.add({severity: 'error', summary: 'Error', detail: err.error.message, life: Enum.messageLife})
-      }
-    });
-
-    this.isView = true;
-    this.isEdit = false;
-    this.visible = true;
-  }
-
   showAddDialog() {
-    this.isView = false;
     this.isEdit = false;
     this.visible = true;
   }
@@ -122,36 +113,52 @@ export class GroupPermissionComponent implements OnInit{
     let id = this.getIdSelections('view')[0];
     if(!id)
       return;
-    this.programService.getData(id).subscribe({
+    this.groupPermissionService.getData(id).subscribe({
       next: (data) => {
         this.formGroup = createFormGroup(data);
       },
       error: (err) => {
-        console.log(err)
         this.messageService.add({severity: 'error', summary: 'Error', detail: err.error.message, life: Enum.messageLife})
       }
     });
 
-    this.isView = false;
     this.isEdit = true;
     this.visible = true;
   }
 
+  closeDialog() {
+    this.isEdit = false;
+    this.visible = false;
+    this.formGroup = createDefaultGroupPermissionForm();
+  }
+
   saveData() {
     if(this.formGroup.invalid) return;
+    this.spinner.show();
     if(this.isEdit)
-      this.programService.updateData(this.formGroup.value);
-    else
-      this.programService.addData(this.formGroup.value).subscribe({
-        next: (data) => {
-          if(data)
-          {
-            this.messageService.add({severity: 'success', summary: 'Success', detail: `Create data successfully`, life: Enum.messageLife});
-          }
+      this.groupPermissionService.updateData(this.formGroup.value).subscribe({
+        next: _ => {
+          this.messageService.add({severity: 'success', summary: 'Success', detail: `Update data successfully`, life: Enum.messageLife});
+          this.loadData(null);
+          this.spinner.hide();
         },
-        error: (err) =>  this.messageService.add({severity: 'error', summary: 'Error', detail: err.error.message, life: Enum.messageLife})
+        error: (err) =>  {
+          this.messageService.add({severity: 'error', summary: 'Error', detail: err.error.message, life: Enum.messageLife})
+          this.spinner.hide();
+        }
       });
-    this.isView = false;
+    else
+      this.groupPermissionService.addData(this.formGroup.value).subscribe({
+        next: _ => {
+          this.messageService.add({severity: 'success', summary: 'Success', detail: `Create data successfully`, life: Enum.messageLife});
+          this.loadData(null);
+          this.spinner.hide();
+        },
+        error: (err) =>  {
+          this.messageService.add({severity: 'error', summary: 'Error', detail: err.error.message, life: Enum.messageLife})
+          this.spinner.hide();
+        }
+      });
     this.isEdit = false;
     this.visible = false;
   }
@@ -175,31 +182,5 @@ export class GroupPermissionComponent implements OnInit{
       }
     }
     return selects;
-  }
-
-  confirmDelete(event: Event) {
-    this.confirmationService.confirm({
-      target: event.target as EventTarget,
-      message: 'Do you want to delete this record?',
-      header: 'Danger Zone',
-      icon: 'pi pi-info-circle',
-      rejectLabel: 'Cancel',
-      rejectButtonProps: {
-        label: 'Cancel',
-        severity: 'secondary',
-        outlined: true,
-      },
-      acceptButtonProps: {
-        label: 'Delete',
-        severity: 'danger',
-      },
-
-      accept: () => {
-        this.messageService.add({ severity: 'info', summary: 'Confirmed', detail: 'Record deleted' });
-      },
-      reject: () => {
-        this.messageService.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected' });
-      },
-    });
   }
 }

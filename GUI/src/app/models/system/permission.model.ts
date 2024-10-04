@@ -1,4 +1,4 @@
-export interface Permission {
+export interface PermissionModel {
   role: string | null;
   roleId: string | null;
   controllerName: string;

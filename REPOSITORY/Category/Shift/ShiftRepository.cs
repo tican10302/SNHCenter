@@ -48,7 +48,7 @@ public class ShiftRepository(IUnitOfWork unitOfWork, IMapper mapper, IHttpContex
     public List<ComboboxModel> GetAllForCombobox()
     {
         var result = unitOfWork.GetRepository<DAL.Entities.Shift>()
-            .GetAll(x => !x.IsDeleted && x.IsActived)
+            .GetAll(x => !x.IsDeleted && x.IsActive)
             .OrderBy(x => x.Name)
             .ToList();
 

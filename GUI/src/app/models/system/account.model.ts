@@ -1,4 +1,4 @@
-export interface Account {
+export interface AccountModel {
   userName: string | null;
   firstName: string | null;
   lastName: string | null;

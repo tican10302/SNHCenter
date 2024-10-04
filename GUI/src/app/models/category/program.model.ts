@@ -1,5 +1,5 @@
 import {FormControl, FormGroup, Validators} from "@angular/forms";
-import {ToFormControls} from "../../base/ModelFormGroup";
+import {ToFormControls} from "../base/form-group.model";
 import * as uuid from 'uuid';
 
 export type ProgramForm = ToFormControls<ProgramModel>;

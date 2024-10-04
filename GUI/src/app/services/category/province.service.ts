@@ -1,9 +1,9 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {environment} from "../../../environments/environment";
-import {GetListPagingResponse} from "../../models/base/getListPagingResponse";
-import {GetListPagingRequest} from "../../models/base/getListPagingRequest";
-import { ProvinceModel } from '../../models/category/province/provinceModel';
+import {GetListResponseModel} from "../../models/base/get-list-response.model";
+import {GetListRequestModel} from "../../models/base/get-list-request.model";
+import { ProvinceModel } from '../../models/category/province.model';
 
 @Injectable({
   providedIn: 'root'
@@ -12,8 +12,8 @@ export class ProvinceService {
   baseUrl = environment.apiUrl;
   constructor(private http: HttpClient) { }
 
-  getListData(model: GetListPagingRequest) {
-    return this.http.post<GetListPagingResponse<ProvinceModel[]>>(this.baseUrl + "province/get-list-paging", model);
+  getListData(model: GetListRequestModel) {
+    return this.http.post<GetListResponseModel<ProvinceModel[]>>(this.baseUrl + "province/get-list-paging", model);
   }
 
   getData(id: string) {

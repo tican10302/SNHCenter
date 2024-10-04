@@ -1,7 +1,7 @@
 import {Component, inject, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
 import {AccountService} from "../../../services/system/account.service";
-import {Permission} from "../../../models/system/permission";
+import {PermissionModel} from "../../../models/system/permission.model";
 import {NgFor, NgIf} from "@angular/common";
 import {ButtonModule} from "primeng/button";
 import {DialogModule} from "primeng/dialog";
@@ -10,13 +10,13 @@ import {IconFieldModule} from "primeng/iconfield";
 import {InputIconModule} from "primeng/inputicon";
 import {InputTextModule} from "primeng/inputtext";
 import {Table, TableModule} from "primeng/table";
-import {TableColumn} from "../../../models/base/tableColumn";
-import {CreateDefaultGetListPagingRequest, GetListPagingRequest} from "../../../models/base/getListPagingRequest";
+import {TableColumnModel} from "../../../models/base/table-column.model";
+import {CreateDefaultGetListPagingRequest, GetListRequestModel} from "../../../models/base/get-list-request.model";
 import {ConfirmationService, MessageService} from "primeng/api";
 import {Enum} from "../../../enums/enum";
 import {ProgramService} from "../../../services/category/program.service";
-import {createDefaultProgramForm, ProgramModel} from "../../../models/category/program/programModel";
-import {createFormGroup} from "../../../models/base/ModelFormGroup";
+import {createDefaultProgramForm, ProgramModel} from "../../../models/category/program.model";
+import {createFormGroup} from "../../../models/base/form-group.model";
 import {NgxSpinnerService} from "ngx-spinner";
 import {TextareaModule} from "primeng/textarea";
 
@@ -41,7 +41,7 @@ import {TextareaModule} from "primeng/textarea";
 })
 export class ProgramComponent implements OnInit{
   @ViewChild('dataTable') dataTable!: Table;
-  permission: Permission | null = null;
+  permission: PermissionModel | null = null;
   formGroup = createDefaultProgramForm();
   visible: boolean = false;
   isView: boolean = false;
@@ -51,10 +51,10 @@ export class ProgramComponent implements OnInit{
   // Table
   tableData!: ProgramModel[];
   selectedListData!: ProgramModel;
-  cols!: TableColumn[];
+  cols!: TableColumnModel[];
   totalRecords: number = 0;
 
-  getListPagingRequest: GetListPagingRequest = CreateDefaultGetListPagingRequest();
+  getListPagingRequest: GetListRequestModel = CreateDefaultGetListPagingRequest();
 
 
   constructor(protected accountService: AccountService,

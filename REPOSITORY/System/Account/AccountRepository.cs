@@ -118,7 +118,7 @@ public class AccountRepository(IUnitOfWork unitOfWork,
         data.Permission = GetPermission(new GetByIdRequest { Id = account.Id }).Result;
                     
         // Get Group Permission
-        data.GroupPermission = groupPermissionRepository.GetAll().Where(x => x.IsActived)
+        data.GroupPermission = groupPermissionRepository.GetAll().Where(x => x.IsActive)
             .Select(x => new GroupPermissionModel()
             {
                 Id = x.Id,

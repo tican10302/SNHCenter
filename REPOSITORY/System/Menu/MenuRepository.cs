@@ -38,7 +38,7 @@ public class MenuRepository(IUnitOfWork unitOfWork, IMapper mapper) : IMenuRepos
     public List<MenuModel> GetAll()
     {
         var result = unitOfWork.GetRepository<DAL.Entities.Menu>()
-            .GetAll(x => x.IsActived)
+            .GetAll(x => x.IsActive)
             .OrderBy(x => x.Sort)
             .ToList();
 

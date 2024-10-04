@@ -52,4 +52,16 @@ a {
   color: var(--p-inputtext-invalid-border-color);
 }
 
+p-inputnumber {
+  padding: 0 !important;
+}
+
+.p-inputnumber {
+  width: 100%;
+}
+
+.p-select-overlay.p-component {
+  width: 100%;
+}
+
 

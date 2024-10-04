@@ -1,5 +1,5 @@
 import { FormControl, FormGroup } from "@angular/forms";
-import { ToFormControls } from "../../base/ModelFormGroup";
+import { ToFormControls } from "../base/form-group.model";
 
 export type ProvinceForm = ToFormControls<ProvinceModel>;
 

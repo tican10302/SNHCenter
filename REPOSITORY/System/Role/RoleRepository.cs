@@ -160,7 +160,7 @@ namespace REPOSITORY.System.Role
         public List<ComboboxModel> GetAllForCombobox()
         {
             var result = unitOfWork.GetRepository<DAL.Entities.Role>()
-                .GetAll(x => !x.IsDeleted && x.IsActived)
+                .GetAll(x => !x.IsDeleted && x.IsActive)
                 .OrderBy(x => x.Name)
                 .ToList();
 

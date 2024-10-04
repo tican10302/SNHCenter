@@ -1,33 +1,32 @@
 import { Injectable } from '@angular/core';
 import {environment} from "../../../environments/environment";
 import {BehaviorSubject, map} from "rxjs";
-import {User} from "../../models/system/user";
+import {UserModel} from "../../models/system/user.model";
 import {HttpClient} from "@angular/common/http";
-import {Account} from "../../models/system/account";
-import {Menu} from "../../models/system/menu";
-import {GroupPermission} from "../../models/system/groupPermission";
-import {Permission} from "../../models/system/permission";
+import {AccountModel} from "../../models/system/account.model";
+import {MenuModel} from "../../models/system/menu.model";
+import {PermissionModel} from "../../models/system/permission.model";
+import {GroupPermissionModel} from "../../models/system/group-permission.model";
 
 @Injectable({
   providedIn: 'root'
 })
 export class AccountService {
   baseUrl = environment.apiUrl;
-  private currentUserSource = new BehaviorSubject<Account | null>(null);
+  private currentUserSource = new BehaviorSubject<AccountModel | null>(null);
   currentUser$ = this.currentUserSource.asObservable();
-  private currentMenuSource = new BehaviorSubject<Menu[] | null>(null);
+  public currentMenuSource = new BehaviorSubject<MenuModel[] | null>(null);
   currentMenu$ = this.currentMenuSource.asObservable();
-  private currentPermissionSource = new BehaviorSubject<Permission[] | null>(null);
+  private currentPermissionSource = new BehaviorSubject<PermissionModel[] | null>(null);
   currentPermission$ = this.currentPermissionSource.asObservable();
-  private currentGroupPermissionSource = new BehaviorSubject<GroupPermission[] | null>(null);
+  private currentGroupPermissionSource = new BehaviorSubject<GroupPermissionModel[] | null>(null);
   currentGroupPermission$ = this.currentGroupPermissionSource.asObservable();
 
   constructor(private http: HttpClient) { }
 
   login(model: any) {
-    console.log(model)
-    return this.http.post<User>(this.baseUrl + "account/login", model).pipe(
-      map((response: User) => {
+    return this.http.post<UserModel>(this.baseUrl + "account/login", model).pipe(
+      map((response: UserModel) => {
         const user = response;
         if (user) {
           this.setCurrentUser(user);
@@ -37,8 +36,8 @@ export class AccountService {
   }
 
   register(model: any) {
-    return this.http.post<User>(this.baseUrl + "account/register", model).pipe(
-      map((response: User) => {
+    return this.http.post<UserModel>(this.baseUrl + "account/register", model).pipe(
+      map((response: UserModel) => {
         const user = response;
         if(user) {
           this.setCurrentUser(user);
@@ -47,7 +46,7 @@ export class AccountService {
     )
   }
 
-  setCurrentUser(user: User) {
+  setCurrentUser(user: UserModel) {
     localStorage.setItem('token', user.token);
     localStorage.setItem('user', JSON.stringify(user.account));
     localStorage.setItem('menu', JSON.stringify(user.menu));
@@ -71,9 +70,9 @@ export class AccountService {
     this.currentGroupPermissionSource.next(null);
   }
 
-  getPermission(route: string): Permission {
+  getPermission(route: string): PermissionModel {
     var controller = route.toLowerCase().trim() + 'controller';
-    var permissionCurrent: Permission = {
+    var permissionCurrent: PermissionModel = {
       role: null,
       roleId: null,
       controllerName: controller,

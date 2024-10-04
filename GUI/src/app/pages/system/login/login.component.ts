@@ -10,8 +10,8 @@ import {Enum} from "../../../enums/enum";
 import {PasswordModule} from "primeng/password";
 import {InputTextModule} from "primeng/inputtext";
 import {NgIf} from "@angular/common";
-import {ModelFormGroup} from "../../../models/base/ModelFormGroup";
-import {createDefaultLoginForm, LoginModel} from "../../../models/system/loginModel";
+import {FormGroupModel} from "../../../models/base/form-group.model";
+import {createDefaultLoginForm, LoginModel} from "../../../models/system/login.model";
 
 @Component({
   selector: 'app-login',
@@ -28,7 +28,7 @@ import {createDefaultLoginForm, LoginModel} from "../../../models/system/loginMo
   styleUrl: './login.component.scss'
 })
 export class LoginComponent implements OnInit{
-  formView!: ModelFormGroup<LoginModel>;
+  formView!: FormGroupModel<LoginModel>;
 
   constructor(
     private accountService: AccountService,
@@ -56,7 +56,6 @@ export class LoginComponent implements OnInit{
       },
       error: (err) => {
         this.spinner.hide();
-        console.log(err);
         if(err.error) {
           if(err.error.status === 500)
           {

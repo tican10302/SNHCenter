@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import {environment} from "../../../environments/environment";
-import {HttpClient, HttpHeaders} from "@angular/common/http";
-import {GetListPagingRequest} from "../../models/base/getListPagingRequest";
-import {GetListPagingResponse} from "../../models/base/getListPagingResponse";
-import {ProgramModel} from "../../models/category/program/programModel";
+import {HttpClient} from "@angular/common/http";
+import {GetListRequestModel} from "../../models/base/get-list-request.model";
+import {GetListResponseModel} from "../../models/base/get-list-response.model";
+import {ProgramModel} from "../../models/category/program.model";
 
 @Injectable({
   providedIn: 'root'
@@ -12,8 +12,8 @@ export class ProgramService {
   baseUrl = environment.apiUrl;
   constructor(private http: HttpClient) { }
 
-  getListData(model: GetListPagingRequest) {
-    return this.http.post<GetListPagingResponse<ProgramModel[]>>(this.baseUrl + "program/get-list-paging", model);
+  getListData(model: GetListRequestModel) {
+    return this.http.post<GetListResponseModel<ProgramModel[]>>(this.baseUrl + "program/get-list-paging", model);
   }
 
   getData(id: string) {

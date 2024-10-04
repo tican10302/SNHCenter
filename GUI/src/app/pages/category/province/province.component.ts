@@ -1,12 +1,12 @@
 import {Component, inject, OnInit, ViewChild} from '@angular/core';
 import {NgFor, NgIf} from "@angular/common"
 import {AccountService} from "../../../services/system/account.service";
-import {Permission} from "../../../models/system/permission";
+import {PermissionModel} from "../../../models/system/permission.model";
 import {ActivatedRoute} from "@angular/router";
 import {Table, TableModule} from "primeng/table";
 import {ProvinceService} from "../../../services/category/province.service";
-import {TableColumn} from "../../../models/base/tableColumn";
-import {CreateDefaultGetListPagingRequest, GetListPagingRequest} from "../../../models/base/getListPagingRequest";
+import {TableColumnModel} from "../../../models/base/table-column.model";
+import {CreateDefaultGetListPagingRequest, GetListRequestModel} from "../../../models/base/get-list-request.model";
 import {MessageService} from "primeng/api";
 import {IconFieldModule} from "primeng/iconfield";
 import {InputIconModule} from "primeng/inputicon";
@@ -15,9 +15,8 @@ import {DialogModule} from "primeng/dialog";
 import {InputTextModule} from "primeng/inputtext";
 import {Enum} from "../../../enums/enum";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import { createDefaultProvinceForm, ProvinceModel } from '../../../models/category/province/provinceModel';
-import { NgxSpinnerService } from 'ngx-spinner';
-import { createFormGroup } from '../../../models/base/ModelFormGroup';
+import { createDefaultProvinceForm, ProvinceModel } from '../../../models/category/province.model';
+import { createFormGroup } from '../../../models/base/form-group.model';
 
 @Component({
   selector: 'app-province',
@@ -39,7 +38,7 @@ import { createFormGroup } from '../../../models/base/ModelFormGroup';
 })
 export class ProvinceComponent implements OnInit{
   @ViewChild('dataTable') dataTable!: Table;
-  permission: Permission | null = null;
+  permission: PermissionModel | null = null;
   formGroup = createDefaultProvinceForm();
   visible: boolean = false;
   isEdit: boolean = false;
@@ -49,15 +48,14 @@ export class ProvinceComponent implements OnInit{
   // Table
   tableData!: ProvinceModel[];
   selectedListData!: ProvinceModel;
-  cols!: TableColumn[];
+  cols!: TableColumnModel[];
   totalRecords: number = 0;
 
-  getListPagingRequest: GetListPagingRequest = CreateDefaultGetListPagingRequest();
+  getListPagingRequest: GetListRequestModel = CreateDefaultGetListPagingRequest();
 
   constructor(protected accountService: AccountService,
               private provinceService: ProvinceService,
-              private messageService: MessageService,
-              private spinner: NgxSpinnerService,) {
+              private messageService: MessageService,) {
   }
 
   ngOnInit() {

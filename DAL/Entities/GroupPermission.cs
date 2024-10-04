@@ -8,7 +8,7 @@ namespace DAL.Entities
         public GroupPermission()
         {
             Sort = 0;
-            IsActived = true;
+            IsActive = true;
         }
 
         [Key]
@@ -17,6 +17,6 @@ namespace DAL.Entities
         public required string Name { get; set; }
         public int Sort { get; set; }
         public string? Icon { get; set; }
-        public bool IsActived { get; set; }
+        public bool IsActive { get; set; }
     }
 }

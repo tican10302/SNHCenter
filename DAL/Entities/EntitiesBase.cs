@@ -11,7 +11,7 @@ namespace DAL.Entities
             CreatedAt = DateTime.Now;
             UpdatedAt = DateTime.Now;;
             IsDeleted = false;
-            IsActived = true;
+            IsActive = true;
         }
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -25,7 +25,7 @@ namespace DAL.Entities
         public DateTime? DeletedAt { get; set; }
         [StringLength(50)]
         public string? DeletedBy { get; set; }
-        public bool IsActived { get; set; }
+        public bool IsActive { get; set; }
         public bool IsDeleted { get; set; }
     }
 }

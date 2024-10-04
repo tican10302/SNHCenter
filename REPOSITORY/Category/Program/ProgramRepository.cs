@@ -48,7 +48,7 @@ public class ProgramRepository(IUnitOfWork unitOfWork, IMapper mapper, IHttpCont
     public List<ComboboxModel> GetAllForCombobox()
     {
         var result = unitOfWork.GetRepository<DAL.Entities.Program>()
-            .GetAll(x => !x.IsDeleted && x.IsActived)
+            .GetAll(x => !x.IsDeleted && x.IsActive)
             .OrderBy(x => x.Name)
             .ToList();
 

@@ -1,4 +1,4 @@
-export interface TableColumn {
+export interface TableColumnModel {
   field: string;
   header: string;
   checkbox?: boolean;

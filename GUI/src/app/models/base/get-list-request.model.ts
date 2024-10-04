@@ -1,4 +1,4 @@
-export interface GetListPagingRequest {
+export interface GetListRequestModel {
   search: string | '';
   fromDate: Date | null;
   toDate: Date | null;
@@ -8,7 +8,7 @@ export interface GetListPagingRequest {
   sort: string | null;
 }
 
-export function CreateDefaultGetListPagingRequest(): GetListPagingRequest {
+export function CreateDefaultGetListPagingRequest(): GetListRequestModel {
   return {
     search: '',
     fromDate: null,

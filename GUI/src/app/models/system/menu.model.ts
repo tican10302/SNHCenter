@@ -1,4 +1,4 @@
-export interface Menu {
+export interface MenuModel {
   controllerName: string | null;
   controller: string | null;
   action: string | null;

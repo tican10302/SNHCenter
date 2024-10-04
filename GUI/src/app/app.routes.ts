@@ -49,8 +49,8 @@ export const routes: Routes = [
         data: { componentName: 'Program' }
       },
       {
-        path: 'group-permission',
-        title: 'Group Permission',
+        path: 'grouppermission',
+        title: 'Group PermissionModel',
         component: GroupPermissionComponent,
         data: { componentName: 'GroupPermission' }
       },
