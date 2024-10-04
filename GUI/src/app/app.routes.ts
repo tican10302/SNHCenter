@@ -77,7 +77,7 @@ export const routes: Routes = [
         data: { componentName: 'Shift' }
       },
       {
-        path: 'group-permission',
+        path: 'grouppermission',
         title: 'Group Permission',
         component: GroupPermissionComponent,
         data: { componentName: 'GroupPermission' }

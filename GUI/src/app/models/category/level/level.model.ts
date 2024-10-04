@@ -1,6 +1,6 @@
 import { FormControl, FormGroup, Validators } from "@angular/forms";
-import { ToFormControls } from "../../base/ModelFormGroup";
 import * as uuid from 'uuid';
+import {ToFormControls} from "../../base/form-group.model";
 
 export type LevelForm = ToFormControls<LevelModel>;
 

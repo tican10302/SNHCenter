@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { environment } from "../../../environments/environment";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
-import { GetListPagingRequest } from "../../models/base/getListPagingRequest";
-import { GetListPagingResponse } from "../../models/base/getListPagingResponse";
-import { LevelModel } from "../../models/category/level/levelModel";
+import {GetListRequestModel} from "../../models/base/get-list-request.model";
+import {GetListResponseModel} from "../../models/base/get-list-response.model";
+import {LevelModel} from "../../models/category/level/level.model";
 
 @Injectable({
   providedIn: 'root'
@@ -12,8 +12,8 @@ export class LevelService {
   baseUrl = environment.apiUrl;
   constructor(private http: HttpClient) { }
 
-  getListData(model: GetListPagingRequest) {
-    return this.http.post<GetListPagingResponse<LevelModel[]>>(this.baseUrl + "level/get-list-paging", model);
+  getListData(model: GetListRequestModel) {
+    return this.http.post<GetListResponseModel<LevelModel[]>>(this.baseUrl + "level/get-list-paging", model);
   }
 
   getData(id: string) {

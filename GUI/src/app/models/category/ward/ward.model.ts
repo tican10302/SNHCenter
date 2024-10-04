@@ -1,9 +1,9 @@
 import { FormControl, FormGroup } from "@angular/forms";
-import { ToFormControls } from "../../base/ModelFormGroup";
+import {ToFormControls} from "../../base/form-group.model";
 
-export type DistrictForm = ToFormControls<DistrictModel>;
+export type WardForm = ToFormControls<WardModel>;
 
-export class DistrictModel {
+export class WardModel {
   code: string | null = null;
   name: string | null = null
   nameEn: string | null = null;
@@ -16,8 +16,8 @@ export class DistrictModel {
   administrativeRegionId: number | null = null;
 }
 
-export function createDefaultDistrictForm() {
-  return new FormGroup<DistrictForm>(<DistrictForm>{
+export function createDefaultWardForm() {
+  return new FormGroup<WardForm>(<WardForm>{
     code: new FormControl(''),
     name: new FormControl(''),
     nameEn: new FormControl(''),

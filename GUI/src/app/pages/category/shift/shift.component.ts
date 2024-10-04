@@ -1,7 +1,6 @@
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from "@angular/router";
 import { AccountService } from "../../../services/system/account.service";
-import { Permission } from "../../../models/system/permission";
 import { NgFor, NgIf } from "@angular/common";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
@@ -10,15 +9,16 @@ import { IconFieldModule } from "primeng/iconfield";
 import { InputIconModule } from "primeng/inputicon";
 import { InputTextModule } from "primeng/inputtext";
 import { Table, TableModule } from "primeng/table";
-import { TableColumn } from "../../../models/base/tableColumn";
-import { CreateDefaultGetListPagingRequest, GetListPagingRequest } from "../../../models/base/getListPagingRequest";
 import { ConfirmationService, MessageService } from "primeng/api";
 import { Enum } from "../../../enums/enum";
 import { ShiftService } from "../../../services/category/shift.service";
-import { createDefaultShiftForm, ShiftModel } from "../../../models/category/shift/shiftModel";
-import { createFormGroup } from "../../../models/base/ModelFormGroup";
+import { createDefaultShiftForm, ShiftModel } from "../../../models/category/shift/shift.model";
 import { NgxSpinnerService } from "ngx-spinner";
 import { TextareaModule } from "primeng/textarea";
+import {PermissionModel} from "../../../models/system/permission.model";
+import {TableColumnModel} from "../../../models/base/table-column.model";
+import {GetListRequestModel} from "../../../models/base/get-list-request.model";
+import {createFormGroup} from "../../../models/base/form-group.model";
 
 @Component({
   selector: 'app-shift',
@@ -41,7 +41,7 @@ import { TextareaModule } from "primeng/textarea";
 })
 export class ShiftComponent implements OnInit {
   @ViewChild('dataTable') dataTable!: Table;
-  permission: Permission | null = null;
+  permission: PermissionModel | null = null;
   formGroup = createDefaultShiftForm();
   visible: boolean = false;
   isView: boolean = false;
@@ -51,10 +51,10 @@ export class ShiftComponent implements OnInit {
   // Table
   tableData!: ShiftModel[];
   selectedListData!: ShiftModel;
-  cols!: TableColumn[];
+  cols!: TableColumnModel[];
   totalRecords: number = 0;
 
-  getListPagingRequest: GetListPagingRequest = CreateDefaultGetListPagingRequest();
+  getListPagingRequest = new GetListRequestModel();
 
 
   constructor(protected accountService: AccountService,
