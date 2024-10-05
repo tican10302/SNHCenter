@@ -13,4 +13,8 @@
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="src\app\pages\training\" />
+    <Folder Include="src\app\services\training\" />
+  </ItemGroup>
 </Project>

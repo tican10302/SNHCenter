@@ -3,7 +3,7 @@ import { HttpClient } from "@angular/common/http";
 import { environment } from "../../../environments/environment";
 import {GetListRequestModel} from "../../models/base/get-list-request.model";
 import {GetListResponseModel} from "../../models/base/get-list-response.model";
-import {WardModel} from "../../models/category/ward/ward.model";
+import {WardModel} from "../../models/category/ward.model";
 
 @Injectable({
   providedIn: 'root'

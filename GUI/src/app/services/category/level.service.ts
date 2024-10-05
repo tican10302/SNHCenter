@@ -3,7 +3,7 @@ import { environment } from "../../../environments/environment";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import {GetListRequestModel} from "../../models/base/get-list-request.model";
 import {GetListResponseModel} from "../../models/base/get-list-response.model";
-import {LevelModel} from "../../models/category/level/level.model";
+import {LevelModel} from "../../models/category/level.model";
 
 @Injectable({
   providedIn: 'root'

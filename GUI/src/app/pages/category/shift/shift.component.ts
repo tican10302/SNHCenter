@@ -12,7 +12,7 @@ import { Table, TableModule } from "primeng/table";
 import { ConfirmationService, MessageService } from "primeng/api";
 import { Enum } from "../../../enums/enum";
 import { ShiftService } from "../../../services/category/shift.service";
-import { createDefaultShiftForm, ShiftModel } from "../../../models/category/shift/shift.model";
+import { createDefaultShiftForm, ShiftModel } from "../../../models/category/shift.model";
 import { NgxSpinnerService } from "ngx-spinner";
 import { TextareaModule } from "primeng/textarea";
 import {PermissionModel} from "../../../models/system/permission.model";

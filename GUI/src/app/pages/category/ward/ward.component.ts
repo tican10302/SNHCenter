@@ -12,7 +12,7 @@ import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
 import { Enum } from "../../../enums/enum";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { createDefaultWardForm, WardModel } from '../../../models/category/ward/ward.model';
+import { createDefaultWardForm, WardModel } from '../../../models/category/ward.model';
 import { NgxSpinnerService } from 'ngx-spinner';
 import {PermissionModel} from "../../../models/system/permission.model";
 import {TableColumnModel} from "../../../models/base/table-column.model";

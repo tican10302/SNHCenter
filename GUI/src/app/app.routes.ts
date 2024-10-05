@@ -15,6 +15,7 @@ import { DistrictComponent } from './pages/category/district/district.component'
 import { WardComponent } from './pages/category/ward/ward.component';
 import { LevelComponent } from './pages/category/level/level.component';
 import { ShiftComponent } from './pages/category/shift/shift.component';
+import { CourseComponent } from './pages/training/course/course.component';
 
 export const routes: Routes = [
   {
@@ -75,6 +76,12 @@ export const routes: Routes = [
         title: 'Shift',
         component: ShiftComponent,
         data: { componentName: 'Shift' }
+      },
+      {
+        path: 'course',
+        title: 'Course',
+        component: CourseComponent,
+        data: { componentName: 'Course' }
       },
       {
         path: 'grouppermission',

@@ -1,6 +1,7 @@
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from "@angular/router";
 import { AccountService } from "../../../services/system/account.service";
+import { PermissionModel } from "../../../models/system/permission.model";
 import { NgFor, NgIf } from "@angular/common";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
@@ -9,19 +10,21 @@ import { IconFieldModule } from "primeng/iconfield";
 import { InputIconModule } from "primeng/inputicon";
 import { InputTextModule } from "primeng/inputtext";
 import { Table, TableModule } from "primeng/table";
+import { TableColumnModel } from "../../../models/base/table-column.model";
+import { GetListRequestModel } from "../../../models/base/get-list-request.model";
 import { ConfirmationService, MessageService } from "primeng/api";
 import { Enum } from "../../../enums/enum";
-import { LevelService } from "../../../services/category/level.service";
-import { createDefaultLevelForm, LevelModel } from "../../../models/category/level.model";
+import { CourseService } from "../../../services/training/course.service";
+import { createDefaultCourseForm, CourseModel } from "../../../models/training/coursemodel"; 
+import { createFormGroup } from "../../../models/base/form-group.model";
 import { NgxSpinnerService } from "ngx-spinner";
 import { TextareaModule } from "primeng/textarea";
-import {PermissionModel} from "../../../models/system/permission.model";
-import {TableColumnModel} from "../../../models/base/table-column.model";
-import {GetListRequestModel} from "../../../models/base/get-list-request.model";
-import {createFormGroup} from "../../../models/base/form-group.model";
+import { DatePickerModule } from 'primeng/datepicker';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { CalendarModule } from 'primeng/calendar'; 
 
 @Component({
-  selector: 'app-level',
+  selector: 'app-course',
   standalone: true,
   imports: [
     NgIf,
@@ -36,29 +39,35 @@ import {createFormGroup} from "../../../models/base/form-group.model";
     ReactiveFormsModule,
     TextareaModule,
   ],
-  templateUrl: './level.component.html',
-  styleUrl: './level.component.scss'
+  templateUrl: './course.component.html',
+  styleUrls: ['./course.component.scss'] 
 })
-export class LevelComponent implements OnInit {
+
+export class CourseComponent implements OnInit {
+  [x: string]: any;
   @ViewChild('dataTable') dataTable!: Table;
   permission: PermissionModel | null = null;
-  formGroup = createDefaultLevelForm();
+  formGroup = createDefaultCourseForm();  
   visible: boolean = false;
   isView: boolean = false;
   isEdit: boolean = false;
   currentRoute = inject(ActivatedRoute).routeConfig?.component?.name.replace(/_?([a-zA-Z]+)Component$/, '$1').toLowerCase() || '';
-
+  startDate: Date | null = null;
+  endDate: Date | null = null;
+  isTouched = false; // Biến theo dõi trạng thái chạm vào
+  onTouch() {
+    this.isTouched = true;
+  }
   // Table
-  tableData!: LevelModel[];
-  selectedListData!: LevelModel;
+  tableData!: CourseModel[];  
+  selectedListData!: CourseModel;
   cols!: TableColumnModel[];
   totalRecords: number = 0;
 
   getListPagingRequest = new GetListRequestModel();
 
-
   constructor(protected accountService: AccountService,
-    private levelService: LevelService,
+    private courseService: CourseService, 
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     private spinner: NgxSpinnerService,) {
@@ -70,9 +79,24 @@ export class LevelComponent implements OnInit {
 
     this.cols = [
       { field: 'name', header: 'Name' },
-      { field: 'fee', header: 'Fee' },
+      { field: 'startDate', header: 'Start Date' },
+      { field: 'endDate', header: 'End Date' },
+      { field: 'center', header: 'Center' },
+      { field: 'room', header: 'Room' },
       { field: 'note', header: 'Note' },
     ];
+
+    //this.formGroup = this['formBuilder'].group({
+    //  name: ['', Validators.required],
+    //  startDate: [null, Validators.required],
+    //  endDate: [null, Validators.required],
+    //  center: ['', Validators.required],
+    //  room: ['', Validators.required],
+    //  note: [''],
+    //  shift: [null, Validators.required], 
+    //  level: [null, Validators.required], 
+    //});
+
   }
 
   onSearch(event: Event) {
@@ -88,7 +112,7 @@ export class LevelComponent implements OnInit {
       this.getListPagingRequest.limit = event.rows;
     }
 
-    this.levelService.getListData(this.getListPagingRequest).subscribe({
+    this.courseService.getListData(this.getListPagingRequest).subscribe({
       next: (data) => {
         this.tableData = data.data;
         this.totalRecords = data.totalRow;
@@ -96,20 +120,21 @@ export class LevelComponent implements OnInit {
       error: (err) => this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error.message, life: Enum.messageLife })
     });
 
-    // Delete data on Form
-    this.formGroup = createDefaultLevelForm();
+    // Reset form
+    this.formGroup = createDefaultCourseForm();
   }
 
   showViewDialog() {
+    this.formGroup = createDefaultCourseForm();
     let id = this.getIdSelections('view')[0];
-    if (!id)
-      return;
-    this.levelService.getData(id).subscribe({
+    if (!id) return;
+
+    this.courseService.getData(id).subscribe({
       next: (data) => {
         this.formGroup = createFormGroup(data);
       },
       error: (err) => {
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error.message, life: Enum.messageLife })
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error.message, life: Enum.messageLife });
       }
     });
 
@@ -125,15 +150,15 @@ export class LevelComponent implements OnInit {
   }
 
   showEditDialog() {
-    let id = this.getIdSelections('view')[0];
-    if (!id)
-      return;
-    this.levelService.getData(id).subscribe({
+    let id = this.getIdSelections('edit')[0];
+    if (!id) return;
+
+    this.courseService.getData(id).subscribe({
       next: (data) => {
         this.formGroup = createFormGroup(data);
       },
       error: (err) => {
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error.message, life: Enum.messageLife })
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error.message, life: Enum.messageLife });
       }
     });
 
@@ -146,52 +171,54 @@ export class LevelComponent implements OnInit {
     this.isView = false;
     this.isEdit = false;
     this.visible = false;
-    this.formGroup = createDefaultLevelForm();
+    this.formGroup = createDefaultCourseForm();
   }
 
   saveData() {
     if (this.formGroup.invalid) return;
     this.spinner.show();
-    if (this.isEdit)
-      this.levelService.updateData(this.formGroup.value).subscribe({
+
+    if (this.isEdit) {
+      this.courseService.updateData(this.formGroup.value).subscribe({
         next: _ => {
-          this.messageService.add({ severity: 'success', summary: 'Success', detail: `Update data successfully`, life: Enum.messageLife });
+          this.messageService.add({ severity: 'success', summary: 'Success', detail: `Updated successfully`, life: Enum.messageLife });
           this.loadData(null);
           this.spinner.hide();
         },
         error: (err) => {
-          this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error.message, life: Enum.messageLife })
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error.message, life: Enum.messageLife });
           this.spinner.hide();
         }
       });
-    else
-      this.levelService.addData(this.formGroup.value).subscribe({
+    } else {
+      this.courseService.addData(this.formGroup.value).subscribe({
         next: _ => {
-          this.messageService.add({ severity: 'success', summary: 'Success', detail: `Create data successfully`, life: Enum.messageLife });
+          this.messageService.add({ severity: 'success', summary: 'Success', detail: `Created successfully`, life: Enum.messageLife });
           this.loadData(null);
           this.spinner.hide();
         },
         error: (err) => {
-          this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error.message, life: Enum.messageLife })
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error.message, life: Enum.messageLife });
           this.spinner.hide();
         }
       });
+    }
+
     this.isView = false;
     this.isEdit = false;
     this.visible = false;
-
   }
 
   deleteData(ids: string[]) {
     this.spinner.show();
-    this.levelService.deleteData(ids).subscribe({
+    this.courseService.deleteData(ids).subscribe({
       next: _ => {
-        this.messageService.add({ severity: 'success', summary: 'Success', detail: `Delete data successfully`, life: Enum.messageLife });
+        this.messageService.add({ severity: 'success', summary: 'Success', detail: `Deleted successfully`, life: Enum.messageLife });
         this.loadData(null);
         this.spinner.hide();
       },
       error: (err) => {
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error.message, life: Enum.messageLife })
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error.message, life: Enum.messageLife });
         this.spinner.hide();
       }
     });
@@ -200,10 +227,9 @@ export class LevelComponent implements OnInit {
   getIdSelections(action: string, multi: boolean = false) {
     let selects: string[] = [];
     if (Array.isArray(this.selectedListData) && this.selectedListData.length >= 1) {
-      selects = this.selectedListData.map(el => {
-        return el.id;
-      })
+      selects = this.selectedListData.map(el => el.id);
     }
+
     if (multi) {
       if (!(selects.length >= 1)) {
         this.messageService.add({ severity: 'error', summary: 'Error', detail: `Please select rows to ${action}`, life: Enum.messageLife });
@@ -220,8 +246,8 @@ export class LevelComponent implements OnInit {
 
   confirmDelete(event: Event) {
     let ids = this.getIdSelections('delete', true);
-    if (!ids || ids.length === 0)
-      return;
+    if (!ids || ids.length === 0) return;
+
     this.confirmationService.confirm({
       target: event.target as EventTarget,
       message: 'Do you want to delete this record?',
@@ -237,7 +263,6 @@ export class LevelComponent implements OnInit {
         label: 'Delete',
         severity: 'danger',
       },
-
       accept: () => {
         this.deleteData(ids);
       },

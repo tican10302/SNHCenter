@@ -12,7 +12,7 @@ import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
 import { Enum } from "../../../enums/enum";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { createDefaultDistrictForm, DistrictModel } from '../../../models/category/district/district.model';
+import { createDefaultDistrictForm, DistrictModel } from '../../../models/category/district.model';
 import { NgxSpinnerService } from 'ngx-spinner';
 import {TableColumnModel} from "../../../models/base/table-column.model";
 import {GetListRequestModel} from "../../../models/base/get-list-request.model";
