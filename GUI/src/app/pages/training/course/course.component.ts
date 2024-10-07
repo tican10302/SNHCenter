@@ -38,6 +38,7 @@ import { CalendarModule } from 'primeng/calendar';
     FormsModule,
     ReactiveFormsModule,
     TextareaModule,
+    DatePickerModule
   ],
   templateUrl: './course.component.html',
   styleUrls: ['./course.component.scss'] 
