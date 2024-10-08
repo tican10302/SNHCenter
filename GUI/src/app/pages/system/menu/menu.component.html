@@ -98,8 +98,8 @@
 </ng-container>
 
 <!--Dialog-->
-<p-dialog header="{{isView ? '' : isEdit ? 'Update' : 'Create'}} Program {{isView ? 'Detail' : ''}}" styleClass="p-dialog-sm p-dialog-modal" [modal]="true" [(visible)]="visible">
-  <form [formGroup]="formGroup" #programForm="ngForm" (ngSubmit)="saveData()" autocomplete="off">
+<p-dialog header="{{isView ? '' : isEdit ? 'Update' : 'Create'}} Menu {{isView ? 'Detail' : ''}}" styleClass="p-dialog-sm p-dialog-modal" [modal]="true" [(visible)]="visible">
+  <form [formGroup]="formGroup" #menuForm="ngForm" (ngSubmit)="saveData()" autocomplete="off">
     <div class="row">
       <label for="name" class="col-md-2">Name</label>
       <input pInputText id="name" [formControl]="formGroup.controls.name" name="name" class="col-md-4" [readOnly]="isView"  />

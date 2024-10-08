@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from "@angular/router";
 import { AccountService } from "../../../services/system/account.service";
-import { NgFor, NgIf } from "@angular/common";
+import {DecimalPipe, NgFor, NgIf} from "@angular/common";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
@@ -12,13 +12,17 @@ import { Table, TableModule } from "primeng/table";
 import { ConfirmationService, MessageService } from "primeng/api";
 import { Enum } from "../../../enums/enum";
 import { LevelService } from "../../../services/category/level.service";
-import { createDefaultLevelForm, LevelModel } from "../../../models/category/level.model";
+import {createDefaultLevelForm, GetListLevelRequestModel, LevelModel} from "../../../models/category/level.model";
 import { NgxSpinnerService } from "ngx-spinner";
 import { TextareaModule } from "primeng/textarea";
 import {PermissionModel} from "../../../models/system/permission.model";
 import {TableColumnModel} from "../../../models/base/table-column.model";
 import {GetListRequestModel} from "../../../models/base/get-list-request.model";
 import {createFormGroup} from "../../../models/base/form-group.model";
+import {InputNumberModule} from "primeng/inputnumber";
+import {Select} from "primeng/select";
+import {SelectListItem} from "../../../models/base/select-list-item.model";
+import {ProgramService} from "../../../services/category/program.service";
 
 @Component({
   selector: 'app-level',
@@ -35,6 +39,9 @@ import {createFormGroup} from "../../../models/base/form-group.model";
     FormsModule,
     ReactiveFormsModule,
     TextareaModule,
+    InputNumberModule,
+    DecimalPipe,
+    Select,
   ],
   templateUrl: './level.component.html',
   styleUrl: './level.component.scss'
@@ -46,6 +53,7 @@ export class LevelComponent implements OnInit {
   visible: boolean = false;
   isView: boolean = false;
   isEdit: boolean = false;
+  programCombobox: SelectListItem[] = [];
   currentRoute = inject(ActivatedRoute).routeConfig?.component?.name.replace(/_?([a-zA-Z]+)Component$/, '$1').toLowerCase() || '';
 
   // Table
@@ -54,14 +62,15 @@ export class LevelComponent implements OnInit {
   cols!: TableColumnModel[];
   totalRecords: number = 0;
 
-  getListPagingRequest = new GetListRequestModel();
+  getListPagingRequest = new GetListLevelRequestModel();
 
 
   constructor(protected accountService: AccountService,
     private levelService: LevelService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
-    private spinner: NgxSpinnerService,) {
+    private spinner: NgxSpinnerService,
+    private programService: ProgramService,) {
   }
 
   ngOnInit() {
@@ -70,9 +79,16 @@ export class LevelComponent implements OnInit {
 
     this.cols = [
       { field: 'name', header: 'Name' },
+      { field: 'program', header: 'Program' },
       { field: 'fee', header: 'Fee' },
       { field: 'note', header: 'Note' },
     ];
+
+    this.programService.getCombobox({}).subscribe({
+      next: (data) => {
+        this.programCombobox = [{ text: '-- Group program --', value: null }, ...data];
+      }
+    })
   }
 
   onSearch(event: Event) {
@@ -242,6 +258,11 @@ export class LevelComponent implements OnInit {
         this.deleteData(ids);
       },
     });
+  }
+
+  onProgramChange(selectedValue: any) {
+    this.getListPagingRequest.programId = selectedValue;
+    this.loadData(null);
   }
 
 }

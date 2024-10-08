@@ -29,12 +29,19 @@
                          (onPage)="loadData($event)">
                     <ng-template pTemplate="caption">
                         <div class="d-flex justify-content-between align-items-center">
-                            <div>
+                          <div class="flex-grow-1">
                                 <p-button *ngIf="permission?.isView" (onClick)="showViewDialog()" icon="pi pi-eye" label="View" severity="info" class="me-md-2" />
                                 <p-button *ngIf="permission?.isAdd" (onClick)="showAddDialog()" icon="pi pi-plus" label="Add" severity="success" class="me-md-2" />
                                 <p-button *ngIf="permission?.isEdit" (onClick)="showEditDialog()" icon="pi pi-pencil" label="Edit" severity="warn" class="me-md-2" />
                                 <p-button *ngIf="permission?.isDelete" (onClick)="confirmDelete($event)" icon="pi pi-trash" label="Delete" severity="danger" class="me-md-2" />
                             </div>
+                          <p-select
+                            [options]="programCombobox"
+                            optionLabel="text"
+                            optionValue="value"
+                            class="me-lg-2"
+                            [style]="{ 'width': '240px' }"
+                            (onChange)="onProgramChange($event.value)" />
                             <p-iconfield iconPosition="right">
                                 <p-inputicon>
                                     <i class="pi pi-search"></i>
@@ -60,7 +67,8 @@
                                 <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
                             </td>
                             <td *ngFor="let col of columns">
-                                {{ rowData[col.field] }}
+                              <span *ngIf="col.field !== 'fee'">{{ rowData[col.field] }}</span>
+                              <span *ngIf="col.field === 'fee'">{{ rowData[col.field] | number: '1.0-0' }}</span>
                             </td>
                         </tr>
                     </ng-template>
@@ -84,9 +92,29 @@
             <small *ngIf="formGroup.get('name')?.invalid && formGroup.get('name')?.touched" class="mt-2 form-group-validator">Name is required.</small>
         </div>
         <div class="row">
-            <label for="fee" class="col-md-4">Fee</label>
-            <input pInputText id="fee" [formControl]="formGroup.controls.name" name="fee" class="col-md-8" [readOnly]="isView" />
-            <small *ngIf="formGroup.get('name')?.invalid && formGroup.get('name')?.touched" class="mt-2 form-group-validator">Fee is required.</small>
+            <label class="col-md-4">Fee</label>
+          <p-inputnumber
+            id="fee"
+            [formControl]="formGroup.controls.fee"
+            name="fee"
+            class="col-md-8"
+            [readonly]="isView"
+            mode="decimal" />
+          <small *ngIf="formGroup.get('fee')?.invalid && formGroup.get('fee')?.touched" class="mt-2 form-group-validator">Fee is required.</small>
+        </div>
+        <div class="row">
+          <label class="col-md-4">Program</label>
+          <p-select
+            name="program"
+            class="col-md-8"
+            [options]="programCombobox"
+            id="program"
+            [formControl]="formGroup.controls.programId"
+            [appendTo]="'body'"
+            optionLabel="text"
+            optionValue="value"
+            [readonly] = "isView" />
+          <small *ngIf="formGroup.get('program')?.invalid && formGroup.get('program')?.touched" class="mt-2 form-group-validator">Program is required.</small>
         </div>
         <div class="row">
             <label for="note" class="col-md-4">Note</label>

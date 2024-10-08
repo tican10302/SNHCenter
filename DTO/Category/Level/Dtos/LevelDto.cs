@@ -15,13 +15,19 @@ namespace DTO.Category.Level.Dtos
     {
         [Required(AllowEmptyStrings = false, ErrorMessage = "Name is required")]
         public string? Name { get; set; }
+        [Required(AllowEmptyStrings = false, ErrorMessage = "Fee is required")]
         public long Fee { get; set; }
+        public string? Note { get; set; }
+        [Required(AllowEmptyStrings = false, ErrorMessage = "Program is required")]
+        public Guid ProgramId { get; set; }
     }
-    public class ProgramDtoValidator : AbstractValidator<LevelDto>
+    public class LevelDtoValidator : AbstractValidator<LevelDto>
     {
-        public ProgramDtoValidator()
+        public LevelDtoValidator()
         {
             RuleFor(r => r.Name).NotEmpty().WithMessage("Name is not null");
+            RuleFor(r => r.Fee).NotEmpty().WithMessage("Fee is not null");
+            RuleFor(r => r.ProgramId).NotEmpty().WithMessage("Program is not null");
         }
     }
 }

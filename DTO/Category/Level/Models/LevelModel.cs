@@ -11,5 +11,8 @@ namespace DTO.Category.Level.Models
     {
         public string? Name { get; set; }
         public long Fee { get; set; }
+        public string? Note { get; set; }
+        public string? Program { get; set; }
+        public Guid ProgramId { get; set; }
     }
 }

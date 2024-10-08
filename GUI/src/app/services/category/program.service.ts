@@ -4,6 +4,7 @@ import {HttpClient} from "@angular/common/http";
 import {GetListRequestModel} from "../../models/base/get-list-request.model";
 import {GetListResponseModel} from "../../models/base/get-list-response.model";
 import {ProgramModel} from "../../models/category/program.model";
+import {SelectListItem} from "../../models/base/select-list-item.model";
 
 @Injectable({
   providedIn: 'root'
@@ -34,4 +35,8 @@ export class ProgramService {
     };
     return this.http.post<boolean>(this.baseUrl + `program/delete-list`, JSON.stringify(deleteListRequest));
   }
+  getCombobox(model: any) {
+    return this.http.post<SelectListItem[]>(this.baseUrl + "program/get-all-for-combobox", model);
+  }
+
 }

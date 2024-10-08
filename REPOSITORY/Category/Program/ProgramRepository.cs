@@ -99,6 +99,7 @@ public class ProgramRepository(IUnitOfWork unitOfWork, IMapper mapper, IHttpCont
     {
         var parameters = new DynamicParameters();
         parameters.Add("@iTextSearch", request.Search, DbType.String);
+        parameters.Add("@iTextSearch", request.Search, DbType.String);
         parameters.Add("@iPageIndex", request.Offset / request.Limit, DbType.Int32);
         parameters.Add("@iRowsPerPage", request.Limit, DbType.Int32);
         parameters.Add("@oTotalRow", dbType: DbType.Int64, direction: ParameterDirection.Output);

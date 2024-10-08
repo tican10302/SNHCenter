@@ -19,6 +19,8 @@ import {PermissionModel} from "../../../models/system/permission.model";
 import {TableColumnModel} from "../../../models/base/table-column.model";
 import {GetListRequestModel} from "../../../models/base/get-list-request.model";
 import {createFormGroup} from "../../../models/base/form-group.model";
+import {DatePickerModule} from "primeng/datepicker";
+import {CheckboxModule} from "primeng/checkbox";
 
 @Component({
   selector: 'app-shift',
@@ -35,6 +37,8 @@ import {createFormGroup} from "../../../models/base/form-group.model";
     FormsModule,
     ReactiveFormsModule,
     TextareaModule,
+    DatePickerModule,
+    CheckboxModule,
   ],
   templateUrl: './shift.component.html',
   styleUrl: './shift.component.scss'

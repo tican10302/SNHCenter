@@ -84,13 +84,23 @@
             <small *ngIf="formGroup.get('name')?.invalid && formGroup.get('name')?.touched" class="mt-2 form-group-validator">Name is required.</small>
         </div>
         <div class="row">
-            <label for="time" class="col-md-4">Time</label>
-            <input pInputText id="time" [formControl]="formGroup.controls.time" name="time" class="col-md-8" [readOnly]="isView" />
+            <label class="col-md-4">Time</label>
+          <p-datepicker
+            [formControl]="formGroup.controls.time"
+            [iconDisplay]="'input'"
+            [showIcon]="true"
+            [timeOnly]="true"
+            [readonlyInput]="isView"
+            inputId="time"></p-datepicker>
             <small *ngIf="formGroup.get('time')?.invalid && formGroup.get('time')?.touched" class="mt-2 form-group-validator">Time is required.</small>
         </div>
         <div class="row">
             <label for="day" class="col-md-4">Day</label>
-            <input pInputText id="day" [formControl]="formGroup.controls.day" name="day" class="col-md-8" [readOnly]="isView" />
+            <p-checkbox
+              id="day"
+              formControlName="city"
+              value="New York" />
+            <label for="day">New York</label>
             <small *ngIf="formGroup.get('day')?.invalid && formGroup.get('day')?.touched" class="mt-2 form-group-validator">Day is required.</small>
         </div>
         <div class="row">

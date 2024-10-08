@@ -11,7 +11,7 @@ public class LevelController(ILevelRepository repository) : BaseController<Level
 {
     [HttpPost]
     [Route("get-list-paging")]
-    public async Task<IActionResult> GetListPagingAsync(GetListPagingRequest request)
+    public async Task<IActionResult> GetListPagingAsync(LevelGetListDto request)
     {
         try
         {

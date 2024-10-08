@@ -95,9 +95,10 @@ public class LevelRepository(IUnitOfWork unitOfWork, IMapper mapper, IHttpContex
     }
 
 
-    public async Task<GetListPagingResponse> GetListPaging(GetListPagingRequest request)
+    public async Task<GetListPagingResponse> GetListPaging(LevelGetListDto request)
     {
         var parameters = new DynamicParameters();
+        parameters.Add("@iProgramId", request.ProgramId, DbType.Guid);
         parameters.Add("@iTextSearch", request.Search, DbType.String);
         parameters.Add("@iPageIndex", request.Offset / request.Limit, DbType.Int32);
         parameters.Add("@iRowsPerPage", request.Limit, DbType.Int32);

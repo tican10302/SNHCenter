@@ -6,7 +6,7 @@ namespace REPOSITORY.Category.Level
 {
     public interface ILevelRepository
     {
-        Task<GetListPagingResponse> GetListPaging(GetListPagingRequest request);
+        Task<GetListPagingResponse> GetListPaging(LevelGetListDto request);
         Task<LevelDto> GetByPost(GetByIdRequest request);
         Task<LevelModel> GetById(GetByIdRequest request);
         Task<bool> Insert(LevelDto request);
