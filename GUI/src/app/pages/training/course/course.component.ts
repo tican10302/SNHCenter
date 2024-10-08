@@ -21,7 +21,9 @@ import { NgxSpinnerService } from "ngx-spinner";
 import { TextareaModule } from "primeng/textarea";
 import { DatePickerModule } from 'primeng/datepicker';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { CalendarModule } from 'primeng/calendar'; 
+import { CalendarModule } from 'primeng/calendar';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { createDefaultLevelForm, LevelModel } from "../../../models/category/level.model";
 
 @Component({
   selector: 'app-course',
@@ -38,7 +40,9 @@ import { CalendarModule } from 'primeng/calendar';
     FormsModule,
     ReactiveFormsModule,
     TextareaModule,
-    DatePickerModule
+    DatePickerModule,
+    MultiSelectModule
+
   ],
   templateUrl: './course.component.html',
   styleUrls: ['./course.component.scss'] 
@@ -55,6 +59,8 @@ export class CourseComponent implements OnInit {
   currentRoute = inject(ActivatedRoute).routeConfig?.component?.name.replace(/_?([a-zA-Z]+)Component$/, '$1').toLowerCase() || '';
   startDate: Date | null = null;
   endDate: Date | null = null;
+  levels: LevelModel[] = []; // Đảm bảo định nghĩa kiểu
+  selectedLevels: LevelModel[] = []; // Đảm bảo định nghĩa kiểu
   isTouched = false; // Biến theo dõi trạng thái chạm vào
   onTouch() {
     this.isTouched = true;
@@ -83,6 +89,7 @@ export class CourseComponent implements OnInit {
       { field: 'startDate', header: 'Start Date' },
       { field: 'endDate', header: 'End Date' },
       { field: 'center', header: 'Center' },
+      { field: 'levels', header: 'Levels' },
       { field: 'room', header: 'Room' },
       { field: 'note', header: 'Note' },
     ];
@@ -94,9 +101,10 @@ export class CourseComponent implements OnInit {
     //  center: ['', Validators.required],
     //  room: ['', Validators.required],
     //  note: [''],
-    //  shift: [null, Validators.required], 
-    //  level: [null, Validators.required], 
+    //  shift: [null, Validators.required],
+    //  level: [null, Validators.required],
     //});
+
 
   }
 

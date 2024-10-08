@@ -83,24 +83,32 @@
             <input pInputText id="name" [formControl]="formGroup.controls.name" name="name" class="col-md-8" [readOnly]="isView" />
             <small *ngIf="formGroup.get('name')?.invalid && formGroup.get('name')?.touched" class="mt-2 form-group-validator">Name is required.</small>
         </div>
-            <div class="row">
-                <label for="startDate" class="col-md-4">Start Day</label>
-                <p-datepicker [(ngModel)]="startDate "
-                              inputId="startDate"
-                              [disabled]="isView"
-                              class="col-md-8">
-                </p-datepicker>
-                <small *ngIf="!startDate && isTouched" class="mt-2 form-group-validator">Start Date is required.</small>
-            </div>
-            <div class="row">
-                <label for="endDate" class="col-md-4">End Day</label>
-                <p-datepicker [(ngModel)]="endDate "
-                              inputId="endDate"
-                              [disabled]="isView"
-                              class="col-md-8">
-                </p-datepicker>
-                <small *ngIf="!endDate && isTouched" class="mt-2 form-group-validator">End Date is required.</small>
-            </div>
+        <div class="row">
+            <label for="startDate" class="col-md-4">Start Day</label>
+            <p-datepicker [(ngModel)]="startDate "
+                          inputId="startDate"
+                          [disabled]="isView"
+                          class="col-md-8">
+            </p-datepicker>
+            <small *ngIf="!startDate && isTouched" class="mt-2 form-group-validator">Start Date is required.</small>
+        </div>
+        <div class="row">
+            <label for="endDate" class="col-md-4">End Day</label>
+            <p-datepicker [(ngModel)]="endDate "
+                          inputId="endDate"
+                          [disabled]="isView"
+                          class="col-md-8">
+            </p-datepicker>
+            <small *ngIf="!endDate && isTouched" class="mt-2 form-group-validator">End Date is required.</small>
+        </div>
+        <div class="row">
+            <label for="endDate" class="col-md-4">Level</label>
+            <p-multiSelect [options]="levels"
+                           [(ngModel)]="selectedLevels"
+                           (onChange)="this['onLevelChange']($event)">
+            </p-multiSelect>
+            <small *ngIf="!endDate && isTouched" class="mt-2 form-group-validator">Level is required.</small>
+        </div>
         <div class="row">
             <label for="room" class="col-md-4">Room</label>
             <input pInputText id="room" [formControl]="formGroup.controls.room" name="room" class="col-md-8" [readOnly]="isView" />
