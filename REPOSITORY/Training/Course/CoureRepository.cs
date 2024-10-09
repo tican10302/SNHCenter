@@ -8,6 +8,7 @@ using DTO.Training.Course.Models;
 using DTO.Training.Course.Dtos;
 using REPOSITORY.Common;
 using Microsoft.AspNetCore.Http;
+using DTO.Category.Level.Dtos;
 
 namespace REPOSITORY.Category.Course;
 
@@ -95,9 +96,11 @@ public class CourseRepository(IUnitOfWork unitOfWork, IMapper mapper, IHttpConte
     }
 
 
-    public async Task<GetListPagingResponse> GetListPaging(GetListPagingRequest request)
+    public async Task<GetListPagingResponse> GetListPaging(CourseGetListDto request)
     {
         var parameters = new DynamicParameters();
+        parameters.Add("@iLevelId", request.LevelId, DbType.Guid);
+        parameters.Add("@iShiftId", request.ShiftId, DbType.Guid);
         parameters.Add("@iTextSearch", request.Search, DbType.String);
         parameters.Add("@iPageIndex", request.Offset / request.Limit, DbType.Int32);
         parameters.Add("@iRowsPerPage", request.Limit, DbType.Int32);

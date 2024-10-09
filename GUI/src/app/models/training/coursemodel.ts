@@ -1,6 +1,7 @@
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { ToFormControls } from "../base/form-group.model";
 import * as uuid from 'uuid';
+import { GetListRequestModel } from "../base/get-list-request.model";
 
 export type CourseForm = ToFormControls<CourseModel>;
 
@@ -16,6 +17,12 @@ export class CourseModel {
   note: string | null = null;        
 }
 
+export class GetListCourseRequestModel extends GetListRequestModel {
+  shiftId: string | null = null;
+  levelId: string | null = null;
+
+}
+
 export function createDefaultCourseForm() {
   return new FormGroup<CourseForm>(<CourseForm>{
     id: new FormControl(uuid.v4(), { validators: [Validators.required] }),
@@ -24,8 +31,8 @@ export function createDefaultCourseForm() {
     endday: new FormControl(null, { validators: [Validators.required] }),    
     center: new FormControl('', { validators: [Validators.required] }),      
     room: new FormControl('', { validators: [Validators.required] }),       
-    shiftId: new FormControl(uuid.v4(), { validators: [Validators.required] }), 
-    levelId: new FormControl(uuid.v4(), { validators: [Validators.required] }),  
+    shiftId: new FormControl(null, { validators: [Validators.required] }),
+    levelId: new FormControl(null, { validators: [Validators.required] }),
     note: new FormControl('')                                                
   });
 }

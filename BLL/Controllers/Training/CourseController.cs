@@ -4,6 +4,7 @@ using DTO.Common;
 using Microsoft.AspNetCore.Mvc;
 using REPOSITORY.Category.Course;
 using REPOSITORY.Common;
+using DTO.Category.Level.Dtos;
 
 namespace BLL.Controllers.Category;
 
@@ -11,7 +12,7 @@ public class CourseController(ICourseRepository repository) : BaseController<Cou
 {
     [HttpPost]
     [Route("get-list-paging")]
-    public async Task<IActionResult> GetListPagingAsync(GetListPagingRequest request)
+    public async Task<IActionResult> GetListPagingAsync(CourseGetListDto request)
     {
         try
         {

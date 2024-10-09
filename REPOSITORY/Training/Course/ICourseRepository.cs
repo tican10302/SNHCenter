@@ -6,7 +6,7 @@ namespace REPOSITORY.Category.Course
 {
     public interface ICourseRepository
     {
-        Task<GetListPagingResponse> GetListPaging(GetListPagingRequest request);
+        Task<GetListPagingResponse> GetListPaging(CourseGetListDto request);
         Task<CourseDto> GetByPost(GetByIdRequest request);
         Task<CourseModel> GetById(GetByIdRequest request);
         Task<bool> Insert(CourseDto request);

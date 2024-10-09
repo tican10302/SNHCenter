@@ -2,7 +2,7 @@ import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from "@angular/router";
 import { AccountService } from "../../../services/system/account.service";
 import { PermissionModel } from "../../../models/system/permission.model";
-import { NgFor, NgIf } from "@angular/common";
+import { DecimalPipe, NgFor, NgIf } from "@angular/common";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
@@ -15,7 +15,7 @@ import { GetListRequestModel } from "../../../models/base/get-list-request.model
 import { ConfirmationService, MessageService } from "primeng/api";
 import { Enum } from "../../../enums/enum";
 import { CourseService } from "../../../services/training/course.service";
-import { createDefaultCourseForm, CourseModel } from "../../../models/training/coursemodel"; 
+import { createDefaultCourseForm, GetListCourseRequestModel, CourseModel } from "../../../models/training/coursemodel";
 import { createFormGroup } from "../../../models/base/form-group.model";
 import { NgxSpinnerService } from "ngx-spinner";
 import { TextareaModule } from "primeng/textarea";
@@ -24,6 +24,12 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CalendarModule } from 'primeng/calendar';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { createDefaultLevelForm, LevelModel } from "../../../models/category/level.model";
+import { InputNumberModule } from "primeng/inputnumber";
+import { Select } from "primeng/select";
+import { SelectListItem } from "../../../models/base/select-list-item.model";
+import { LevelService } from "../../../services/category/level.service";
+import { ShiftService } from "../../../services/category/shift.service";
+
 
 @Component({
   selector: 'app-course',
@@ -41,8 +47,10 @@ import { createDefaultLevelForm, LevelModel } from "../../../models/category/lev
     ReactiveFormsModule,
     TextareaModule,
     DatePickerModule,
-    MultiSelectModule
-
+    MultiSelectModule,
+    InputNumberModule,
+    DecimalPipe,
+    Select,
   ],
   templateUrl: './course.component.html',
   styleUrls: ['./course.component.scss'] 
@@ -56,28 +64,31 @@ export class CourseComponent implements OnInit {
   visible: boolean = false;
   isView: boolean = false;
   isEdit: boolean = false;
-  currentRoute = inject(ActivatedRoute).routeConfig?.component?.name.replace(/_?([a-zA-Z]+)Component$/, '$1').toLowerCase() || '';
   startDate: Date | null = null;
   endDate: Date | null = null;
-  levels: LevelModel[] = []; // Đảm bảo định nghĩa kiểu
-  selectedLevels: LevelModel[] = []; // Đảm bảo định nghĩa kiểu
   isTouched = false; // Biến theo dõi trạng thái chạm vào
   onTouch() {
     this.isTouched = true;
   }
+  levelCombobox: SelectListItem[] = [];
+  shiftCombobox: SelectListItem[] = [];
+  currentRoute = inject(ActivatedRoute).routeConfig?.component?.name.replace(/_?([a-zA-Z]+)Component$/, '$1').toLowerCase() || '';
+
   // Table
   tableData!: CourseModel[];  
   selectedListData!: CourseModel;
   cols!: TableColumnModel[];
   totalRecords: number = 0;
 
-  getListPagingRequest = new GetListRequestModel();
+  getListPagingRequest = new GetListCourseRequestModel();
 
   constructor(protected accountService: AccountService,
     private courseService: CourseService, 
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
-    private spinner: NgxSpinnerService,) {
+    private spinner: NgxSpinnerService,
+    private levelService: LevelService,
+    private shiftService: ShiftService,) {
   }
 
   ngOnInit() {
@@ -89,23 +100,21 @@ export class CourseComponent implements OnInit {
       { field: 'startDate', header: 'Start Date' },
       { field: 'endDate', header: 'End Date' },
       { field: 'center', header: 'Center' },
-      { field: 'levels', header: 'Levels' },
       { field: 'room', header: 'Room' },
+      { field: 'level', header: 'Level' },
+      { field: 'shift', header: 'Shift' },
       { field: 'note', header: 'Note' },
     ];
-
-    //this.formGroup = this['formBuilder'].group({
-    //  name: ['', Validators.required],
-    //  startDate: [null, Validators.required],
-    //  endDate: [null, Validators.required],
-    //  center: ['', Validators.required],
-    //  room: ['', Validators.required],
-    //  note: [''],
-    //  shift: [null, Validators.required],
-    //  level: [null, Validators.required],
-    //});
-
-
+    this.levelService.getCombobox({}).subscribe({
+      next: (data) => {
+        this.levelCombobox = [{ text: '-- Group level --', value: null }, ...data];
+      }
+    })
+    this.shiftService.getCombobox({}).subscribe({
+      next: (data) => {
+        this.shiftCombobox = [{ text: '-- Group shift --', value: null }, ...data];
+      }
+    })
   }
 
   onSearch(event: Event) {
@@ -276,6 +285,14 @@ export class CourseComponent implements OnInit {
         this.deleteData(ids);
       },
     });
+  }
+  onLevelChange(selectedValue: any) {
+    this.getListPagingRequest.levelId = selectedValue;
+    this.loadData(null);
+  }
+  onShiftChange(selectedValue: any) {
+    this.getListPagingRequest.shiftId = selectedValue;
+    this.loadData(null);
   }
 
 }

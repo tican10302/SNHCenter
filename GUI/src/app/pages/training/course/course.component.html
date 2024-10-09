@@ -29,12 +29,19 @@
                          (onPage)="loadData($event)">
                     <ng-template pTemplate="caption">
                         <div class="d-flex justify-content-between align-items-center">
-                            <div>
+                            <div class="flex-grow-1">
                                 <p-button *ngIf="permission?.isView" (onClick)="showViewDialog()" icon="pi pi-eye" label="View" severity="info" class="me-md-2" />
                                 <p-button *ngIf="permission?.isAdd" (onClick)="showAddDialog()" icon="pi pi-plus" label="Add" severity="success" class="me-md-2" />
                                 <p-button *ngIf="permission?.isEdit" (onClick)="showEditDialog()" icon="pi pi-pencil" label="Edit" severity="warn" class="me-md-2" />
                                 <p-button *ngIf="permission?.isDelete" (onClick)="confirmDelete($event)" icon="pi pi-trash" label="Delete" severity="danger" class="me-md-2" />
                             </div>
+
+                            <p-select [options]="levelCombobox"
+                                      optionLabel="text"
+                                      optionValue="value"
+                                      class="me-lg-2"
+                                      [style]="{ 'width': '240px' }"
+                                      (onChange)="onLevelChange($event.value)" />
                             <p-iconfield iconPosition="right">
                                 <p-inputicon>
                                     <i class="pi pi-search"></i>
@@ -102,12 +109,30 @@
             <small *ngIf="!endDate && isTouched" class="mt-2 form-group-validator">End Date is required.</small>
         </div>
         <div class="row">
-            <label for="endDate" class="col-md-4">Level</label>
-            <p-multiSelect [options]="levels"
-                           [(ngModel)]="selectedLevels"
-                           (onChange)="this['onLevelChange']($event)">
-            </p-multiSelect>
-            <small *ngIf="!endDate && isTouched" class="mt-2 form-group-validator">Level is required.</small>
+            <label class="col-md-4">Level</label>
+            <p-select name="level"
+                      class="col-md-8"
+                      [options]="levelCombobox"
+                      id="program"
+                      [formControl]="formGroup.controls.levelId"
+                      [appendTo]="'body'"
+                      optionLabel="text"
+                      optionValue="value"
+                      [readonly]="isView" />
+            <small *ngIf="formGroup.get('level')?.invalid && formGroup.get('level')?.touched" class="mt-2 form-group-validator">Level is required.</small>
+        </div>
+        <div class="row">
+            <label class="col-md-4">Shift</label>
+            <p-select name="shift"
+                      class="col-md-8"
+                      [options]="shiftCombobox"
+                      id="program"
+                      [formControl]="formGroup.controls.shiftId"
+                      [appendTo]="'body'"
+                      optionLabel="text"
+                      optionValue="value"
+                      [readonly]="isView" />
+            <small *ngIf="formGroup.get('shift')?.invalid && formGroup.get('shift')?.touched" class="mt-2 form-group-validator">Shift is required.</small>
         </div>
         <div class="row">
             <label for="room" class="col-md-4">Room</label>
