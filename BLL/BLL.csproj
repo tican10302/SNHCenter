@@ -29,7 +29,6 @@
 
     <ItemGroup>
         <Folder Include="Controllers\Base\" />
-        <Folder Include="Controllers\Management\" />
         <Folder Include="Middleware\" />
     </ItemGroup>
 

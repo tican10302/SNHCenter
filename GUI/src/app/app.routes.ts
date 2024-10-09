@@ -16,6 +16,7 @@ import { WardComponent } from './pages/category/ward/ward.component';
 import { LevelComponent } from './pages/category/level/level.component';
 import { ShiftComponent } from './pages/category/shift/shift.component';
 import { CourseComponent } from './pages/training/course/course.component';
+import { ParentComponent } from './pages/management/parent/parent.component';
 
 export const routes: Routes = [
   {
@@ -82,6 +83,12 @@ export const routes: Routes = [
         title: 'Course',
         component: CourseComponent,
         data: { componentName: 'Course' }
+      },
+      {
+        path: 'parent',
+        title: 'Parent',
+        component: ParentComponent,
+        data: { componentName: 'Parent' }
       },
       {
         path: 'grouppermission',

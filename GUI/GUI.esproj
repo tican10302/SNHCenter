@@ -14,7 +14,9 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="src\app\pages\management\" />
     <Folder Include="src\app\pages\training\" />
+    <Folder Include="src\app\services\management\" />
     <Folder Include="src\app\services\training\" />
   </ItemGroup>
 </Project>
