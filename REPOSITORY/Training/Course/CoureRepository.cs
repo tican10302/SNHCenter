@@ -106,7 +106,7 @@ public class CourseRepository(IUnitOfWork unitOfWork, IMapper mapper, IHttpConte
         parameters.Add("@iRowsPerPage", request.Limit, DbType.Int32);
         parameters.Add("@oTotalRow", dbType: DbType.Int64, direction: ParameterDirection.Output);
 
-        var result = await unitOfWork.GetRepository<CourseModel>().ExecWithStoreProcedure("sp_Category_Course_GetListPaging", parameters);
+        var result = await unitOfWork.GetRepository<CourseModel>().ExecWithStoreProcedure("sp_Training_Course_GetListPaging", parameters);
 
         var totalRow = parameters.Get<long>("@oTotalRow");
         var response = new GetListPagingResponse()

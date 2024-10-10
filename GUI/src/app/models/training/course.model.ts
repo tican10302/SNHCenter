@@ -8,13 +8,13 @@ export type CourseForm = ToFormControls<CourseModel>;
 export class CourseModel {
   id: string | null = null;
   name: string | null = null;
-  starday: Date | null = null;     
-  endday: Date | null = null;       
-  center: string | null = null;     
-  room: string | null = null;        
-  shiftId: string | null = null;     
-  levelId: string | null = null;     
-  note: string | null = null;        
+  startDate: Date | null = null;
+  endDate: Date | null = null;
+  center: string | null = null;
+  room: string | null = null;
+  shiftId: string | null = null;
+  levelId: string | null = null;
+  note: string | null = null;
 }
 
 export class GetListCourseRequestModel extends GetListRequestModel {
@@ -27,12 +27,12 @@ export function createDefaultCourseForm() {
   return new FormGroup<CourseForm>(<CourseForm>{
     id: new FormControl(uuid.v4(), { validators: [Validators.required] }),
     name: new FormControl('', { validators: [Validators.required] }),
-    starday: new FormControl(null, { validators: [Validators.required] }),  
-    endday: new FormControl(null, { validators: [Validators.required] }),    
-    center: new FormControl('', { validators: [Validators.required] }),      
-    room: new FormControl('', { validators: [Validators.required] }),       
+    startDate: new FormControl(null, { validators: [Validators.required] }),
+    endDate: new FormControl(null),
+    center: new FormControl('', { validators: [Validators.required] }),
+    room: new FormControl('', { validators: [Validators.required] }),
     shiftId: new FormControl(null, { validators: [Validators.required] }),
     levelId: new FormControl(null, { validators: [Validators.required] }),
-    note: new FormControl('')                                                
+    note: new FormControl('')
   });
 }

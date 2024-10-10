@@ -80,8 +80,8 @@
 </ng-container>
 
 <!--Dialog-->
-<p-dialog header="{{isView ? '' : isEdit ? 'Update' : 'Create'}} Program {{isView ? 'Detail' : ''}}" styleClass="p-dialog-sm p-dialog-modal" [modal]="true" [(visible)]="visible">
-  <form [formGroup]="formGroup" #programForm="ngForm" (ngSubmit)="saveData()" autocomplete="off">
+<p-dialog header="{{isView ? '' : isEdit ? 'Update' : 'Create'}} Role {{isView ? 'Detail' : ''}}" styleClass="p-dialog-sm p-dialog-modal" [modal]="true" [(visible)]="visible">
+  <form [formGroup]="formGroup" #roleForm="ngForm" (ngSubmit)="saveData()" autocomplete="off">
     <div class="row">
       <label for="roleCode" class="col-md-4">Role code</label>
       <input pInputText id="roleCode" [formControl]="formGroup.controls.roleCode" name="roleCode" class="col-md-8" [readOnly]="isView"  />
@@ -95,5 +95,52 @@
       <p-button label="Cancel" severity="secondary" (click)="closeDialog()" />
       <p-button [label]="isView ? '' : isEdit ? 'Update' : 'Create'" *ngIf="!isView" type="submit" />
     </div>
+  </form>
+</p-dialog>
+
+<!--Dialog Role Permission-->
+<p-dialog header="Set Permission" styleClass="p-dialog-sm p-dialog-modal" [modal]="true" [(visible)]="visiblePermission">
+  <form [formGroup]="formGroupRolePermission" #rolePermissionForm="ngForm" (ngSubmit)="saveData()" autocomplete="off">
+    <p-tabs>
+      <p-tabpanel *ngFor="let tab of tabsRolePermission" [header]="tab.name || ''">
+        <p-table
+          #dataTableRolePermission
+          dataKey="id"
+          [columns]="colsRolePermission"
+          [value]="tableDataRolePermission"
+          [(selection)]="selectedListDataRolePermission"
+          [tableStyle]="{ 'min-width': '50rem' }"
+          [resizableColumns]="true"
+          [rows]="10"
+          [lazy]="true"
+          showGridlines
+          stripedRows
+          (onPage)="showViewDialogRolePermission()"
+        >
+          <ng-template pTemplate="header" let-columns>
+            <tr>
+              <th class="text-center" *ngFor="let col of columns" pResizableColumn>
+                {{ col.header }}
+              </th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-rowData let-columns="columns">
+            <tr>
+              <td class="text-center">
+                <p-tableCheckbox [value]="rowData" ></p-tableCheckbox>
+              </td>
+              <td *ngFor="let col of columns">
+                {{ rowData[col.field] }}
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td [colSpan]="cols.length + 1" class="text-center">No data found.</td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </p-tabpanel>
+    </p-tabs>
   </form>
 </p-dialog>

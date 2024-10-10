@@ -15,7 +15,7 @@ import { GetListRequestModel } from "../../../models/base/get-list-request.model
 import { ConfirmationService, MessageService } from "primeng/api";
 import { Enum } from "../../../enums/enum";
 import { CourseService } from "../../../services/training/course.service";
-import { createDefaultCourseForm, GetListCourseRequestModel, CourseModel } from "../../../models/training/coursemodel";
+import { createDefaultCourseForm, GetListCourseRequestModel, CourseModel } from "../../../models/training/course.model";
 import { createFormGroup } from "../../../models/base/form-group.model";
 import { NgxSpinnerService } from "ngx-spinner";
 import { TextareaModule } from "primeng/textarea";
@@ -53,29 +53,25 @@ import { ShiftService } from "../../../services/category/shift.service";
     Select,
   ],
   templateUrl: './course.component.html',
-  styleUrls: ['./course.component.scss'] 
+  styleUrls: ['./course.component.scss']
 })
 
 export class CourseComponent implements OnInit {
   [x: string]: any;
   @ViewChild('dataTable') dataTable!: Table;
   permission: PermissionModel | null = null;
-  formGroup = createDefaultCourseForm();  
+  formGroup = createDefaultCourseForm();
   visible: boolean = false;
   isView: boolean = false;
   isEdit: boolean = false;
   startDate: Date | null = null;
   endDate: Date | null = null;
-  isTouched = false; // Biến theo dõi trạng thái chạm vào
-  onTouch() {
-    this.isTouched = true;
-  }
   levelCombobox: SelectListItem[] = [];
   shiftCombobox: SelectListItem[] = [];
   currentRoute = inject(ActivatedRoute).routeConfig?.component?.name.replace(/_?([a-zA-Z]+)Component$/, '$1').toLowerCase() || '';
 
   // Table
-  tableData!: CourseModel[];  
+  tableData!: CourseModel[];
   selectedListData!: CourseModel;
   cols!: TableColumnModel[];
   totalRecords: number = 0;
@@ -83,7 +79,7 @@ export class CourseComponent implements OnInit {
   getListPagingRequest = new GetListCourseRequestModel();
 
   constructor(protected accountService: AccountService,
-    private courseService: CourseService, 
+    private courseService: CourseService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     private spinner: NgxSpinnerService,
@@ -107,12 +103,12 @@ export class CourseComponent implements OnInit {
     ];
     this.levelService.getCombobox({}).subscribe({
       next: (data) => {
-        this.levelCombobox = [{ text: '-- Group level --', value: null }, ...data];
+        this.levelCombobox = [{ text: '-- Level --', value: null }, ...data];
       }
     })
     this.shiftService.getCombobox({}).subscribe({
       next: (data) => {
-        this.shiftCombobox = [{ text: '-- Group shift --', value: null }, ...data];
+        this.shiftCombobox = [{ text: '-- Shift --', value: null }, ...data];
       }
     })
   }

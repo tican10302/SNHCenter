@@ -5,6 +5,8 @@ import {GetListRequestModel} from "../../models/base/get-list-request.model";
 import {GetListResponseModel} from "../../models/base/get-list-response.model";
 import {GroupPermissionModel} from "../../models/system/group-permission.model";
 import {SelectListItem} from "../../models/base/select-list-item.model";
+import {GetListRolePermissionRequestModel, RolePermissionModel} from "../../models/system/role-permission.model";
+import {RoleModel} from "../../models/system/role.model";
 
 @Injectable({
   providedIn: 'root'
@@ -31,5 +33,14 @@ export class GroupPermissionService {
 
   getCombobox(model: any) {
     return this.http.post<SelectListItem[]>(this.baseUrl + "grouppermission/get-all-for-combobox", model);
+  }
+
+  // Role permission
+  getListRolePermission(model: GetListRolePermissionRequestModel) {
+    return this.http.post<boolean>(this.baseUrl + `grouppermission/get-list-role-permission`, JSON.stringify(model));
+  }
+
+  updateRolePermission(model: RolePermissionModel) {
+    return this.http.put<boolean>(this.baseUrl + `grouppermission/post-role-permission`, JSON.stringify(model));
   }
 }

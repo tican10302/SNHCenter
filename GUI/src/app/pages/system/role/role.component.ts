@@ -9,18 +9,22 @@ import {InputTextModule} from "primeng/inputtext";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {TextareaModule} from "primeng/textarea";
 import {PermissionModel} from "../../../models/system/permission.model";
-import {createDefaultProgramForm, ProgramModel} from "../../../models/category/program.model";
 import {ActivatedRoute} from "@angular/router";
 import {TableColumnModel} from "../../../models/base/table-column.model";
 import {GetListRequestModel} from "../../../models/base/get-list-request.model";
 import {AccountService} from "../../../services/system/account.service";
-import {ProgramService} from "../../../services/category/program.service";
 import {ConfirmationService, MessageService} from "primeng/api";
 import {NgxSpinnerService} from "ngx-spinner";
 import {Enum} from "../../../enums/enum";
 import {createFormGroup} from "../../../models/base/form-group.model";
 import {createDefaultRoleForm, RoleModel} from "../../../models/system/role.model";
 import {RoleService} from "../../../services/system/role.service";
+import {
+  createDefaultRolePermissionForm,
+  GetListRolePermissionRequestModel, RolePermissionModel
+} from "../../../models/system/role-permission.model";
+import {TabPanel, Tabs} from "primeng/tabs";
+import {GroupPermissionModel} from "../../../models/system/group-permission.model";
 
 @Component({
   selector: 'app-role',
@@ -37,6 +41,8 @@ import {RoleService} from "../../../services/system/role.service";
     FormsModule,
     ReactiveFormsModule,
     TextareaModule,
+    Tabs,
+    TabPanel,
   ],
   templateUrl: './role.component.html',
   styleUrl: './role.component.scss'
@@ -45,9 +51,12 @@ export class RoleComponent implements OnInit{
   @ViewChild('dataTable') dataTable!: Table;
   permission: PermissionModel | null = null;
   formGroup = createDefaultRoleForm();
+  formGroupRolePermission = createDefaultRolePermissionForm();
   visible: boolean = false;
+  visiblePermission: boolean = false;
   isView: boolean = false;
   isEdit: boolean = false;
+  tabsRolePermission: GroupPermissionModel[] = [];
   currentRoute = inject(ActivatedRoute).routeConfig?.component?.name.replace(/_?([a-zA-Z]+)Component$/, '$1').toLowerCase() || '';
 
   // Table
@@ -55,6 +64,12 @@ export class RoleComponent implements OnInit{
   selectedListData!: RoleModel;
   cols!: TableColumnModel[];
   totalRecords: number = 0;
+
+  // Table Role Permission
+  tableDataRolePermission!: RolePermissionModel[];
+  selectedListDataRolePermission!: RolePermissionModel;
+  colsRolePermission!: TableColumnModel[];
+  totalRecordsRolePermission: number = 0;
 
   getListPagingRequest = new GetListRequestModel();
 
@@ -73,6 +88,15 @@ export class RoleComponent implements OnInit{
     this.cols = [
       { field: 'roleCode', header: 'Role code' },
       { field: 'name', header: 'Name' },
+    ];
+
+    this.colsRolePermission = [
+      { field: 'isView', header: 'View' },
+      { field: 'isAdd', header: 'Add' },
+      { field: 'isEdit', header: 'Edit' },
+      { field: 'isDelete', header: 'Delete' },
+      { field: 'isApprove', header: 'Approve' },
+      { field: 'isStatistic', header: 'Statistic' },
     ];
   }
 
@@ -119,6 +143,32 @@ export class RoleComponent implements OnInit{
     this.isView = true;
     this.isEdit = false;
     this.visible = true;
+  }
+
+  showViewDialogRolePermission() {
+    let selects: GetListRolePermissionRequestModel[] = [];
+    if (Array.isArray(this.selectedListData) && this.selectedListData.length >= 1) {
+      this.selectedListData.map(el => {
+        selects.push({groupId: el.groupId, roleId: el.roleId});
+      })
+    }
+    if(!(selects.length === 1)) {
+      this.messageService.add({severity: 'error', summary: 'Error', detail: `Please select a row to set permission`, life: Enum.messageLife});
+      return;
+    }
+
+    this.formGroupRolePermission = createDefaultRolePermissionForm();
+    this.roleService.getListRolePermission(selects[0]).subscribe({
+      next: (data) => {
+        this.tableDataRolePermission = data.data;
+        this.totalRecordsRolePermission = data.totalRow;
+      },
+      error: (err) => {
+        this.messageService.add({severity: 'error', summary: 'Error', detail: err.error.message, life: Enum.messageLife})
+      }
+    });
+
+    this.visiblePermission = true;
   }
 
   showAddDialog() {
@@ -183,6 +233,23 @@ export class RoleComponent implements OnInit{
     this.isEdit = false;
     this.visible = false;
 
+  }
+
+  saveDataRolePermission() {
+    this.spinner.show();
+    if(this.isEdit)
+      this.roleService.updateData(this.formGroup.value).subscribe({
+        next: _ => {
+          this.messageService.add({severity: 'success', summary: 'Success', detail: `Update data successfully`, life: Enum.messageLife});
+          this.loadData(null);
+          this.spinner.hide();
+        },
+        error: (err) =>  {
+          this.messageService.add({severity: 'error', summary: 'Error', detail: err.error.message, life: Enum.messageLife})
+          this.spinner.hide();
+        }
+      });
+    this.visiblePermission = false;
   }
 
   deleteData(ids: string[]) {

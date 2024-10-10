@@ -6,7 +6,7 @@ import {GetListResponseModel} from "../../models/base/get-list-response.model";
 import {MenuModel} from "../../models/system/menu.model";
 import {SelectListItem} from "../../models/base/select-list-item.model";
 import {RoleModel} from "../../models/system/role.model";
-import {GetListRolePermissionRequestModel} from "../../models/system/role-permission.model";
+import {GetListRolePermissionRequestModel, RolePermissionModel} from "../../models/system/role-permission.model";
 
 @Injectable({
   providedIn: 'root'
@@ -43,10 +43,10 @@ export class RoleService {
   }
 
   getListRolePermission(model: GetListRolePermissionRequestModel) {
-    return this.http.post<GetListResponseModel<MenuModel[]>>(this.baseUrl + "role/get-list-role-permission", model);
+    return this.http.post<GetListResponseModel<RolePermissionModel[]>>(this.baseUrl + "role/get-list-role-permission", JSON.stringify(model));
   }
 
   postRolePermission(model: any) {
-    return this.http.post<boolean>(this.baseUrl + `role/post-role-permission`, JSON.stringify(model));
+    return this.http.post<RolePermissionModel>(this.baseUrl + `role/post-role-permission`, JSON.stringify(model));
   }
 }

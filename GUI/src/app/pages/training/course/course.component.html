@@ -36,6 +36,12 @@
                                 <p-button *ngIf="permission?.isDelete" (onClick)="confirmDelete($event)" icon="pi pi-trash" label="Delete" severity="danger" class="me-md-2" />
                             </div>
 
+                          <p-select [options]="shiftCombobox"
+                                    optionLabel="text"
+                                    optionValue="value"
+                                    class="me-lg-2"
+                                    [style]="{ 'width': '240px' }"
+                                    (onChange)="onShiftChange($event.value)" />
                             <p-select [options]="levelCombobox"
                                       optionLabel="text"
                                       optionValue="value"
@@ -92,47 +98,55 @@
         </div>
         <div class="row">
             <label for="startDate" class="col-md-4">Start Day</label>
-            <p-datepicker [(ngModel)]="startDate "
+            <p-datepicker [formControl]="formGroup.controls.startDate"
                           inputId="startDate"
-                          [disabled]="isView"
+                          [readonlyInput]="isView"
+                          [iconDisplay]="'input'"
+                          [showIcon]="true"
+                          inputId="icondisplay"
+                          dateFormat="dd/mm/yy"
                           class="col-md-8">
             </p-datepicker>
-            <small *ngIf="!startDate && isTouched" class="mt-2 form-group-validator">Start Date is required.</small>
+            <small *ngIf="formGroup.get('startDate')?.invalid && formGroup.get('startDate')?.touched" class="mt-2 form-group-validator">Start Date is required.</small>
         </div>
         <div class="row">
             <label for="endDate" class="col-md-4">End Day</label>
-            <p-datepicker [(ngModel)]="endDate "
+            <p-datepicker [formControl]="formGroup.controls.endDate"
                           inputId="endDate"
-                          [disabled]="isView"
+                          [readonlyInput]="isView"
+                          [iconDisplay]="'input'"
+                          [showIcon]="true"
+                          inputId="icondisplay"
+                          dateFormat="dd/mm/yy"
                           class="col-md-8">
             </p-datepicker>
-            <small *ngIf="!endDate && isTouched" class="mt-2 form-group-validator">End Date is required.</small>
+            <small *ngIf="formGroup.get('endDate')?.invalid && formGroup.get('endDate')?.touched" class="mt-2 form-group-validator">End Date is required.</small>
         </div>
         <div class="row">
             <label class="col-md-4">Level</label>
-            <p-select name="level"
+            <p-select name="levelId"
                       class="col-md-8"
                       [options]="levelCombobox"
-                      id="program"
+                      id="levelId"
                       [formControl]="formGroup.controls.levelId"
                       [appendTo]="'body'"
                       optionLabel="text"
                       optionValue="value"
                       [readonly]="isView" />
-            <small *ngIf="formGroup.get('level')?.invalid && formGroup.get('level')?.touched" class="mt-2 form-group-validator">Level is required.</small>
+            <small *ngIf="formGroup.get('levelId')?.invalid && formGroup.get('levelId')?.touched" class="mt-2 form-group-validator">Level is required.</small>
         </div>
         <div class="row">
             <label class="col-md-4">Shift</label>
-            <p-select name="shift"
+            <p-select name="shiftId"
                       class="col-md-8"
                       [options]="shiftCombobox"
-                      id="program"
+                      id="shiftId"
                       [formControl]="formGroup.controls.shiftId"
                       [appendTo]="'body'"
                       optionLabel="text"
                       optionValue="value"
                       [readonly]="isView" />
-            <small *ngIf="formGroup.get('shift')?.invalid && formGroup.get('shift')?.touched" class="mt-2 form-group-validator">Shift is required.</small>
+            <small *ngIf="formGroup.get('shiftId')?.invalid && formGroup.get('shiftId')?.touched" class="mt-2 form-group-validator">Shift is required.</small>
         </div>
         <div class="row">
             <label for="room" class="col-md-4">Room</label>
