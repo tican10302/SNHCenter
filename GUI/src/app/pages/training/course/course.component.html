@@ -97,7 +97,7 @@
             <small *ngIf="formGroup.get('name')?.invalid && formGroup.get('name')?.touched" class="mt-2 form-group-validator">Name is required.</small>
         </div>
         <div class="row">
-            <label for="startDate" class="col-md-4">Start Day</label>
+            <label class="col-md-4">Start Day</label>
             <p-datepicker [formControl]="formGroup.controls.startDate"
                           inputId="startDate"
                           [readonlyInput]="isView"
@@ -110,7 +110,7 @@
             <small *ngIf="formGroup.get('startDate')?.invalid && formGroup.get('startDate')?.touched" class="mt-2 form-group-validator">Start Date is required.</small>
         </div>
         <div class="row">
-            <label for="endDate" class="col-md-4">End Day</label>
+            <label class="col-md-4">End Day</label>
             <p-datepicker [formControl]="formGroup.controls.endDate"
                           inputId="endDate"
                           [readonlyInput]="isView"
