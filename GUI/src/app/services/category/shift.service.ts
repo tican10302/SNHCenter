@@ -26,9 +26,16 @@ export class ShiftService {
     return this.http.post<boolean>(this.baseUrl + `shift`, JSON.stringify(model));
      
   }
+  //addData(model: any) {
+  //  return this.http.post<boolean>(this.baseUrl + `shift`, JSON.stringify(model));
+  //}
+
+  //updateData(model: any) {
+  //  console.log(model)
+  //  return this.http.put<boolean>(this.baseUrl + `shift`, JSON.stringify(model));
+  //}
 
   updateData(model: any) {
-    console.log(model)
     return this.http.put<boolean>(this.baseUrl + `shift`, JSON.stringify(model));
   }
 

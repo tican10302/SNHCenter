@@ -35,6 +35,7 @@ export class ProgramService {
     };
     return this.http.post<boolean>(this.baseUrl + `program/delete-list`, JSON.stringify(deleteListRequest));
   }
+
   getCombobox(model: any) {
     return this.http.post<SelectListItem[]>(this.baseUrl + "program/get-all-for-combobox", model);
   }

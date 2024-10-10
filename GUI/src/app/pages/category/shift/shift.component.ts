@@ -21,7 +21,6 @@ import {GetListRequestModel} from "../../../models/base/get-list-request.model";
 import {createFormGroup} from "../../../models/base/form-group.model";
 import {DatePickerModule} from "primeng/datepicker";
 import {CheckboxModule} from "primeng/checkbox";
-
 @Component({
   selector: 'app-shift',
   standalone: true,
@@ -106,6 +105,7 @@ export class ShiftComponent implements OnInit {
   }
 
   showViewDialog() {
+    this.formGroup = createDefaultShiftForm();
     let id = this.getIdSelections('view')[0];
     if (!id)
       return;

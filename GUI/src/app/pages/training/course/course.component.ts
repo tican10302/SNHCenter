@@ -22,7 +22,7 @@ import { TextareaModule } from "primeng/textarea";
 import { DatePickerModule } from 'primeng/datepicker';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CalendarModule } from 'primeng/calendar';
-import { MultiSelectModule } from 'primeng/multiselect';
+import { SelectModule } from 'primeng/select';
 import { createDefaultLevelForm, LevelModel } from "../../../models/category/level.model";
 import { InputNumberModule } from "primeng/inputnumber";
 import { Select } from "primeng/select";
@@ -47,7 +47,7 @@ import { ShiftService } from "../../../services/category/shift.service";
     ReactiveFormsModule,
     TextareaModule,
     DatePickerModule,
-    MultiSelectModule,
+    SelectModule,
     InputNumberModule,
     DecimalPipe,
     Select,
