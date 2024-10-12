@@ -46,7 +46,7 @@ export class RoleService {
     return this.http.post<RolePermissionModel[]>(this.baseUrl + "role/get-list-role-permission", JSON.stringify(model));
   }
 
-  postRolePermission(model: any) {
+  postRolePermission(model: RolePermissionModel) {
     return this.http.post<RolePermissionModel>(this.baseUrl + `role/post-role-permission`, JSON.stringify(model));
   }
 }

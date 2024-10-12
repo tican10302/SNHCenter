@@ -133,7 +133,7 @@
                     [(ngModel)]="rowData[col.field]"
                     [style]="{'width': '50px'}"
                     [disabled]="!rowData[col.options]"
-                    (onChange)="setPermission(columns)"
+                    (onChange)="setPermission(rowData)"
                   ></p-inputSwitch>
                 </ng-container>
                 <ng-template #defaultColumn>

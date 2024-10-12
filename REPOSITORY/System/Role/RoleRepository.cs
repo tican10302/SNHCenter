@@ -195,7 +195,10 @@ namespace REPOSITORY.System.Role
                 var resultUpdate = await unitOfWork.GetRepository<DAL.Entities.Permission>().Find(x => x.Id == request.Id);
                 if (resultUpdate == null)
                 {
-                    request.Id = Guid.NewGuid();
+                    if (request.Id == Guid.Empty)
+                    {
+                        request.Id = Guid.NewGuid();
+                    }
                     var add = mapper.Map<DAL.Entities.Permission>(request);
                     await unitOfWork.GetRepository<DAL.Entities.Permission>().AddAsync(add);
                     response = mapper.Map<Role_PermissionModel>(add);

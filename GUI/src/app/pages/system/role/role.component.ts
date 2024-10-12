@@ -29,6 +29,7 @@ import {GroupPermissionService} from "../../../services/system/group-permission.
 import {of, switchMap, throwError} from "rxjs";
 import {InputSwitchModule} from "primeng/inputswitch";
 import {CheckboxModule} from "primeng/checkbox";
+import * as uuid from "uuid";
 
 @Component({
   selector: 'app-role',
@@ -87,7 +88,7 @@ export class RoleComponent implements OnInit{
               private messageService: MessageService,
               private confirmationService: ConfirmationService,
               private spinner: NgxSpinnerService,
-              private groupPermissionService: GroupPermissionService) {
+              private groupPermissionService: GroupPermissionService,) {
   }
 
   ngOnInit() {
@@ -386,7 +387,21 @@ export class RoleComponent implements OnInit{
     })
   }
 
-  setPermission(id: any) {
-    console.log(id);
+  setPermission(rowData: RolePermissionModel) {
+    this.spinner.show();
+    if(rowData.id === uuid.NIL)
+    {
+      rowData.id = uuid.v4();
+    }
+    this.roleService.postRolePermission(rowData).subscribe({
+      next: data => {
+        this.messageService.add({severity: 'success', summary: 'Success', detail: 'Set role permission successfully!', life: Enum.messageLife});
+        this.spinner.hide();
+      },
+      error: err => {
+        this.messageService.add({severity: 'error', summary: 'Error', detail: err.error.message, life: Enum.messageLife});
+        this.spinner.hide();
+      }
+    })
   }
 }
