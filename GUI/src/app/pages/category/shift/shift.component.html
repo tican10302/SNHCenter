@@ -93,47 +93,99 @@
                           [readonlyInput]="isView"
                           inputId="time"
                           class="col-md-9">
+              <ng-template pTemplate="inputicon" let-clickCallBack="clickCallBack">
+                <i class="pi pi-clock pointer-events-none" (click)="clickCallBack($event)"></i>
+              </ng-template>
             </p-datepicker>
             <small *ngIf="formGroup.get('time')?.invalid && formGroup.get('time')?.touched" class="form-group-validator">Time is required.</small>
         </div>
 
         <div class="row">
             <label class="col-md-3">Day</label>
-            <div class="col-md-9">
+            <div class="col-md-9 p-0">
                 <div class="d-flex flex-wrap">
                     <div class="d-flex align-items-start me-3">
-                        <p-checkbox inputId="monday" [formControl]="formGroup.controls.day" name="monday" value="monday" [readonly]="isView"></p-checkbox>
-                        <label for="monday" class="ms-2">Mon</label>
+                      <p-checkbox
+                        inputId="monday"
+                        name="monday"
+                        [formControl]="formGroup.controls.Monday"
+                        (onChange)="onCheckboxChangeDay('Monday')"
+                        [binary]="true"
+                        [readonly]="isView">
+                      </p-checkbox>
+                        <label class="ms-2">Monday</label>
                     </div>
 
                     <div class="d-flex align-items-start me-3">
-                        <p-checkbox inputId="tuesday" [formControl]="formGroup.controls.day" name="tuesday" value="tuesday"  [readonly]="isView"></p-checkbox>
-                        <label for="tuesday" class="ms-2">Tue</label>
+                      <p-checkbox
+                        inputId="tuesday"
+                        name="tuesday"
+                        [formControl]="formGroup.controls.Tuesday"
+                        (onChange)="onCheckboxChangeDay('Tuesday')"
+                        [binary]="true"
+                        [readonly]="isView">
+                      </p-checkbox>
+                        <label class="ms-2">Tuesday</label>
                     </div>
 
                     <div class="d-flex align-items-start me-3">
-                        <p-checkbox inputId="wednesday" [formControl]="formGroup.controls.day" name="wednesday" value="wednesday" [readonly]="isView"></p-checkbox>
-                        <label for="wednesday" class="ms-2">Wed</label>
+                      <p-checkbox
+                        inputId="wednesday"
+                        name="wednesday"
+                        [formControl]="formGroup.controls.Wednesday"
+                        (onChange)="onCheckboxChangeDay('Wednesday')"
+                        [binary]="true"
+                        [readonly]="isView">
+                      </p-checkbox>
+                        <label class="ms-2">Wednesday</label>
                     </div>
 
                     <div class="d-flex align-items-start me-3">
-                        <p-checkbox inputId="thursday" [formControl]="formGroup.controls.day" name="thursday" value="thursday" [readonly]="isView"></p-checkbox>
-                        <label for="thursday" class="ms-2">Thu</label>
+                      <p-checkbox
+                        inputId="thursday"
+                        name="thursday"
+                        [formControl]="formGroup.controls.Thursday"
+                        (onChange)="onCheckboxChangeDay('Thursday')"
+                        [binary]="true"
+                        [readonly]="isView">
+                      </p-checkbox>
+                        <label class="ms-2">Thursday</label>
                     </div>
 
                     <div class="d-flex align-items-start me-3">
-                        <p-checkbox inputId="friday" [formControl]="formGroup.controls.day" name="friday" value="friday" [readonly]="isView"></p-checkbox>
-                        <label for="friday" class="ms-2">Fri</label>
+                      <p-checkbox
+                        inputId="friday"
+                        name="friday"
+                        [formControl]="formGroup.controls.Friday"
+                        (onChange)="onCheckboxChangeDay('Friday')"
+                        [binary]="true"
+                        [readonly]="isView">
+                      </p-checkbox>
+                        <label class="ms-2">Friday</label>
                     </div>
 
                     <div class="d-flex align-items-start me-3">
-                        <p-checkbox inputId="saturday" [formControl]="formGroup.controls.day" name="saturday" value="saturday" [readonly]="isView"></p-checkbox>
-                        <label for="saturday" class="ms-2">Sat</label>
+                      <p-checkbox
+                        inputId="saturday"
+                        name="saturday"
+                        [formControl]="formGroup.controls.Saturday"
+                        (onChange)="onCheckboxChangeDay('Saturday')"
+                        [binary]="true"
+                        [readonly]="isView">
+                      </p-checkbox>
+                        <label class="ms-2">Saturday</label>
                     </div>
 
                     <div class="d-flex align-items-start me-3">
-                        <p-checkbox inputId="sunday" [formControl]="formGroup.controls.day" name="sunday" value="saturday" [readonly]="isView"></p-checkbox>
-                        <label for="sunday" class="ms-2">Sun</label>
+                      <p-checkbox
+                        inputId="sunday"
+                        name="sunday"
+                        [formControl]="formGroup.controls.Sunday"
+                        (onChange)="onCheckboxChangeDay('Sunday')"
+                        [binary]="true"
+                        [readonly]="isView">
+                      </p-checkbox>
+                        <label class="ms-2">Sunday</label>
                     </div>
                 </div>
             </div>

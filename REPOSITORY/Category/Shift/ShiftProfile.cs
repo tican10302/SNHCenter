@@ -13,11 +13,6 @@ namespace REPOSITORY.Category
             CreateMap<ShiftDto, DAL.Entities.Shift>();
             CreateMap<ShiftModel, DAL.Entities.Shift>();
             CreateMap<DAL.Entities.Shift, ShiftModel>();
-            CreateMap<DataRow, ShiftModel>()
-            .ForMember(dest => dest.Days, opt => opt.MapFrom(src =>
-                src["Days"] != DBNull.Value
-                ? src["Days"].ToString().Split(new[] { ',' }, StringSplitOptions.None).Select(day => day.Trim()).ToList()
-                : new List<string>()));
         }
     }
 }

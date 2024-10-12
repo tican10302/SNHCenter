@@ -4,7 +4,7 @@ import { AccountService } from "../../../services/system/account.service";
 import { NgFor, NgIf } from "@angular/common";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
-import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import {FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule} from "@angular/forms";
 import { IconFieldModule } from "primeng/iconfield";
 import { InputIconModule } from "primeng/inputicon";
 import { InputTextModule } from "primeng/inputtext";
@@ -12,7 +12,7 @@ import { Table, TableModule } from "primeng/table";
 import { ConfirmationService, MessageService } from "primeng/api";
 import { Enum } from "../../../enums/enum";
 import { ShiftService } from "../../../services/category/shift.service";
-import { createDefaultShiftForm, ShiftModel } from "../../../models/category/shift.model";
+import {createDefaultShiftForm, ShiftDto, ShiftModel} from "../../../models/category/shift.model";
 import { NgxSpinnerService } from "ngx-spinner";
 import { TextareaModule } from "primeng/textarea";
 import {PermissionModel} from "../../../models/system/permission.model";
@@ -49,6 +49,7 @@ export class ShiftComponent implements OnInit {
   visible: boolean = false;
   isView: boolean = false;
   isEdit: boolean = false;
+  selectDays: string[] = [];
   currentRoute = inject(ActivatedRoute).routeConfig?.component?.name.replace(/_?([a-zA-Z]+)Component$/, '$1').toLowerCase() || '';
 
   // Table
@@ -74,7 +75,7 @@ export class ShiftComponent implements OnInit {
     this.cols = [
       { field: 'name', header: 'Name' },
       { field: 'time', header: 'Time' },
-      { field: 'day', header: 'Day' },
+      { field: 'days', header: 'Days' },
       { field: 'note', header: 'Note' },
     ];
   }
@@ -111,7 +112,19 @@ export class ShiftComponent implements OnInit {
       return;
     this.shiftService.getData(id).subscribe({
       next: (data) => {
-        this.formGroup = createFormGroup(data);
+        let dto = this.convertModelToDto(data);
+
+        // Set time to date
+        const time: Date = new Date();
+        const timeString = dto.time?.toString() || '00:00:00';
+        const [hours, minutes, seconds] = timeString.split(':').map(Number);
+
+        time.setHours(hours, minutes, seconds, 0);
+        dto.time = time;
+
+        this.formGroup = createFormGroup(dto);
+        this.selectDays = data.days ? data.days.split(', ') : [];
+        console.log(this.formGroup);
       },
       error: (err) => {
         this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error.message, life: Enum.messageLife })
@@ -124,9 +137,13 @@ export class ShiftComponent implements OnInit {
   }
 
   showAddDialog() {
+    // Delete data on Form
+    this.formGroup = createDefaultShiftForm();
+
     this.isView = false;
     this.isEdit = false;
     this.visible = true;
+    this.selectDays = [];
   }
 
   showEditDialog() {
@@ -135,7 +152,18 @@ export class ShiftComponent implements OnInit {
       return;
     this.shiftService.getData(id).subscribe({
       next: (data) => {
-        this.formGroup = createFormGroup(data);
+        let dto = this.convertModelToDto(data);
+
+        // Set time to date
+        const time: Date = new Date();
+        const timeString = dto.time?.toString() || '00:00:00';
+        const [hours, minutes, seconds] = timeString.split(':').map(Number);
+
+        time.setHours(hours, minutes, seconds, 0);
+        dto.time = time;
+
+        this.formGroup = createFormGroup(dto);
+        this.selectDays = data.days ? data.days.split(',') : [];
       },
       error: (err) => {
         this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error.message, life: Enum.messageLife })
@@ -151,14 +179,18 @@ export class ShiftComponent implements OnInit {
     this.isView = false;
     this.isEdit = false;
     this.visible = false;
+    this.selectDays = [];
     this.formGroup = createDefaultShiftForm();
   }
 
   saveData() {
     if (this.formGroup.invalid) return;
     this.spinner.show();
+
+    // convert dto to model
+    let data = this.convertFormGroupToModel(this.formGroup);
     if (this.isEdit)
-      this.shiftService.updateData(this.formGroup.value).subscribe({
+      this.shiftService.updateData(data).subscribe({
         next: _ => {
           this.messageService.add({ severity: 'success', summary: 'Success', detail: `Update data successfully`, life: Enum.messageLife });
           this.loadData(null);
@@ -170,7 +202,7 @@ export class ShiftComponent implements OnInit {
         }
       });
     else
-      this.shiftService.addData(this.formGroup.value).subscribe({
+      this.shiftService.addData(data).subscribe({
         next: _ => {
           this.messageService.add({ severity: 'success', summary: 'Success', detail: `Create data successfully`, life: Enum.messageLife });
           this.loadData(null);
@@ -184,6 +216,7 @@ export class ShiftComponent implements OnInit {
     this.isView = false;
     this.isEdit = false;
     this.visible = false;
+    this.selectDays = [];
 
   }
 
@@ -247,6 +280,69 @@ export class ShiftComponent implements OnInit {
         this.deleteData(ids);
       },
     });
+  }
+
+  convertModelToDto(model: ShiftModel): ShiftDto {
+    return {
+      id: model.id,
+      name: model.name,
+      time: model.time,
+      days: model.days,
+      note: model.note,
+      Monday: !!model.days?.includes('Monday'),
+      Tuesday: !!model.days?.includes('Tuesday'),
+      Wednesday: !!model.days?.includes('Wednesday'),
+      Thursday: !!model.days?.includes('Thursday'),
+      Friday: !!model.days?.includes('Friday'),
+      Saturday: !!model.days?.includes('Saturday'),
+      Sunday: !!model.days?.includes('Sunday')
+    }
+  }
+
+  convertFormGroupToModel(formGroup: FormGroup): ShiftModel {
+    const formValue = formGroup.value;
+
+    const formattedTime = formValue.time.toLocaleTimeString('en-GB', {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
+    });
+
+    console.log(formattedTime)
+    let daysArray: string[] = [];
+
+    if (formValue.Monday) daysArray.push('Monday');
+    if (formValue.Tuesday) daysArray.push('Tuesday');
+    if (formValue.Wednesday) daysArray.push('Wednesday');
+    if (formValue.Thursday) daysArray.push('Thursday');
+    if (formValue.Friday) daysArray.push('Friday');
+    if (formValue.Saturday) daysArray.push('Saturday');
+    if (formValue.Sunday) daysArray.push('Sunday');
+
+    return {
+      id: formValue.id,
+      name: formValue.name,
+      time: formattedTime,
+      days: daysArray.join(', '),
+      note: formValue.note
+    };
+  }
+
+  onCheckboxChangeDay(day: string) {
+    const selected = this.formGroup.get(day)?.value;
+    if (selected) {
+      // Add day to selected days array
+      if (!this.selectDays.includes(day)) {
+        this.selectDays.push(day);
+      }
+    } else {
+      // Remove day from selected days array
+      const index = this.selectDays.indexOf(day);
+      if (index !== -1) {
+        this.selectDays.splice(index, 1);
+      }
+    }
   }
 
 }

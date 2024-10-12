@@ -4,4 +4,6 @@ export interface TableColumnModel {
   class?: string;
   style?: string;
   checkbox?: boolean;
+  visible?: boolean;
+  options?: any;
 }

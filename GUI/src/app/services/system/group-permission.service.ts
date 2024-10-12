@@ -19,6 +19,10 @@ export class GroupPermissionService {
     return this.http.post<GetListResponseModel<GroupPermissionModel[]>>(this.baseUrl + "grouppermission/get-list", model);
   }
 
+  getAllData() {
+    return this.http.get<GroupPermissionModel[]>(this.baseUrl + "grouppermission/get-all");
+  }
+
   getData(id: string) {
     return this.http.get<GroupPermissionModel>(this.baseUrl + `grouppermission/${id}`);
   }

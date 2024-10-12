@@ -130,6 +130,7 @@ public class ShiftRepository(IUnitOfWork unitOfWork, IMapper mapper, IHttpContex
             }
 
             var entity = mapper.Map<DAL.Entities.Shift>(request);
+            entity.Time = new TimeSpan(entity.Time.Hours, entity.Time.Minutes, 0);
             entity.CreatedBy = httpContextAccessor.HttpContext?.User.Identity?.Name;
             entity.CreatedAt = DateTime.Now;
             entity.UpdatedBy = httpContextAccessor.HttpContext?.User.Identity?.Name;
@@ -173,6 +174,7 @@ public class ShiftRepository(IUnitOfWork unitOfWork, IMapper mapper, IHttpContex
 
             entity.UpdatedAt = DateTime.Now;
             entity.UpdatedBy = httpContextAccessor.HttpContext?.User.Identity?.Name;
+            entity.Time = new TimeSpan(entity.Time.Hours, entity.Time.Minutes, 0);
 
             await unitOfWork.GetRepository<DAL.Entities.Shift>().UpdateAsync(entity);
 

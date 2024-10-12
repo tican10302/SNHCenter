@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DAL.Entities
 {
@@ -7,5 +8,7 @@ namespace DAL.Entities
         public required string Name { get; set; }
         public required TimeSpan Time { get; set; }
         public required string Days { get; set; }
+        [MaxLength(Int32.MaxValue)]
+        public string? Note { get; set; }
     }
 }

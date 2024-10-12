@@ -36,6 +36,7 @@
                 <p-button *ngIf="permission?.isView" (onClick)="showViewDialog()" icon="pi pi-eye" label="View" severity="info" class="me-md-2" />
                 <p-button *ngIf="permission?.isAdd" (onClick)="showAddDialog()" icon="pi pi-plus" label="Add" severity="success" class="me-md-2" />
                 <p-button *ngIf="permission?.isEdit" (onClick)="showEditDialog()" icon="pi pi-pencil" label="Edit" severity="warn" class="me-md-2" />
+                <p-button *ngIf="permission?.isEdit" (onClick)="showViewDialogRolePermission()" icon="pi pi-wrench" label="Set Permission" severity="help" class="me-md-2" />
                 <p-button *ngIf="permission?.isDelete" (onClick)="confirmDelete($event)" icon="pi pi-trash" label="Delete" severity="danger" class="me-md-2" />
               </div>
               <p-iconfield iconPosition="right">
@@ -99,48 +100,58 @@
 </p-dialog>
 
 <!--Dialog Role Permission-->
-<p-dialog header="Set Permission" styleClass="p-dialog-sm p-dialog-modal" [modal]="true" [(visible)]="visiblePermission">
-  <form [formGroup]="formGroupRolePermission" #rolePermissionForm="ngForm" (ngSubmit)="saveData()" autocomplete="off">
-    <p-tabs>
-      <p-tabpanel *ngFor="let tab of tabsRolePermission" [header]="tab.name || ''">
-        <p-table
-          #dataTableRolePermission
-          dataKey="id"
-          [columns]="colsRolePermission"
-          [value]="tableDataRolePermission"
-          [(selection)]="selectedListDataRolePermission"
-          [tableStyle]="{ 'min-width': '50rem' }"
-          [resizableColumns]="true"
-          [rows]="10"
-          [lazy]="true"
-          showGridlines
-          stripedRows
-          (onPage)="showViewDialogRolePermission()"
-        >
-          <ng-template pTemplate="header" let-columns>
-            <tr>
-              <th class="text-center" *ngFor="let col of columns" pResizableColumn>
+<p-dialog header="Set Permission" styleClass="p-dialog-lg p-dialog-modal" [modal]="true" [(visible)]="visiblePermission">
+  <p-tabs (onChange)="onTabChange($event)">
+    <p-tabpanel *ngFor="let tab of tabsRolePermission" [header]="tab.name || ''">
+      <p-table
+        #dataTableRolePermission
+        dataKey="id"
+        [columns]="colsRolePermission"
+        [value]="tableDataRolePermission"
+        [tableStyle]="{ 'min-width': '50rem' }"
+        [resizableColumns]="true"
+        [rows]="10"
+        [lazy]="true"
+        showGridlines
+        stripedRows
+      >
+        <ng-template pTemplate="header" let-columns>
+          <tr>
+            <ng-container *ngFor="let col of columns">
+              <th class="text-center" pResizableColumn *ngIf="!col.visible">
                 {{ col.header }}
               </th>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-rowData let-columns="columns">
-            <tr>
-              <td class="text-center">
-                <p-tableCheckbox [value]="rowData" ></p-tableCheckbox>
+            </ng-container>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData let-columns="columns">
+          <tr>
+            <ng-container *ngFor="let col of columns">
+              <td *ngIf="!col.visible" [ngClass]="col.class">
+                <ng-container *ngIf="rowData[col.field] === true || rowData[col.field] === false; else defaultColumn">
+                  <p-inputSwitch
+                    [(ngModel)]="rowData[col.field]"
+                    [style]="{'width': '50px'}"
+                    [disabled]="!rowData[col.options]"
+                    (onChange)="setPermission(columns)"
+                  ></p-inputSwitch>
+                </ng-container>
+                <ng-template #defaultColumn>
+                  {{ rowData[col.field] }}
+                </ng-template>
               </td>
-              <td *ngFor="let col of columns">
-                {{ rowData[col.field] }}
-              </td>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="emptymessage">
-            <tr>
-              <td [colSpan]="cols.length + 1" class="text-center">No data found.</td>
-            </tr>
-          </ng-template>
-        </p-table>
-      </p-tabpanel>
-    </p-tabs>
-  </form>
+            </ng-container>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td [colSpan]="colsRolePermission.length + 1" class="text-center">No data found.</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-tabpanel>
+  </p-tabs>
+  <div class="d-flex justify-content-end gap-2">
+    <p-button label="Cancel" severity="secondary" (click)="closeDialogRolePermission()" />
+  </div>
 </p-dialog>
