@@ -2,7 +2,7 @@
 using DTO.Training.Course.Dtos;
 using DTO.Training.Course.Models;
 
-namespace REPOSITORY.Category.Course
+namespace REPOSITORY.Training.Course
 {
     public class CourseProfile : Profile
     {

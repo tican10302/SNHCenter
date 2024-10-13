@@ -2,7 +2,7 @@
 using DTO.Training.Course.Models;
 using DTO.Training.Course.Dtos;
 
-namespace REPOSITORY.Category.Course
+namespace REPOSITORY.Training.Course
 {
     public interface ICourseRepository
     {
