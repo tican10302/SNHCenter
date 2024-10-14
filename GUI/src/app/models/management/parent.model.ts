@@ -17,6 +17,7 @@ export class ParentModel {
   wardId: string | null = null;
   note: string | null = null;
 }
+
 export class GetListParentRequestModel extends GetListRequestModel {
   provinceId: string | null = null;
   districtId: string | null = null;

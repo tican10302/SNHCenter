@@ -15,7 +15,7 @@ import { GetListRequestModel } from "../../../models/base/get-list-request.model
 import { ConfirmationService, MessageService } from "primeng/api";
 import { Enum } from "../../../enums/enum";
 import { ParentService } from "../../../services/management/parent.service";
-import { createDefaultParentForm, ParentModel } from "../../../models/management/parent.model";
+import {createDefaultParentForm, GetListParentRequestModel, ParentModel} from "../../../models/management/parent.model";
 import { createFormGroup } from "../../../models/base/form-group.model";
 import { NgxSpinnerService } from "ngx-spinner";
 import { TextareaModule } from "primeng/textarea";
@@ -63,7 +63,7 @@ export class ParentComponent implements OnInit {
   cols!: TableColumnModel[];
   totalRecords: number = 0;
 
-  getListPagingRequest = new GetListRequestModel();
+  getListPagingRequest = new GetListParentRequestModel();
 
 
   constructor(protected accountService: AccountService,

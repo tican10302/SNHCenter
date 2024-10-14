@@ -22,8 +22,9 @@ import {TextareaModule} from "primeng/textarea";
 import {SelectListItem} from "../../../models/base/select-list-item.model";
 import {LevelService} from "../../../services/category/level.service";
 import {Select} from "primeng/select";
-import {LessonTemplateModel} from "../../../models/management/lesson-template.model";
+import {createDefaultLessonTemplateForm, LessonTemplateModel} from "../../../models/management/lesson-template.model";
 import {LessonTemplateService} from "../../../services/management/lesson-template.service";
+import {Ripple} from "primeng/ripple";
 
 @Component({
   selector: 'app-course-template',
@@ -39,7 +40,8 @@ import {LessonTemplateService} from "../../../services/management/lesson-templat
     ReactiveFormsModule,
     NgIf,
     TextareaModule,
-    Select
+    Select,
+    Ripple
   ],
   templateUrl: './course-template.component.html',
   styleUrl: './course-template.component.scss'
@@ -48,6 +50,7 @@ export class CourseTemplateComponent implements OnInit{
   @ViewChild('dataTable') dataTable!: Table;
   permission: PermissionModel | null = null;
   formGroup = createDefaultCourseTemplateForm();
+  formGroupLessonTemplate = createDefaultLessonTemplateForm();
   visible: boolean = false;
   isView: boolean = false;
   isEdit: boolean = false;
@@ -61,10 +64,8 @@ export class CourseTemplateComponent implements OnInit{
   totalRecords: number = 0;
 
   // Table Lesson Template
-  tableDataLessonTemplate!: LessonTemplateModel[];
-  selectedListDataLessonTemplate!: LessonTemplateModel;
+  tableDataLessonTemplate: LessonTemplateModel[] = [];
   colsLessonTemplate!: TableColumnModel[];
-  totalRecordsLessonTemplate: number = 0;
 
   getListPagingRequest = new GetListRequestModel();
 
@@ -282,5 +283,52 @@ export class CourseTemplateComponent implements OnInit{
         this.deleteData(ids);
       },
     });
+  }
+
+  // Lesson Template
+  newRow: LessonTemplateModel | null = null;
+  editingRowIndex: number | null = null;
+
+  addRowLessonTemplate() {
+    if (this.editingRowIndex !== null) {
+      // Nếu đã có dòng đang chỉnh sửa, không thêm dòng mới nữa
+      return;
+    }
+
+    // Tạo một dòng mới rỗng
+    this.newRow = new LessonTemplateModel();
+    this.tableDataLessonTemplate = [this.newRow, ...this.tableDataLessonTemplate]; // Thêm dòng mới vào đầu danh sách
+
+    // Gán chỉ số dòng mới để bật chế độ chỉnh sửa
+    this.editingRowIndex = 0;
+  }
+
+  onRowEditInit(rowIndex: number) {
+    if (this.editingRowIndex !== null) {
+      // Nếu đã có dòng đang chỉnh sửa, không cho phép chỉnh sửa thêm
+      return;
+    }
+
+    // Bật chế độ chỉnh sửa cho dòng hiện tại
+    this.editingRowIndex = rowIndex;
+  }
+
+  // Hàm lưu dữ liệu khi chỉnh sửa xong
+  onRowEditSave(rowData: LessonTemplateModel) {
+    // Xóa chế độ chỉnh sửa sau khi lưu dữ liệu
+    this.editingRowIndex = null;
+    this.newRow = null; // Reset newRow khi lưu thành công
+  }
+
+  // Hàm hủy chỉnh sửa
+  onRowEditCancel(rowData: LessonTemplateModel, rowIndex: number) {
+    if (rowData === this.newRow) {
+      // Nếu dòng đang hủy là dòng mới, xóa dòng này
+      this.tableDataLessonTemplate.splice(rowIndex, 1);
+      this.newRow = null; // Reset newRow khi hủy
+    }
+
+    // Dừng chế độ chỉnh sửa
+    this.editingRowIndex = null;
   }
 }
