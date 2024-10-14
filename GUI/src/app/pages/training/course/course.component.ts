@@ -282,6 +282,7 @@ export class CourseComponent implements OnInit {
       },
     });
   }
+
   onLevelChange(selectedValue: any) {
     this.getListPagingRequest.levelId = selectedValue;
     this.loadData(null);

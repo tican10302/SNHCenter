@@ -116,10 +116,10 @@ export class ShiftComponent implements OnInit {
 
         // Set time to date
         const time: Date = new Date();
-        const timeString = dto.time?.toString() || '00:00:00';
-        const [hours, minutes, seconds] = timeString.split(':').map(Number);
+        const timeString = dto.time?.toString() || '00:00';
+        const [hours, minutes] = timeString.split(':').map(Number);
 
-        time.setHours(hours, minutes, seconds, 0);
+        time.setHours(hours, minutes, 0);
         dto.time = time;
 
         this.formGroup = createFormGroup(dto);

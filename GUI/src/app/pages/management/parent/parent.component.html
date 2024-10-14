@@ -35,6 +35,27 @@
                                 <p-button *ngIf="permission?.isEdit" (onClick)="showEditDialog()" icon="pi pi-pencil" label="Edit" severity="warn" class="me-md-2" />
                                 <p-button *ngIf="permission?.isDelete" (onClick)="confirmDelete($event)" icon="pi pi-trash" label="Delete" severity="danger" class="me-md-2" />
                             </div>
+                            <p-select
+                            [options]="provinceCombobox"
+                            optionLabel="text"
+                            optionValue="value"
+                            class="me-lg-2"
+                            [style]="{ 'width': '240px' }"
+                            (onChange)="onProvinceChange($event.value)" />
+                            <p-select
+                            [options]="districtCombobox"
+                            optionLabel="text"
+                            optionValue="value"
+                            class="me-lg-2"
+                            [style]="{ 'width': '240px' }"
+                            (onChange)="onDistrictChange($event.value)" />
+                            <p-select
+                            [options]="wardCombobox"
+                            optionLabel="text"
+                            optionValue="value"
+                            class="me-lg-2"
+                            [style]="{ 'width': '240px' }"
+                            (onChange)="onWardChange($event.value)" />
                             <p-iconfield iconPosition="right">
                                 <p-inputicon>
                                     <i class="pi pi-search"></i>
@@ -102,7 +123,48 @@
             <input pInputText id="email" [formControl]="formGroup.controls.email" name="email" class="col-md-8" [readOnly]="isView" />
             <small *ngIf="formGroup.get('email')?.invalid && formGroup.get('email')?.touched" class="mt-2 form-group-validator">Email is required.</small>
         </div>
-
+        <div class="row">
+          <label class="col-md-4">Province</label>
+          <p-select
+            name="province"
+            class="col-md-8"
+            [options]="provinceCombobox"
+            id="province"
+            [formControl]="formGroup.controls.provinceId"
+            [appendTo]="'body'"
+            optionLabel="text"
+            optionValue="value"
+            [readonly] = "isView" />
+          <small *ngIf="formGroup.get('province')?.invalid && formGroup.get('province')?.touched" class="mt-2 form-group-validator">Province is required.</small>
+        </div>
+        <div class="row">
+          <label class="col-md-4">District</label>
+          <p-select
+            name="district"
+            class="col-md-8"
+            [options]="districtCombobox"
+            id="district"
+            [formControl]="formGroup.controls.districtId"
+            [appendTo]="'body'"
+            optionLabel="text"
+            optionValue="value"
+            [readonly] = "isView" />
+          <small *ngIf="formGroup.get('district')?.invalid && formGroup.get('district')?.touched" class="mt-2 form-group-validator">District is required.</small>
+        </div>
+        <div class="row">
+          <label class="col-md-4">Ward</label>
+          <p-select
+            name="ward"
+            class="col-md-8"
+            [options]="wardCombobox"
+            id="ward"
+            [formControl]="formGroup.controls.wardId"
+            [appendTo]="'body'"
+            optionLabel="text"
+            optionValue="value"
+            [readonly] = "isView" />
+          <small *ngIf="formGroup.get('ward')?.invalid && formGroup.get('ward')?.touched" class="mt-2 form-group-validator">Ward is required.</small>
+        </div>
         <div class="row">
             <label for="note" class="col-md-4">Note</label>
             <textarea id="note" [formControl]="formGroup.controls.note" name="note" class="col-md-8" [readOnly]="isView" rows="5" cols="30" pTextarea>

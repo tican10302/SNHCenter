@@ -2,7 +2,7 @@
 using DTO.Training.Course.Dtos;
 using DTO.Common;
 using Microsoft.AspNetCore.Mvc;
-using REPOSITORY.Category.Course;
+using REPOSITORY.Training.Course;
 using REPOSITORY.Common;
 using DTO.Category.Level.Dtos;
 
@@ -122,6 +122,21 @@ public class CourseController(ICourseRepository repository) : BaseController<Cou
         catch (Exception ex)
         {
             return HandleException(ex);
+        }
+    }
+
+    [HttpPost("get-all-for-combobox")]
+    public IActionResult GetAllForCombobox(GetAllRequest request)
+    {
+        try
+        {
+            if (!ModelState.IsValid) throw new Exception(CommonFunc.GetModelStateAPI(ModelState));
+            var result = repository.GetAllForCombobox();
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
         }
     }
 }

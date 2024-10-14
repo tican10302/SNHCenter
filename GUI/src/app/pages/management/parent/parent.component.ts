@@ -19,6 +19,11 @@ import { createDefaultParentForm, ParentModel } from "../../../models/management
 import { createFormGroup } from "../../../models/base/form-group.model";
 import { NgxSpinnerService } from "ngx-spinner";
 import { TextareaModule } from "primeng/textarea";
+import { Select } from "primeng/select";
+import { SelectListItem } from "../../../models/base/select-list-item.model";
+import { ProvinceService } from "../../../services/category/province.service";
+import { DistrictService } from "../../../services/category/district.service";
+import { WardService } from "../../../services/category/ward.service";
 
 @Component({
   selector: 'app-parent',
@@ -35,6 +40,7 @@ import { TextareaModule } from "primeng/textarea";
     FormsModule,
     ReactiveFormsModule,
     TextareaModule,
+    Select,
   ],
   templateUrl: './parent.component.html',
   styleUrl: './parent.component.scss'
@@ -46,6 +52,9 @@ export class ParentComponent implements OnInit {
   visible: boolean = false;
   isView: boolean = false;
   isEdit: boolean = false;
+  provinceCombobox: SelectListItem[] = [];
+  districtCombobox: SelectListItem[] = [];
+  wardCombobox: SelectListItem[] = [];
   currentRoute = inject(ActivatedRoute).routeConfig?.component?.name.replace(/_?([a-zA-Z]+)Component$/, '$1').toLowerCase() || '';
 
   // Table
@@ -61,7 +70,10 @@ export class ParentComponent implements OnInit {
     private parentService: ParentService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
-    private spinner: NgxSpinnerService,) {
+    private spinner: NgxSpinnerService,
+    private provinceService: ProvinceService,
+    private districtService: DistrictService,
+    private wardService: WardService,) {
   }
 
   ngOnInit() {
@@ -73,8 +85,26 @@ export class ParentComponent implements OnInit {
       { field: 'lastName', header: 'Last Name' },
       { field: 'phone', header: 'Phone' },
       { field: 'email', header: 'Email' },
+      { field: 'province', header: 'Province' },
+      { field: 'district', header: 'District' },
+      { field: 'ward', header: 'Ward' },
       { field: 'note', header: 'Note' },
     ];
+    this.provinceService.getCombobox({}).subscribe({
+      next: (data) => {
+        this.provinceCombobox = [{ text: '-- Group province --', value: null }, ...data];
+      }
+    })
+    this.districtService.getCombobox({}).subscribe({
+      next: (data) => {
+        this.districtCombobox = [{ text: '-- Group district --', value: null }, ...data];
+      }
+    })
+    this.wardService.getCombobox({}).subscribe({
+      next: (data) => {
+        this.wardCombobox = [{ text: '-- Group ward --', value: null }, ...data];
+      }
+    })
   }
 
   onSearch(event: Event) {
@@ -246,5 +276,16 @@ export class ParentComponent implements OnInit {
       },
     });
   }
-
+  onProvinceChange(selectedValue: any) {
+    this.getListPagingRequest.provinceId = selectedValue;
+    this.loadData(null);
+  }
+  onDistrictChange(selectedValue: any) {
+    this.getListPagingRequest.districtId = selectedValue;
+    this.loadData(null);
+  }
+  onWardChange(selectedValue: any) {
+    this.getListPagingRequest.wardId = selectedValue;
+    this.loadData(null);
+  }
 }

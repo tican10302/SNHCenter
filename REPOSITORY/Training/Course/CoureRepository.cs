@@ -8,9 +8,8 @@ using DTO.Training.Course.Models;
 using DTO.Training.Course.Dtos;
 using REPOSITORY.Common;
 using Microsoft.AspNetCore.Http;
-using DTO.Category.Level.Dtos;
 
-namespace REPOSITORY.Category.Course;
+namespace REPOSITORY.Training.Course;
 
 [RegisterClassAsTransient]
 public class CourseRepository(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor) : ICourseRepository

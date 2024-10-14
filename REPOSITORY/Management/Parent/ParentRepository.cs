@@ -99,6 +99,9 @@ public class ParentRepository(IUnitOfWork unitOfWork, IMapper mapper, IHttpConte
     public async Task<GetListPagingResponse> GetListPaging(GetListPagingRequest request)
     {
         var parameters = new DynamicParameters();
+        parameters.Add("@iProvinceId", request.ProvinceId, DbType.Guid);
+        parameters.Add("@iDistrictId", request.DistrictId, DbType.Guid);
+        parameters.Add("@iWardId", request.WardId, DbType.Guid);
         parameters.Add("@iTextSearch", request.Search, DbType.String);
         parameters.Add("@iTextSearch", request.Search, DbType.String);
         parameters.Add("@iPageIndex", request.Offset / request.Limit, DbType.Int32);
