@@ -1,22 +1,44 @@
-﻿using DTO.Base;
-using DTO.Management.Parent.Dtos;
+using DAL.Entities;
+using DTO.Base;
 using DTO.Common;
+using DTO.Management.CourseTemplate.Dtos;
+using DTO.Management.LessonTemplate.Dtos;
 using Microsoft.AspNetCore.Mvc;
-using REPOSITORY.Management.Parent;
 using REPOSITORY.Common;
+using REPOSITORY.Management.LessonTemplate;
 
 namespace BLL.Controllers.Management;
 
-public class ParentController(IParentRepository repository) : BaseController<ParentController>
+public class LessonTemplateController(ILessonTemplateRepository repository) : BaseController<LessonTemplateController>
 {
     [HttpPost]
     [Route("get-list-paging")]
-    public async Task<IActionResult> GetListPagingAsync(ParentGetListDto request)
+    public async Task<IActionResult> GetListPagingAsync(GetListPagingRequest request)
     {
         try
         {
             if (!ModelState.IsValid) throw new Exception(CommonFunc.GetModelStateAPI(ModelState));
             var result = await repository.GetListPaging(request);
+            return Ok(result);
+        }
+        catch (ApiException ex)
+        {
+            return HandleApiException(ex);
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
+    }
+    
+    [HttpPost]
+    [Route("get-all")]
+    public IActionResult GetAll(GetListLessonTemplateRequest request)
+    {
+        try
+        {
+            if (!ModelState.IsValid) throw new Exception(CommonFunc.GetModelStateAPI(ModelState));
+            var result = repository.GetAll(request);
             return Ok(result);
         }
         catch (ApiException ex)
@@ -66,14 +88,14 @@ public class ParentController(IParentRepository repository) : BaseController<Par
             return HandleException(ex);
         }
     }
-
+    
     [HttpPost]
-    public async Task<IActionResult> Create(ParentDto request)
+    public async Task<IActionResult> CreateList(List<LessonTemplateDto> request)
     {
         try
         {
             if (!ModelState.IsValid) throw new Exception(CommonFunc.GetModelStateAPI(ModelState));
-            await repository.Insert(request);
+            await repository.InsertList(request);
             return Created();
         }
         catch (ApiException ex)
@@ -87,12 +109,12 @@ public class ParentController(IParentRepository repository) : BaseController<Par
     }
 
     [HttpPut]
-    public async Task<IActionResult> Update(ParentDto request)
+    public async Task<IActionResult> UpdateList(List<LessonTemplateDto> request)
     {
         try
         {
             if (!ModelState.IsValid) throw new Exception(CommonFunc.GetModelStateAPI(ModelState));
-            await repository.Update(request);
+            await repository.UpdateList(request);
             return Ok();
         }
         catch (ApiException ex)
@@ -121,21 +143,6 @@ public class ParentController(IParentRepository repository) : BaseController<Par
         catch (Exception ex)
         {
             return HandleException(ex);
-        }
-    }
-
-    [HttpPost("get-all-for-combobox")]
-    public IActionResult GetAllForCombobox(GetAllRequest request)
-    {
-        try
-        {
-            if (!ModelState.IsValid) throw new Exception(CommonFunc.GetModelStateAPI(ModelState));
-            var result = repository.GetAllForCombobox();
-            return Ok(result);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
         }
     }
 }

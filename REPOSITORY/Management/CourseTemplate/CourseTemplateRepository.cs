@@ -4,15 +4,17 @@ using AutoDependencyRegistration.Attributes;
 using AutoMapper;
 using Dapper;
 using DTO.Base;
-using DTO.Category.LessonTemplate.Dtos;
-using DTO.Category.LessonTemplate.Models;
+using DTO.Category.Program.Dtos;
+using DTO.Category.Program.Models;
+using DTO.Management.CourseTemplate.Dtos;
+using DTO.Management.CourseTemplate.Models;
 using Microsoft.AspNetCore.Http;
 using REPOSITORY.Common;
 
-namespace REPOSITORY.Category.LessonTemplate;
+namespace REPOSITORY.Management.CourseTemplate;
 
 [RegisterClassAsTransient]
-public class LessonTemplateRepository(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor) : ILessonTemplateRepository
+public class CourseTemplateRepository(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor) : ICourseTemplateRepository
 {
     public async Task<GetListPagingResponse> GetListPaging(GetListPagingRequest request)
     {
@@ -22,71 +24,73 @@ public class LessonTemplateRepository(IUnitOfWork unitOfWork, IMapper mapper, IH
         parameters.Add("@iRowsPerPage", request.Limit, DbType.Int32);
         parameters.Add("@oTotalRow", dbType: DbType.Int64, direction: ParameterDirection.Output);
 
-        var result = await unitOfWork.GetRepository<LessonTemplateModel>().ExecWithStoreProcedure("sp_Category_LessonTemplate_GetListPaging", parameters);
+        var result = await unitOfWork.GetRepository<CourseTemplateModel>().ExecWithStoreProcedure("sp_Management_CourseTemplate_GetListPaging", parameters);
 
         var totalRow = parameters.Get<long>("@oTotalRow");
-        var responseData = new GetListPagingResponse
+        var response = new GetListPagingResponse()
         {
             PageIndex = request.Offset,
             Data = result,
             TotalRow = Convert.ToInt32(totalRow)
         };
-
-        return responseData;
+        return response;
     }
-
-    public async Task<LessonTemplateModel> GetById(GetByIdRequest request)
+    
+    public async Task<CourseTemplateModel> GetById(GetByIdRequest request)
     {
-        var data = await unitOfWork.GetRepository<DAL.Entities.LessonTemplate>().GetByIdAsync(request.Id);
+        var data = await unitOfWork.GetRepository<DAL.Entities.CourseTemplate>().GetByIdAsync(request.Id);
         if (data == null)
         {
             throw new ApiException((int)HttpStatusCode.NotFound, "Not data found");
         }
 
-        var result = mapper.Map<LessonTemplateModel>(data);
+        var result = mapper.Map<CourseTemplateModel>(data);
         return result;
     }
-
-    public async Task<LessonTemplateDto> GetByPost(GetByIdRequest request)
+    
+    public async Task<CourseTemplateDto> GetByPost(GetByIdRequest request)
     {
-            var result = new LessonTemplateDto();
-            var data = await unitOfWork.GetRepository<DAL.Entities.LessonTemplate>().GetByIdAsync(request.Id);
-            if (data == null)
-            {
-                result.Id = Guid.NewGuid();
-                result.IsEdit = false;
-            }
-            else
-            {
-                result = mapper.Map<LessonTemplateDto>(data);
-                result.IsEdit = true;
-            }
 
-            return result;
+        var result = new CourseTemplateDto();
+        var data = await unitOfWork.GetRepository<DAL.Entities.CourseTemplate>().GetByIdAsync(request.Id);
+
+        if (data == null)
+        {
+            result.Id = Guid.NewGuid();
+            result.IsEdit = false;
+        }
+        else
+        {
+            result = mapper.Map<CourseTemplateDto>(data);
+            result.IsEdit = true;
+        }
+
+        return result;
     }
-
-    public async Task<bool> Insert(LessonTemplateDto request)
+    
+    public async Task<bool> Insert(CourseTemplateDto request)
     {
         try
         {
             using var transaction = unitOfWork.BeginTransactionAsync();
 
-            var checkData = await unitOfWork.GetRepository<DAL.Entities.LessonTemplate>().Find(x => 
+            var checkData = await unitOfWork.GetRepository<DAL.Entities.CourseTemplate>().Find(x =>
                 !x.IsDeleted &&
-                (x.CourseTemplateId == request.CourseTemplateId
-                && x.LessonNo == request.LessonNo));
+                x.LevelId == request.LevelId);
             if (checkData != null)
             {
                 throw new ApiException((int)HttpStatusCode.BadRequest, "Data already exists");
             }
             
-            var entity = mapper.Map<DAL.Entities.LessonTemplate>(request);
+            
+
+            var entity = mapper.Map<DAL.Entities.CourseTemplate>(request);
             entity.CreatedBy = httpContextAccessor.HttpContext?.User.Identity?.Name;
             entity.CreatedAt = DateTime.Now;
             entity.UpdatedBy = httpContextAccessor.HttpContext?.User.Identity?.Name;
             entity.UpdatedAt = DateTime.Now;
-            
-            await unitOfWork.GetRepository<DAL.Entities.LessonTemplate>().AddAsync(entity);
+
+            await unitOfWork.GetRepository<DAL.Entities.CourseTemplate>().AddAsync(entity);
 
             await unitOfWork.SaveChangesAsync();
             await unitOfWork.CommitAsync();
@@ -99,34 +103,33 @@ public class LessonTemplateRepository(IUnitOfWork unitOfWork, IMapper mapper, IH
 
         return true;
     }
-
-    public async Task<bool> Update(LessonTemplateDto request)
+    
+    public async Task<bool> Update(CourseTemplateDto request)
     {
         try
         {
             using var transaction = unitOfWork.BeginTransactionAsync();
 
-            var checkData = await unitOfWork.GetRepository<DAL.Entities.LessonTemplate>().Find(x =>
+            var checkData = await unitOfWork.GetRepository<DAL.Entities.CourseTemplate>().Find(x =>
                 !x.IsDeleted &&
                 x.Id != request.Id &&
-                (x.CourseTemplateId == request.CourseTemplateId
-                 && x.LessonNo == request.LessonNo));
+                x.LevelId == request.LevelId);
             if (checkData != null)
             {
                 throw new ApiException((int)HttpStatusCode.BadRequest, "Data already exists");
             }
 
-            var data = await unitOfWork.GetRepository<DAL.Entities.LessonTemplate>().GetByIdAsync(request.Id);
+            var data = await unitOfWork.GetRepository<DAL.Entities.CourseTemplate>().GetByIdAsync(request.Id);
             if (data == null)
             {
-                throw new ApiException((int)HttpStatusCode.BadRequest, "Not data found");
+                throw new ApiException((int)HttpStatusCode.NotFound, "Not data found");
             }
             var entity = mapper.Map(request, data);
 
             entity.UpdatedAt = DateTime.Now;
             entity.UpdatedBy = httpContextAccessor.HttpContext?.User.Identity?.Name;
-            
-            await unitOfWork.GetRepository<DAL.Entities.LessonTemplate>().UpdateAsync(entity);
+
+            await unitOfWork.GetRepository<DAL.Entities.CourseTemplate>().UpdateAsync(entity);
 
             await unitOfWork.SaveChangesAsync();
             await unitOfWork.CommitAsync();
@@ -139,22 +142,24 @@ public class LessonTemplateRepository(IUnitOfWork unitOfWork, IMapper mapper, IH
 
         return true;
     }
-
-
-    public async Task<bool> DeleteList(DeleteListRequest request)
+    
+    public async Task<bool> DeLeteList(DeleteListRequest request)
     {
         try
         {
             using var transaction = unitOfWork.BeginTransactionAsync();
             foreach (var id in request.Ids)
             {
-                var entity = await unitOfWork.GetRepository<DAL.Entities.LessonTemplate>().GetByIdAsync(id);
+                var entity = await unitOfWork.GetRepository<DAL.Entities.CourseTemplate>().GetByIdAsync(id);
 
-                entity.IsDeleted = true;
-                entity.DeletedAt = DateTime.Now;
-                entity.DeletedBy = httpContextAccessor.HttpContext?.User.Identity?.Name;
-            
-                await unitOfWork.GetRepository<DAL.Entities.LessonTemplate>().UpdateAsync(entity);
+                if (entity != null)
+                {
+                    entity.IsDeleted = true;
+                    entity.DeletedAt = DateTime.Now;
+                    entity.DeletedBy = httpContextAccessor.HttpContext?.User.Identity?.Name;
+
+                    await unitOfWork.GetRepository<DAL.Entities.CourseTemplate>().UpdateAsync(entity);
+                }
 
                 await unitOfWork.SaveChangesAsync();
             }

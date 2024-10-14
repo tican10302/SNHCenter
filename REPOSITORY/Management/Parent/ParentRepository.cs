@@ -96,7 +96,7 @@ public class ParentRepository(IUnitOfWork unitOfWork, IMapper mapper, IHttpConte
     }
 
 
-    public async Task<GetListPagingResponse> GetListPaging(GetListPagingRequest request)
+    public async Task<GetListPagingResponse> GetListPaging(ParentGetListDto request)
     {
         var parameters = new DynamicParameters();
         parameters.Add("@iProvinceId", request.ProvinceId, DbType.Guid);
@@ -108,7 +108,7 @@ public class ParentRepository(IUnitOfWork unitOfWork, IMapper mapper, IHttpConte
         parameters.Add("@iRowsPerPage", request.Limit, DbType.Int32);
         parameters.Add("@oTotalRow", dbType: DbType.Int64, direction: ParameterDirection.Output);
 
-        var result = await unitOfWork.GetRepository<ParentModel>().ExecWithStoreProcedure("sp_Category_Parent_GetListPaging", parameters);
+        var result = await unitOfWork.GetRepository<ParentModel>().ExecWithStoreProcedure("sp_Management_Parent_GetListPaging", parameters);
 
         var totalRow = parameters.Get<long>("@oTotalRow");
         var response = new GetListPagingResponse()

@@ -6,7 +6,7 @@ namespace REPOSITORY.Management.Parent
 {
     public interface IParentRepository
     {
-        Task<GetListPagingResponse> GetListPaging(GetListPagingRequest request);
+        Task<GetListPagingResponse> GetListPaging(ParentGetListDto request);
         Task<ParentDto> GetByPost(GetByIdRequest request);
         Task<ParentModel> GetById(GetByIdRequest request);
         Task<bool> Insert(ParentDto request);
