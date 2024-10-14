@@ -160,7 +160,7 @@ namespace REPOSITORY.System.Role
         public List<ComboboxModel> GetAllForCombobox()
         {
             var result = unitOfWork.GetRepository<DAL.Entities.Role>()
-                .GetAll(x => !x.IsDeleted && x.IsActived)
+                .GetAll(x => !x.IsDeleted && x.IsActive)
                 .OrderBy(x => x.Name)
                 .ToList();
 
@@ -195,7 +195,10 @@ namespace REPOSITORY.System.Role
                 var resultUpdate = await unitOfWork.GetRepository<DAL.Entities.Permission>().Find(x => x.Id == request.Id);
                 if (resultUpdate == null)
                 {
-                    request.Id = Guid.NewGuid();
+                    if (request.Id == Guid.Empty)
+                    {
+                        request.Id = Guid.NewGuid();
+                    }
                     var add = mapper.Map<DAL.Entities.Permission>(request);
                     await unitOfWork.GetRepository<DAL.Entities.Permission>().AddAsync(add);
                     response = mapper.Map<Role_PermissionModel>(add);

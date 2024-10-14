@@ -1,0 +1,62 @@
+@model DTO.Category.Ward.Models.WardModel
+
+@* @{
+    List<string> selectedDays = Model.SelectDays ?? new List<string>();
+} *@
+
+<div class="modal-content modal-snhcenter" id="modalLoading">
+        <div class="modal-header">
+            <h4 class="modal-title">Ward Detail</h4>
+            <button type="button" class="btn-close" onclick="closePopup();" aria-label="Close" data-bs-dimiss="modal"></button>
+        </div>
+        
+        <div class="modal-body">
+            <div class="row form-group">
+                <label class="col-sm-2 form-label">Code <span class="text-danger">(*)</span></label>
+                <div class="col-sm-4">
+                    @(Html.TextBoxFor(model => model.Code, new { @placeholder = "Enter code", @readonly = true }))
+                </div>
+
+                <label class="col-sm-2 form-label">Name <span class="text-danger">(*)</span></label>
+                <div class="col-sm-4">
+                    @(Html.TextBoxFor(model => model.Name, new { @placeholder = "Enter name", @readonly = true }))
+                </div>
+
+                <label class="col-sm-2 form-label">NameEn <span class="text-danger">(*)</span></label>
+                <div class="col-sm-4">
+                @(Html.TextBoxFor(model => model.NameEn, new { @placeholder = "Enter NameEn", @readonly = true }))
+                </div>
+
+                <label class="col-sm-2 form-label">FullName <span class="text-danger">(*)</span></label>
+                <div class="col-sm-4">
+                    @(Html.TextBoxFor(model => model.FullName, new { @placeholder = "Enter FullName", @readonly = true }))
+                </div>
+
+                <label class="col-sm-2 form-label">FullNameEn <span class="text-danger">(*)</span></label>
+                <div class="col-sm-4">
+                    @(Html.TextBoxFor(model => model.FullNameEn, new { @placeholder = "Enter FullNameEn", @readonly = true }))
+                </div>
+
+                <label class="col-sm-2 form-label">CodeName <span class="text-danger">(*)</span></label>
+                <div class="col-sm-4">
+                    @(Html.TextBoxFor(model => model.CodeName, new { @placeholder = "Enter CodeName", @readonly = true }))
+                </div>
+
+            </div>
+            
+        </div>
+        
+        <div class="modal-footer">
+            <button type="button" class="btn btn-danger btn-sm" onclick="closePopup();"><i class="fas fa-times-square"></i> Cancel</button>
+        </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $("#frmWard").find("span.field-validation-valid").hide();
+    })
+    
+    function closePopup() {
+        $('#modal-default').modal('hide');
+    }
+</script>

@@ -127,7 +127,7 @@ public class GroupPermissionRepository(IUnitOfWork unitOfWork, IMapper mapper) :
     public List<GroupPermissionModel> GetAll()
     {
         var result = unitOfWork.GetRepository<DAL.Entities.GroupPermission>()
-            .GetAll(x => x.IsActived)
+            .GetAll(x => x.IsActive)
             .OrderBy(x => x.Sort)
             .ToList();
 
@@ -138,7 +138,7 @@ public class GroupPermissionRepository(IUnitOfWork unitOfWork, IMapper mapper) :
     public List<SelectListItem> GetAllForCombobox()
     {
         var result = unitOfWork.GetRepository<DAL.Entities.GroupPermission>()
-            .GetAll(x => x.IsActived)
+            .GetAll(x => x.IsActive)
             .OrderBy(x => x.Sort)
             .ToList();
 

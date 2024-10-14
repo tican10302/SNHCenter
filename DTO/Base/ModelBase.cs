@@ -8,7 +8,7 @@
         public DateTime UpdatedAt { get; set; }
         public string? UpdatedBy { get; set; }
         public bool IsEdit { get; set; } = false;
-        public bool IsActived { get; set; } = true;
+        public bool IsActive { get; set; } = true;
         public int Sort { get; set; }
     }
 }

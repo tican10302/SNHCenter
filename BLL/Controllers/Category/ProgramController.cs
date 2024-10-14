@@ -123,4 +123,19 @@ public class ProgramController(IProgramRepository repository) : BaseController<P
             return HandleException(ex);
         }
     }
+    
+    [HttpPost("get-all-for-combobox")]
+    public IActionResult GetAllForCombobox(GetAllRequest request)
+    {
+        try
+        {
+            if (!ModelState.IsValid) throw new Exception(CommonFunc.GetModelStateAPI(ModelState));
+            var result = repository.GetAllForCombobox();
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
 }

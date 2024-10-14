@@ -26,7 +26,7 @@ namespace DAL.Entities
         public bool HasDelete { get; set; }
         public bool HasApprove { get; set; }
         public bool HasStatistic { get; set; }
-        public bool IsActived { get; set; }
+        public bool IsActive { get; set; }
         public bool IsShowMenu { get; set; }
     }
 }

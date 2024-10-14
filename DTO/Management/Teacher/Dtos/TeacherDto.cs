@@ -8,4 +8,5 @@ namespace DTO.Management.Teacher.Dtos;
 
 public class TeacherDto : UserDto
 {
+
 }

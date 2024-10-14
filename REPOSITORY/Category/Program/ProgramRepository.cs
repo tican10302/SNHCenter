@@ -48,7 +48,7 @@ public class ProgramRepository(IUnitOfWork unitOfWork, IMapper mapper, IHttpCont
     public List<ComboboxModel> GetAllForCombobox()
     {
         var result = unitOfWork.GetRepository<DAL.Entities.Program>()
-            .GetAll(x => !x.IsDeleted && x.IsActived)
+            .GetAll(x => !x.IsDeleted && x.IsActive)
             .OrderBy(x => x.Name)
             .ToList();
 
@@ -98,6 +98,7 @@ public class ProgramRepository(IUnitOfWork unitOfWork, IMapper mapper, IHttpCont
     public async Task<GetListPagingResponse> GetListPaging(GetListPagingRequest request)
     {
         var parameters = new DynamicParameters();
+        parameters.Add("@iTextSearch", request.Search, DbType.String);
         parameters.Add("@iTextSearch", request.Search, DbType.String);
         parameters.Add("@iPageIndex", request.Offset / request.Limit, DbType.Int32);
         parameters.Add("@iRowsPerPage", request.Limit, DbType.Int32);

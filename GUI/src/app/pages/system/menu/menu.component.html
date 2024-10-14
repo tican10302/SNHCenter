@@ -1,0 +1,201 @@
+<ng-container *ngIf="permission?.isView">
+  <div>
+    <div class="title">
+      <h2 class="title-content">
+        Menu
+      </h2>
+    </div>
+    <div class="content">
+      <div class="">
+        <div class="row">
+          <div class="col-md-6">
+
+          </div>
+        </div>
+        <p-table
+          #dataTable
+          dataKey="id"
+          [columns]="cols"
+          [value]="tableData"
+          [(selection)]="selectedListData"
+          [paginator]="true"
+          [tableStyle]="{ 'min-width': '50rem' }"
+          [resizableColumns]="true"
+          [rows]="10"
+          [rowsPerPageOptions]="[10, 15, 20]"
+          [totalRecords]="totalRecords"
+          [lazy]="true"
+          [(first)]="getListPagingRequest.offset"
+          showGridlines
+          stripedRows
+          (onPage)="loadData($event)"
+        >
+          <ng-template pTemplate="caption">
+            <div class="d-flex justify-content-between align-items-center">
+              <div class="flex-grow-1">
+                <p-button *ngIf="permission?.isView" (onClick)="showViewDialog()" icon="pi pi-eye" label="View" severity="info" class="me-md-2" />
+                <p-button *ngIf="permission?.isAdd" (onClick)="showAddDialog()" icon="pi pi-plus" label="Add" severity="success" class="me-md-2" />
+                <p-button *ngIf="permission?.isEdit" (onClick)="showEditDialog()" icon="pi pi-pencil" label="Edit" severity="warn" class="me-md-2" />
+              </div>
+              <p-select
+                [options]="groupPermissionCombobox"
+                optionLabel="text"
+                optionValue="value"
+                class="me-lg-2"
+                [style]="{ 'width': '240px' }"
+                (onChange)="onGroupPermissionChange($event.value)" />
+              <p-iconfield iconPosition="right">
+                <p-inputicon>
+                  <i class="pi pi-search"></i>
+                </p-inputicon>
+                <input
+                  pInputText
+                  type="text"
+                  (keyup.enter)="onSearch($event)"
+                  placeholder="Search keyword" />
+              </p-iconfield>
+            </div>
+          </ng-template>
+          <ng-template pTemplate="header" let-columns>
+            <tr>
+              <th class="text-center" style="width: 4rem;" pResizableColumn><p-tableHeaderCheckbox /></th>
+              <th class="text-center" *ngFor="let col of columns" pResizableColumn>
+                {{ col.header }}
+              </th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-rowData let-columns="columns">
+            <tr>
+              <td class="text-center">
+                <p-tableCheckbox [value]="rowData" ></p-tableCheckbox>
+              </td>
+              <td *ngFor="let col of columns" [ngClass]="col.class">
+                <ng-container *ngIf="rowData[col.field] === true || rowData[col.field] === false; else defaultColumn">
+                  <ng-container *ngIf="col.field === 'isActive'; else inputSwitchColumn">
+                     <span [ngClass]="{'text-success': rowData[col.field], 'text-danger': !rowData[col.field]}">
+                        {{ rowData[col.field] ? 'Online' : 'Offline' }}
+                     </span>
+                  </ng-container>
+                  <ng-template #inputSwitchColumn>
+                    <p-inputSwitch [(ngModel)]="rowData[col.field]" [style]="{'width': '50px'}" [readonly]="true"></p-inputSwitch>
+                  </ng-template>
+                </ng-container>
+                <ng-template #defaultColumn>
+                  {{ rowData[col.field] }}
+                </ng-template>
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td [colSpan]="cols.length + 1" class="text-center">No data found.</td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </div>
+  </div>
+</ng-container>
+
+<!--Dialog-->
+<p-dialog header="{{isView ? '' : isEdit ? 'Update' : 'Create'}} Menu {{isView ? 'Detail' : ''}}" styleClass="p-dialog-sm p-dialog-modal" [modal]="true" [(visible)]="visible">
+  <form [formGroup]="formGroup" #menuForm="ngForm" (ngSubmit)="saveData()" autocomplete="off">
+    <div class="row">
+      <label for="name" class="col-md-2">Name</label>
+      <input pInputText id="name" [formControl]="formGroup.controls.name" name="name" class="col-md-4" [readOnly]="isView"  />
+      <label for="controllerName" class="col-md-2">Controller Name</label>
+      <input pInputText id="controllerName" [formControl]="formGroup.controls.controllerName" name="controllerName" class="col-md-4" [readOnly]="isView"  />
+    </div>
+    <div class="row">
+      <label for="controller" class="col-md-2">Controller</label>
+      <input pInputText id="controller" [formControl]="formGroup.controls.controller" name="controller" class="col-md-4" [readOnly]="isView"  />
+      <label for="action" class="col-md-2">Action</label>
+      <input pInputText id="action" [formControl]="formGroup.controls.action" name="action" class="col-md-4" [readOnly]="isView"  />
+    </div>
+    <div class="row">
+      <label for="groupPermission" class="col-md-2">Group Permission</label>
+      <p-select
+        name="groupPermission"
+        class="col-md-4"
+        [options]="groupPermissionCombobox"
+        id="groupPermission"
+        [formControl]="formGroup.controls.groupPermissionId"
+        [appendTo]="'body'"
+        optionLabel="text"
+        optionValue="value"
+        [readonly] = "isView" />
+      <label for="isActive" class="col-md-2">Active</label>
+      <p-select
+        name="isActive"
+        class="col-md-4"
+        [options]="activeCombobox"
+        id="isActive"
+        [formControl]="formGroup.controls.isActive"
+        [appendTo]="'body'"
+        optionLabel="text"
+        optionValue="value"
+        [readonly] = "isView" />
+    </div>
+    <div class="row">
+      <label for="sort" class="col-md-2">Sort</label>
+      <p-inputNumber
+        inputId="integeronly"
+        id="sort"
+        [formControl]="formGroup.controls.sort"
+        [min]="0"
+        name="sort"
+        class="col-md-4" />
+      <label for="icon" class="col-md-2">Icon</label>
+      <input pInputText id="icon" [formControl]="formGroup.controls.icon" name="icon" class="col-md-4" [readOnly]="isView"  />
+    </div>
+    <div class="row">
+      <label for="isShowMenu" class="col-md-2">Show on menu</label>
+      <p-toggleswitch id="isShowMenu" [formControl]="formGroup.controls.isShowMenu" name="isShowMenu" class="col-md-4 px-lg-0" [readonly]="isView" />
+    </div>
+    <div class="row">
+      <label class="col-md-12">Permission</label>
+    </div>
+    <div class="row">
+      <div class="col-md-2 d-flex justify-content-center">
+          <p-inputSwitch
+            id="hasView"
+            [formControl]="formGroup.controls.hasView" />
+          <label for="hasView" class="ms-lg-2">View</label>
+      </div>
+      <div class="col-md-2 d-flex justify-content-center">
+        <p-inputSwitch
+          id="hasAdd"
+          [formControl]="formGroup.controls.hasAdd" />
+        <label for="hasAdd" class="ms-lg-2">Add</label>
+      </div>
+      <div class="col-md-2 d-flex justify-content-center">
+        <p-inputSwitch
+          id="hasEdit"
+          [formControl]="formGroup.controls.hasEdit" />
+        <label for="hasEdit" class="ms-lg-2">Edit</label>
+      </div>
+      <div class="col-md-2 d-flex justify-content-center">
+        <p-inputSwitch
+          id="hasDelete"
+          [formControl]="formGroup.controls.hasDelete" />
+        <label for="hasDelete" class="ms-lg-2">Delete</label>
+      </div>
+      <div class="col-md-2 d-flex justify-content-center">
+        <p-inputSwitch
+          id="hasApprove"
+          [formControl]="formGroup.controls.hasApprove" />
+        <label for="hasApprove" class="ms-lg-2">Approve</label>
+      </div>
+      <div class="col-md-2 d-flex justify-content-center">
+        <p-inputSwitch
+          id="hasStatistic"
+          [formControl]="formGroup.controls.hasStatistic" />
+        <label for="hasStatistic" class="ms-lg-2">Statistic</label>
+      </div>
+    </div>
+    <div class="d-flex justify-content-end gap-2">
+      <p-button label="Cancel" severity="secondary" (click)="closeDialog()" />
+      <p-button [label]="isView ? '' : isEdit ? 'Update' : 'Create'" *ngIf="!isView" type="submit" />
+    </div>
+  </form>
+</p-dialog>

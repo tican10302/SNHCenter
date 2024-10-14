@@ -2,15 +2,16 @@ using DTO.Base;
 using DTO.Category.Shift.Models;
 using DTO.Category.Shift.Dtos;
 
-namespace REPOSITORY.Category;
-
-public interface IShiftRepository
+namespace REPOSITORY.Category.Shift
 {
-    Task<BaseResponse<GetListPagingResponse>> GetListPaging(GetListPagingRequest request);
-    Task<BaseResponse<ShiftDto>> GetByPost(GetByIdRequest request);
-    Task<BaseResponse<ShiftModel>> GetById(GetByIdRequest request);
-    Task<BaseResponse<ShiftModel>> Insert(ShiftDto request);
-    Task<BaseResponse<ShiftModel>> Update(ShiftDto request);
-    Task<BaseResponse<string>> DeLeteList(DeleteListRequest request);
-    Task<BaseResponse<List<ComboboxModel>>> GetAllForCombobox(GetAllRequest request);
+    public interface IShiftRepository
+    {
+        Task<GetListPagingResponse> GetListPaging(GetListPagingRequest request);
+        Task<ShiftDto> GetByPost(GetByIdRequest request);
+        Task<ShiftModel> GetById(GetByIdRequest request);
+        Task<bool> Insert(ShiftDto request);
+        Task<bool> Update(ShiftDto request);
+        Task<bool> DeLeteList(DeleteListRequest request);
+        List<ComboboxModel> GetAllForCombobox();
+    }
 }
